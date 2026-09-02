@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 5 Toolkit - Syllabus and Curriculum Design</title>
+<style>
+  :root {
+    --teal: #1F4E44;
+    --teal-acc: #2F6F62;
+    --gold: #C98A2B;
+    --gold-lt: #E8C468;
+    --ink: #1B2430;
+    --cream: #F2EFE6;
+    --white: #FFFFFF;
+    --cardbg: #F3F1EC;
+    --muted: #6B7280;
+    --success: #7BC67E;
+    --error: #A23B33;
+    --error-bg: #FDEDEA;
+    --group-bg: #FBF0DC;
+    --indiv-bg: #E4EFEC;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--white); }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    min-height: 640px;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; margin: 0; }
+  #app { min-height: 640px; padding-bottom: 40px; }
+  .theme-dark { background: var(--teal); color: var(--cream); }
+  .theme-dark h1, .theme-dark h2, .theme-dark h3 { color: var(--cream); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 64px 20px 60px; }
+  .wrap-wide { max-width: 1080px; margin: 0 auto; padding: 64px 20px 60px; }
+
+  .toggle-pill {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 50;
+    display: flex;
+    background: var(--white);
+    border: 1px solid #D8D3C8;
+    border-radius: 999px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(27,36,48,0.12);
+  }
+  .toggle-pill button {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .toggle-pill button.active { background: var(--teal); color: var(--cream); }
+  .content-pad-top { padding-top: 56px; }
+
+  .card {
+    background: var(--cardbg);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .theme-dark .card { background: #173C34; }
+  .card-white { background: var(--white); border: 1px solid #E4E0D6; }
+  .theme-dark .card-white, .theme-dark .card-white * { color: var(--ink); }
+
+  .btn {
+    display: inline-block;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn-primary { background: var(--teal-acc); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--teal); }
+  .btn-gold { background: var(--gold); color: #fff; }
+  .btn-gold:hover:not(:disabled) { background: #B37A22; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--teal-acc); color: var(--teal-acc); }
+  .btn-danger { background: var(--error); color: #fff; }
+  .btn-danger:hover:not(:disabled) { background: #832C26; }
+  .btn-block { display: block; width: 100%; }
+
+  .badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .badge-group { background: var(--gold); }
+  .badge-indiv { background: var(--teal-acc); }
+
+  input[type="text"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #D8D3C8;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #fff;
+    color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  .spectrum-track {
+    position: relative;
+    height: 36px;
+    background: #E4E0D6;
+    border-radius: 18px;
+    margin: 16px 0 6px;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .spectrum-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--teal-acc);
+    border-radius: 18px;
+    pointer-events: none;
+  }
+  .spectrum-thumb {
+    position: absolute; top: 50%;
+    width: 30px; height: 30px;
+    margin-left: -15px; margin-top: -15px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(27,36,48,0.3);
+    touch-action: none;
+  }
+
+  .option-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1.5px solid #E4E0D6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    background: #fff;
+  }
+  .option-row.selected { border-color: var(--teal-acc); background: #EAF3F1; }
+  .option-row input { margin-top: 3px; }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border: 1.5px solid #E4E0D6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #fff;
+  }
+  .order-btns button {
+    border: none;
+    background: var(--cardbg);
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .order-btns button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .inline-error {
+    background: var(--error-bg);
+    color: var(--error);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin: 10px 0;
+  }
+  .muted-small { color: var(--muted); font-size: 13px; }
+  .tech-detail { color: var(--muted); font-size: 11px; margin-top: 4px; font-family: Consolas, monospace; }
+
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: -3px;
+    margin-right: 8px;
+  }
+  .spinner-dark {
+    border: 2.5px solid rgba(47,111,98,0.25);
+    border-top-color: var(--teal-acc);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(27,36,48,0.55);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
+  }
+  .modal-buttons { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab-btn {
+    border: none; border-radius: 8px 8px 0 0;
+    padding: 10px 22px; font-size: 14px; font-weight: 700; cursor: pointer;
+    background: rgba(255,255,255,0.08); color: var(--gold-lt);
+  }
+  .tab-btn.active { background: #173C34; color: var(--gold-lt); }
+
+  .block-header {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin: 26px 0 10px;
+  }
+  .theme-dark .block-header { color: var(--gold-lt); }
+
+  .progress-pill {
+    display: inline-block;
+    background: var(--cardbg);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal-acc);
+  }
+
+  .checkmark { color: var(--success); font-weight: 700; margin-right: 6px; }
+
+  .bar-track { background: #E4E0D6; border-radius: 6px; height: 10px; overflow: hidden; }
+  .bar-fill { background: var(--teal-acc); height: 100%; }
+  .bar-fill-acc { background: var(--success); }
+
+  a.link-btn { color: var(--teal-acc); font-weight: 600; text-decoration: none; cursor: pointer; }
+  .theme-dark a.link-btn { color: var(--gold-lt); }
+
+  @media (max-width: 640px) {
+    .wrap, .wrap-wide { padding: 16px 14px 50px; }
+    .modal-card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function () {
+"use strict";
+
+/* =========================================================
+   UNICODE HELPERS (kept as \\u escapes so the file stays ASCII)
+   ========================================================= */
+var U = {
+  dash: "\u2014",
+  rarr: "\u2192",
+  check: "\u2713",
+  ldq: "\u201C",
+  rdq: "\u201D",
+  triUp: "\u25B2",
+  triDown: "\u25BC",
+  warn: "\u26A0",
+  refresh: "\u{1F504}",
+  trash: "\u{1F5D1}",
+  bulb: "\u{1F4A1}",
+  pause: "\u23F8",
+  speech: "\u{1F4AC}",
+  bullet: "\u25AA"
+};
+
+/* =========================================================
+   CONFIG
+   ========================================================= */
+var CONFIG = {
+  weekKey: "week5",
+  password: "ELT100",
+  classSize: { A: 26, B: 20 },
+  // Group count is set explicitly per class, NOT derived from classSize/4 -
+  // the instructor may keep an existing group count even after the roster
+  // size changes (e.g. A Class grew from 24 to 26 but stays at 6 groups).
+  groupCounts: { A: 6, B: 5 },
+  groupCount: function (cls) { return CONFIG.groupCounts[cls]; }
+};
+
+// Week 2/3/4와 동일한 Apps Script(구글시트 KV 백엔드)를 재사용합니다.
+// This app was written against Claude's window.storage API. Rather than touch
+// every call site below, we define window.storage here ourselves so every
+// existing rawGet/rawSet/rawDelete/rawList call (unchanged, further down)
+// transparently talks to our own Apps Script backend via fetch() instead.
+// get() throws "Key not found" for a missing key to match the real
+// window.storage.get() behavior this file's isNotFoundError logic expects.
+(function () {
+  var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJc_RFDdhCU4_VB41uMefmy6cKgjg4DVwqVk1xBDa5MDAA0aMq53VinzQf1iZKyy4i/exec";
+  window.storage = {
+    get: async function (key, shared) {
+      var res = await fetch(APPS_SCRIPT_URL + "?action=get&key=" + encodeURIComponent(key));
+      var data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "get failed");
+      if (data.value === null || typeof data.value === "undefined") throw new Error("Key not found");
+      return { key: key, value: data.value, shared: shared };
+    },
+    set: async function (key, value, shared) {
+      var res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // avoids CORS preflight
+        body: JSON.stringify({ action: "set", key: key, value: value })
+      });
+      var data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "set failed");
+      return true;
+    },
+    list: async function (prefix, shared) {
+      var res = await fetch(APPS_SCRIPT_URL + "?action=list&prefix=" + encodeURIComponent(prefix));
+      var data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "list failed");
+      return { keys: data.keys };
+    },
+    delete: async function (key, shared) {
+      var res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "delete", key: key })
+      });
+      var data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "delete failed");
+      return true;
+    }
+  };
+})();
+
+/* =========================================================
+   ACTIVITY DATA (mirrors the Week 5 lecture-slides spec exactly)
+   ========================================================= */
+var ACTIVITIES = [
+  {
+    id: "a1_poll", block: "A", order: 1, mode: "individual", type: "poll",
+    title: "Same thing, or not?",
+    blurb: "Quick poll: is a syllabus the same as a curriculum?",
+    question: "Is a syllabus the same thing as a curriculum?",
+    options: [
+      "Yes " + U.dash + " they're basically interchangeable",
+      "No " + U.dash + " a syllabus is a plan for one course; a curriculum is the broader program-level system",
+      "Not sure yet " + U.dash + " let's find out"
+    ]
+  },
+  {
+    id: "a2_matching", block: "A", order: 2, mode: "individual", type: "matching",
+    title: "Match the syllabus to its learners",
+    blurb: "Match each example syllabus to the learners it belongs to.",
+    terms: [
+      "Syllabus 1 " + U.dash + " topics like cyberlove, cosmetic surgery, smoking; discussion and debate assessments",
+      "Syllabus 2 " + U.dash + " annotated bibliography, tutorial discussions, listening to lectures, a 10-week intensive timetable",
+      "Syllabus 3 " + U.dash + " content objectives about biomes/food chains, songs during snack time, group biome posters"
+    ],
+    optionBank: [
+      "Japanese high-school students in their final year, preparing discussions/debates on social topics (EFL, general English focus)",
+      "Adult international students in an intensive English-for-Academic-Purposes course, preparing for university study at an Australian university",
+      "Fifth-grade ESL learners (ages 10" + U.dash + "11) in a US public school, learning science content and English together"
+    ],
+    correct: [0, 1, 2]
+  },
+  {
+    id: "a3_scenario", block: "A", order: 3, mode: "individual", type: "scenario",
+    title: "Implementation or enactment?",
+    blurb: "4 short scenarios " + U.dash + " ID the curriculum view.",
+    questions: [
+      { stem: "A ministry writes a national curriculum; publishers create matching textbooks; teachers are expected to follow the book page-by-page. If test scores are low, the teacher is asked why they didn't follow the material properly.", options: ["Implementation view", "Enactment view"], correct: 0 },
+      { stem: "A teacher walks in with a lesson plan, but when students seem confused by the planned example, she improvises a new one on the spot " + U.dash + " and adjusts tomorrow's lesson based on what happened today.", options: ["Implementation view", "Enactment view"], correct: 1 },
+      { stem: "A curriculum committee analyzes needs and decides on methodology, then hands the finished plan to materials writers, who hand it to teacher trainers, who train teachers to deliver it exactly as designed.", options: ["Implementation view", "Enactment view"], correct: 0 },
+      { stem: "A teacher and her students jointly negotiate which topics to explore next based on what came up in yesterday's discussion " + U.dash + " treating the curriculum as something they're creating together in the room.", options: ["Implementation view", "Enactment view"], correct: 1 }
+    ]
+  },
+  {
+    id: "a4_spectrum", block: "A", order: 4, mode: "group", type: "spectrum",
+    title: "Follow the plan, or adapt to context?",
+    blurb: "GROUP: place the Egypt case on a spectrum, and justify it.",
+    prompt: "Egypt's early-primary curriculum designers wanted fun, communicative, play-based activities. The community had a strong exam culture, high parent expectations for literacy, and limited weekly English time.",
+    question: "As a group: where should the designers have landed?",
+    leftLabel: "0 " + U.dash + " Follow the original communicative plan exactly",
+    rightLabel: "100 " + U.dash + " Adapt heavily to local context and constraints",
+    justifyLabel: "Justify your placement with at least one specific contextual factor from the case."
+  },
+  {
+    id: "a5_ordering", block: "A", order: 5, mode: "individual", type: "ordering",
+    title: "Put the planning process in order",
+    blurb: "Reorder Graves's curriculum-planning steps.",
+    instructions: "Put Graves's curriculum-planning steps in the order she presents them:",
+    initialOrder: [
+      "Designing an assessment plan",
+      "Articulating guiding principles",
+      "Deciding and organizing program content",
+      "Assessing learner needs",
+      "Analyzing contextual factors",
+      "Determining program goals"
+    ],
+    correctOrder: [
+      "Articulating guiding principles",
+      "Analyzing contextual factors",
+      "Assessing learner needs",
+      "Determining program goals",
+      "Deciding and organizing program content",
+      "Designing an assessment plan"
+    ]
+  },
+  {
+    id: "b1_poll", block: "B", order: 6, mode: "individual", type: "poll",
+    title: "What matters most to you?",
+    blurb: "Quick poll on the basic features of a syllabus.",
+    question: "Which basic feature of a syllabus matters most to you as a learner?",
+    options: ["Clear objectives", "Being comprehensive", "A pre-specified order", "Being a public document you can check anytime"]
+  },
+  {
+    id: "b2_matching", block: "B", order: 7, mode: "individual", type: "matching",
+    title: "Match the syllabus type to its definition",
+    blurb: "Match each syllabus-type name to its correct definition.",
+    terms: [
+      "Structural (grammatical) syllabus",
+      "Lexical syllabus",
+      "Functional-notional syllabus",
+      "Situational / topic-based syllabus",
+      "Content-based (CLIL) syllabus",
+      "Task-based syllabus"
+    ],
+    optionBank: [
+      "Organized around grammatical structures like verb tenses and question types, taught largely at the sentence level",
+      "Organized around a mini-corpus of common, pragmatically useful words and multi-word expressions",
+      "Organized around the communicative purposes (functions) and concepts (notions) language expresses",
+      "Organized around real-life contexts or topics, such as " + U.ldq + "Eating a meal" + U.rdq + " or " + U.ldq + "The family" + U.rdq,
+      "Organized around subjects or skills taught through English, with language emerging as needed",
+      "Organized around communicative tasks with a real-world outcome rather than a linguistic one"
+    ],
+    correct: [0, 1, 2, 3, 4, 5]
+  },
+  {
+    id: "b3_scenario", block: "B", order: 8, mode: "individual", type: "scenario",
+    title: "Name that syllabus type",
+    blurb: "4 short course descriptions " + U.dash + " ID the syllabus type.",
+    questions: [
+      { stem: "A course is organized entirely around units like " + U.ldq + "At the Doctor's," + U.rdq + " " + U.ldq + "Renting an Apartment," + U.rdq + " and " + U.ldq + "Job Interviews," + U.rdq + " with vocabulary and grammar chosen to fit each unit.", options: ["Structural", "Lexical", "Situational/topic-based", "Task-based"], correct: 2 },
+      { stem: "A course lists forms like the present perfect, comparative adjectives, and modal verbs, presented roughly in order of difficulty.", options: ["Structural", "Functional-notional", "Content-based", "Task-based"], correct: 0 },
+      { stem: "A course teaches middle-school science (photosynthesis, ecosystems) in English, with English vocabulary and grammar introduced only as needed to understand the science.", options: ["Lexical", "Situational/topic-based", "Content-based", "Task-based"], correct: 2 },
+      { stem: "A course is built around real-world jobs like " + U.ldq + "get your partner to draw a picture matching yours" + U.rdq + " and " + U.ldq + "negotiate a fair price at a market stall," + U.rdq + " with success measured by whether the outcome was achieved, not by which grammar was used.", options: ["Structural", "Functional-notional", "Content-based", "Task-based"], correct: 3 }
+    ]
+  },
+  {
+    id: "b4_ordering", block: "B", order: 9, mode: "individual", type: "ordering",
+    title: "Order the CEFR levels",
+    blurb: "Reorder the CEFR levels from lowest to highest.",
+    instructions: "Put the CEFR levels in order, from lowest to highest:",
+    initialOrder: ["B1", "Pre-A1", "C1", "A2", "C2", "A1", "B2"],
+    correctOrder: ["Pre-A1", "A1", "A2", "B1", "B2", "C1", "C2"]
+  },
+  {
+    id: "b5_group", block: "B", order: 10, mode: "group", type: "freetext",
+    title: "Write your group's syllabus guideline",
+    blurb: "GROUP: pick a teacher approach and write one guideline.",
+    prompt: "As a group: decide which of the five teachers' approaches (Anna, Joseph, Maria, Lilly, David) your future teaching context would call for.",
+    question: "Write ONE concrete guideline for how your group would use an approved syllabus in that context.",
+    placeholder: "Our group's guideline...",
+    reference: [
+      { name: "Anna", desc: "Comprehensive syllabus; uses it constantly to plan every class." },
+      { name: "Joseph", desc: "Ignores the approved syllabus; builds his own program from student needs." },
+      { name: "Maria", desc: "Trusts the approved coursebook to already reflect the curriculum; hasn't reread the syllabus since training." },
+      { name: "Lilly", desc: "Mostly follows the coursebook; checks the syllabus occasionally as a retrospective checklist." },
+      { name: "David", desc: "New teacher, no coursebooks available; must build lessons directly from a general-standards syllabus." }
+    ]
+  },
+  {
+    id: "sy_freetext", block: "SY", order: 11, mode: "individual", type: "freetext",
+    title: "Connect the two blocks",
+    blurb: "Individual synthesis question.",
+    question: "Pick one syllabus type from Block B. Which curriculum-planning step from Block A would matter most for making that type work well? Why?",
+    placeholder: "Type your answer..."
+  }
+];
+
+var BLOCK_LABELS = { A: "Concept Block A " + U.dash + " Graves, Ch. 4", B: "Concept Block B " + U.dash + " Ur, Ch. 14", SY: "Synthesis" };
+
+function getActivity(id) {
+  for (var i = 0; i < ACTIVITIES.length; i++) if (ACTIVITIES[i].id === id) return ACTIVITIES[i];
+  return null;
+}
+
+/* =========================================================
+   STORAGE LAYER
+   - all calls go through an adaptive throttle
+   - all calls retry with backoff
+   - never fires one call per item in a loop (list() + mapLimited instead)
+   ========================================================= */
+function sleep(ms) { return new Promise(function (res) { setTimeout(res, ms); }); }
+
+var Throttle = {
+  minGap: 60,
+  lastDispatch: 0,
+  lastRateLimitAt: 0,
+  debounceWindow: 250,
+  async wait() {
+    var now = Date.now();
+    var waitMs = Math.max(0, this.lastDispatch + this.minGap - now);
+    if (waitMs > 0) await sleep(waitMs);
+    this.lastDispatch = Date.now();
+  },
+  onSuccess() {
+    this.minGap = Math.max(20, this.minGap * 0.7);
+  },
+  onRateLimit() {
+    var now = Date.now();
+    if (now - this.lastRateLimitAt > this.debounceWindow) {
+      this.minGap = Math.min(6000, this.minGap * 1.8);
+      this.lastRateLimitAt = now;
+    }
+  }
+};
+
+function isRateLimitError(e) {
+  var msg = (e && e.message) ? e.message : String(e);
+  return /rate limit/i.test(msg);
+}
+
+// A missing key is an EXPECTED outcome (activity not yet answered / key not yet
+// deleted), not a transient failure - retrying it with backoff just wastes seconds
+// on every "does this exist yet" check. Detected separately so callers can skip
+// the retry ladder for it entirely.
+function isNotFoundError(e) {
+  var msg = (e && e.message) ? e.message : String(e);
+  return /not found/i.test(msg);
+}
+
+function isStorageNotReady() {
+  return typeof window.storage === "undefined";
+}
+
+async function waitForStorageReady(maxWaitMs) {
+  var waited = 0;
+  while (isStorageNotReady() && waited < maxWaitMs) {
+    await sleep(150);
+    waited += 150;
+  }
+  return !isStorageNotReady();
+}
+
+async function withRetry(fn, opts) {
+  opts = opts || {};
+  var retries = opts.retries === undefined ? 5 : opts.retries;
+  var baseDelay = opts.baseDelay || 150;
+  var isExpectedEmpty = opts.isExpectedEmpty;
+  var lastErr = null;
+  for (var i = 0; i <= retries; i++) {
+    if (isStorageNotReady()) {
+      // storage may be injected shortly after page load - retryable, not a hard failure
+      var ready = await waitForStorageReady(3000);
+      if (!ready) { lastErr = new Error("storage not ready"); await sleep(baseDelay); continue; }
+    }
+    try {
+      await Throttle.wait();
+      var result = await fn();
+      Throttle.onSuccess();
+      return result;
+    } catch (e) {
+      lastErr = e;
+      if (isExpectedEmpty && isExpectedEmpty(e)) {
+        // not a real failure - fail fast, no backoff ladder
+        throw e;
+      }
+      if (isRateLimitError(e)) Throttle.onRateLimit();
+      if (i === retries) break;
+      var delay = baseDelay * Math.pow(1.6, i) + Math.random() * 100;
+      await sleep(delay);
+    }
+  }
+  throw lastErr;
+}
+
+// raw wrappers - single unwrap point, no double-wrapping of {key,value,shared}
+async function rawGet(key) { return window.storage.get(key, true); }
+async function rawSet(key, value) { return window.storage.set(key, value, true); }
+async function rawDelete(key) { return window.storage.delete(key, true); }
+async function rawList(prefix) { return window.storage.list(prefix, true); }
+
+async function safeGet(key) {
+  try {
+    var r = await withRetry(function () { return rawGet(key); }, { isExpectedEmpty: isNotFoundError });
+    return r && typeof r.value !== "undefined" ? r.value : null;
+  } catch (e) {
+    return null; // treat as empty, per spec (missing key fails fast now, see isExpectedEmpty)
+  }
+}
+
+// Used only for "does this exist yet" checks (group-done status) where the
+// common case is "no" and speed matters far more than exhausting every retry.
+// Deliberately does NOT depend on matching the exact wording of a "not found"
+// error - any failure (missing key OR a real transient hiccup) just resolves
+// to null quickly, since the caller treats "unknown" the same as "not yet".
+async function quickGetOrNull(key) {
+  try {
+    var r = await withRetry(function () { return rawGet(key); }, { retries: 1, baseDelay: 80 });
+    return r && typeof r.value !== "undefined" ? r.value : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function safeSet(key, value) {
+  try {
+    await withRetry(function () { return rawSet(key, value); }, { retries: 6, baseDelay: 200 });
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: (e && e.message) ? e.message : String(e) };
+  }
+}
+
+// retries the delete call itself, not just a later verification.
+// A "not found" on delete means the key is already gone - that IS the goal
+// state, so it's treated as success rather than burning through retries.
+async function safeDeleteKey(key) {
+  try {
+    await withRetry(function () { return rawDelete(key); }, { retries: 5, baseDelay: 150, isExpectedEmpty: isNotFoundError });
+    return true;
+  } catch (e) {
+    if (isNotFoundError(e)) return true;
+    return false;
+  }
+}
+
+// plain safeList: treats failure as empty (fine for non-critical reads like the course map)
+async function safeList(prefix) {
+  try {
+    var r = await withRetry(function () { return rawList(prefix); });
+    return r && r.keys ? r.keys : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+// verifying safeList: distinguishes "confirmed empty" from "could not confirm"
+async function safeListVerify(prefix) {
+  try {
+    var r = await withRetry(function () { return rawList(prefix); }, { retries: 4 });
+    return { ok: true, keys: r && r.keys ? r.keys : [] };
+  } catch (e) {
+    return { ok: false, keys: [], error: (e && e.message) ? e.message : String(e) };
+  }
+}
+
+async function mapLimited(items, limit, fn) {
+  var results = new Array(items.length);
+  var idx = 0;
+  async function worker() {
+    while (idx < items.length) {
+      var cur = idx++;
+      results[cur] = await fn(items[cur], cur);
+    }
+  }
+  var workerCount = Math.max(1, Math.min(limit, items.length));
+  var workers = [];
+  for (var i = 0; i < workerCount; i++) workers.push(worker());
+  await Promise.all(workers);
+  return results;
+}
+
+function sanitizeKeyPart(s) {
+  return String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 60) || "anon";
+}
+
+function indivKey(cls, studentName, activityId) {
+  return CONFIG.weekKey + ":resp:" + cls + ":" + sanitizeKeyPart(studentName) + ":" + activityId;
+}
+function groupKey(cls, groupNum, activityId) {
+  return CONFIG.weekKey + ":groupresp:" + cls + ":g" + groupNum + ":" + activityId;
+}
+function indivPrefixForStudent(cls, studentName) {
+  return CONFIG.weekKey + ":resp:" + cls + ":" + sanitizeKeyPart(studentName) + ":";
+}
+function indivPrefixForClass(cls) {
+  return CONFIG.weekKey + ":resp:" + cls + ":";
+}
+function groupPrefixForClass(cls) {
+  return CONFIG.weekKey + ":groupresp:" + cls + ":";
+}
+
+/* =========================================================
+   DOM HELPERS
+   - boolean attrs get real DOM property assignment, not setAttribute
+   ========================================================= */
+var BOOL_ATTRS = { disabled: 1, checked: 1, readOnly: 1, selected: 1 };
+
+function el(tag, attrs, children) {
+  var e = document.createElement(tag);
+  attrs = attrs || {};
+  for (var k in attrs) {
+    if (!Object.prototype.hasOwnProperty.call(attrs, k)) continue;
+    var v = attrs[k];
+    if (v === undefined || v === null) continue;
+    if (BOOL_ATTRS[k]) {
+      e[k] = !!v;
+    } else if (k === "class") {
+      e.className = v;
+    } else if (k === "style") {
+      e.setAttribute("style", v);
+    } else if (k.indexOf("on") === 0 && typeof v === "function") {
+      e.addEventListener(k.slice(2).toLowerCase(), v);
+    } else if (k === "value" && (tag === "input" || tag === "textarea" || tag === "select")) {
+      e.value = v;
+    } else {
+      e.setAttribute(k, v);
+    }
+  }
+  children = children || [];
+  if (!Array.isArray(children)) children = [children];
+  children.forEach(function (c) {
+    if (c === null || c === undefined || c === false) return;
+    if (typeof c === "string" || typeof c === "number") e.appendChild(document.createTextNode(String(c)));
+    else e.appendChild(c);
+  });
+  return e;
+}
+function text(t) { return document.createTextNode(t); }
+
+/* =========================================================
+   STATE
+   ========================================================= */
+var STATE = {
+  screen: "landing",
+  role: null,
+  student: { name: "", cls: null, group: {}, individualDone: {}, groupDone: {} },
+  activeActivityId: null,
+  instructorAuthed: false,
+  authError: null,
+  dashboard: { cls: "A", data: null, loading: false, error: null },
+  resetInProgress: false,
+  resetProgress: { done: 0, total: 0, error: null },
+  submitState: {}, // activityId -> { loading, error }
+  pendingAnswers: {}, // activityId -> in-progress form data
+  justSubmitted: null,
+  storageWarning: !window.storage
+};
+
+function getSubmitState(id) {
+  if (!STATE.submitState[id]) STATE.submitState[id] = { loading: false, error: null };
+  return STATE.submitState[id];
+}
+
+/* =========================================================
+   MODAL SYSTEM (replaces alert/confirm/prompt entirely)
+   ========================================================= */
+var modalRoot = null;
+function closeModal() {
+  if (modalRoot && modalRoot.parentNode) modalRoot.parentNode.removeChild(modalRoot);
+  modalRoot = null;
+}
+function showModal(opts) {
+  return new Promise(function (resolve) {
+    closeModal();
+    var buttons = (opts.buttons || [{ label: "OK", value: true, variant: "primary" }]).map(function (b) {
+      return el("button", {
+        class: "btn " + (b.variant === "danger" ? "btn-danger" : b.variant === "outline" ? "btn-outline" : "btn-primary"),
+        onclick: function () { closeModal(); resolve(b.value); }
+      }, b.label);
+    });
+    var card = el("div", { class: "modal-card" }, [
+      el("h3", { style: "margin-bottom:10px;font-size:20px;color:var(--ink);" }, opts.title || ""),
+      el("div", { style: "font-size:15px;color:var(--ink);line-height:1.5;" }, opts.body || ""),
+      el("div", { class: "modal-buttons" }, buttons)
+    ]);
+    modalRoot = el("div", { class: "modal-overlay" }, [card]);
+    document.body.appendChild(modalRoot);
+  });
+}
+
+/* =========================================================
+   RENDER
+   - single source of truth: STATE. Every screen is rebuilt from STATE.
+   ========================================================= */
+function render() {
+  var app = document.getElementById("app");
+  app.innerHTML = "";
+  app.className = isDarkScreen() ? "theme-dark" : "";
+  app.appendChild(buildScreen());
+}
+
+function isDarkScreen() {
+  return STATE.screen === "instructorAuth" || STATE.screen === "dashboard";
+}
+
+function togglePill() {
+  if (STATE.screen === "landing") return null;
+  var studentActive = STATE.role === "student";
+  return el("div", { class: "toggle-pill" }, [
+    el("button", {
+      class: studentActive ? "active" : "",
+      onclick: function () {
+        STATE.role = "student";
+        STATE.screen = STATE.student.name ? "courseMap" : "studentEntry";
+        render();
+      }
+    }, "Student"),
+    el("button", {
+      class: !studentActive ? "active" : "",
+      onclick: function () {
+        STATE.role = "instructor";
+        STATE.screen = STATE.instructorAuthed ? "dashboard" : "instructorAuth";
+        if (STATE.screen === "dashboard" && !STATE.dashboard.data) loadDashboard();
+        render();
+      }
+    }, "Instructor")
+  ]);
+}
+
+function buildScreen() {
+  switch (STATE.screen) {
+    case "landing": return screenLanding();
+    case "studentEntry": return wrapWithPill(screenStudentEntry());
+    case "courseMap": return wrapWithPill(screenCourseMap());
+    case "activity": return wrapWithPill(screenActivity());
+    case "instructorAuth": return wrapWithPill(screenInstructorAuth());
+    case "dashboard": return wrapWithPill(screenDashboard());
+    default: return screenLanding();
+  }
+}
+function wrapWithPill(node) {
+  var frag = document.createDocumentFragment();
+  var pill = togglePill();
+  if (pill) frag.appendChild(pill);
+  frag.appendChild(node);
+  return frag;
+}
+
+/* ---------- Landing ---------- */
+function screenLanding() {
+  return el("div", { class: "wrap content-pad-top", style: "text-align:center;padding-top:70px;" }, [
+    el("h1", { style: "font-size:30px;margin-bottom:8px;color:var(--teal);" }, "Week 5 " + U.dash + " Syllabus and Curriculum Design"),
+    el("p", { class: "muted-small", style: "margin-bottom:36px;" }, "Choose how you're joining today's class."),
+    el("div", { style: "display:flex;gap:20px;justify-content:center;flex-wrap:wrap;" }, [
+      el("div", { class: "card card-white", style: "width:260px;cursor:pointer;", onclick: function () { STATE.role = "student"; STATE.screen = "studentEntry"; render(); } }, [
+        el("h2", { style: "font-size:20px;margin-bottom:8px;" }, "Enter as Student"),
+        el("p", { class: "muted-small" }, "Join the Course Map for A Class or B Class.")
+      ]),
+      el("div", { class: "card card-white", style: "width:260px;cursor:pointer;", onclick: function () {
+        STATE.role = "instructor";
+        STATE.screen = STATE.instructorAuthed ? "dashboard" : "instructorAuth";
+        render();
+        if (STATE.screen === "dashboard" && !STATE.dashboard.data) loadDashboard();
+      } }, [
+        el("h2", { style: "font-size:20px;margin-bottom:8px;" }, "Enter as Instructor"),
+        el("p", { class: "muted-small" }, "View live results for both classes.")
+      ])
+    ]),
+    STATE.storageWarning ? el("p", { class: "inline-error", style: "max-width:420px;margin:24px auto 0;" }, "Connecting to storage... if this message persists, reload the page.") : null
+  ]);
+}
+
+/* ---------- Student entry ---------- */
+function screenStudentEntry() {
+  var nameVal = STATE.student.name;
+  var clsVal = STATE.student.cls;
+  var err = STATE._entryError;
+  var nameInput, clsSelect;
+  var container = el("div", { class: "wrap", style: "max-width:440px;padding-top:90px;" }, [
+    el("h2", { style: "font-size:24px;margin-bottom:18px;" }, "Join the class"),
+    err ? el("div", { class: "inline-error" }, err) : null,
+    el("label", { class: "muted-small", style: "display:block;margin-bottom:4px;" }, "Your name"),
+  ]);
+  nameInput = el("input", { type: "text", value: nameVal, placeholder: "e.g. Minjun Kim" });
+  container.appendChild(el("div", { style: "margin-bottom:16px;" }, [nameInput]));
+  container.appendChild(el("label", { class: "muted-small", style: "display:block;margin-bottom:4px;" }, "Class section"));
+  clsSelect = el("select", {}, [
+    el("option", { value: "" }, "Choose A or B..."),
+    el("option", { value: "A", selected: clsVal === "A" }, "A Class"),
+    el("option", { value: "B", selected: clsVal === "B" }, "B Class")
+  ]);
+  container.appendChild(el("div", { style: "margin-bottom:22px;" }, [clsSelect]));
+  container.appendChild(el("button", {
+    class: "btn btn-primary btn-block",
+    onclick: async function () {
+      var nm = nameInput.value.trim();
+      var cl = clsSelect.value;
+      if (!nm) { STATE._entryError = "Please enter your name."; render(); return; }
+      if (!cl) { STATE._entryError = "Please choose your class section."; render(); return; }
+      STATE._entryError = null;
+      STATE.student.name = nm;
+      STATE.student.cls = cl;
+      STATE.screen = "courseMap";
+      render();
+      await loadCourseMapStatus();
+      render();
+    }
+  }, "Continue"));
+  return container;
+}
+
+/* ---------- Course map ---------- */
+async function loadCourseMapStatus() {
+  var prefix = indivPrefixForStudent(STATE.student.cls, STATE.student.name);
+  var keys = await safeList(prefix); // ONE call covers every individual activity for this student
+  var done = {};
+  keys.forEach(function (k) { done[k.slice(prefix.length)] = true; });
+  STATE.student.individualDone = done;
+  var groupActs = ACTIVITIES.filter(function (a) { return a.mode === "group"; });
+  for (var i = 0; i < groupActs.length; i++) {
+    var g = STATE.student.group[groupActs[i].id];
+    if (g) {
+      var v = await quickGetOrNull(groupKey(STATE.student.cls, g, groupActs[i].id));
+      STATE.student.groupDone[groupActs[i].id] = !!v;
+    }
+  }
+}
+
+function isActivityDone(act) {
+  if (act.mode === "group") return !!STATE.student.groupDone[act.id];
+  return !!STATE.student.individualDone[act.id];
+}
+
+function screenCourseMap() {
+  var total = ACTIVITIES.length;
+  var doneCount = ACTIVITIES.filter(isActivityDone).length;
+  var blocks = ["A", "B", "SY"];
+  var container = el("div", { class: "wrap" }, [
+    el("div", { style: "display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:6px;" }, [
+      el("h2", { style: "font-size:24px;" }, "Course Map"),
+      el("span", { class: "progress-pill" }, doneCount + " / " + total + " done")
+    ]),
+    el("p", { class: "muted-small", style: "margin-bottom:8px;" }, STATE.student.name + " " + U.dash + " " + STATE.student.cls + " Class")
+  ]);
+  blocks.forEach(function (b) {
+    container.appendChild(el("div", { class: "block-header" }, BLOCK_LABELS[b]));
+    ACTIVITIES.filter(function (a) { return a.block === b; }).sort(function (x, y) { return x.order - y.order; }).forEach(function (act) {
+      var done = isActivityDone(act);
+      container.appendChild(el("div", {
+        class: "card card-white",
+        style: "cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;",
+        onclick: function () { STATE.activeActivityId = act.id; STATE.screen = "activity"; render(); }
+      }, [
+        el("div", {}, [
+          el("div", { style: "font-weight:700;font-size:16px;margin-bottom:4px;" }, [
+            done ? el("span", { class: "checkmark" }, U.check) : null,
+            text(act.order + ". " + act.title)
+          ]),
+          el("div", { class: "muted-small" }, act.blurb)
+        ]),
+        el("div", {}, [
+          el("span", { class: "badge " + (act.mode === "group" ? "badge-group" : "badge-indiv") }, act.mode === "group" ? "GROUP" : "INDIVIDUAL")
+        ])
+      ]));
+    });
+  });
+  return container;
+}
+
+/* ---------- Activity screen ---------- */
+function screenActivity() {
+  var act = getActivity(STATE.activeActivityId);
+  if (!act) { STATE.screen = "courseMap"; return screenCourseMap(); }
+
+  var backBtn = el("a", { class: "link-btn", style: "display:inline-block;margin-bottom:14px;", onclick: function () { STATE.screen = "courseMap"; render(); } }, U.rarr.split("").reverse().join("") /* placeholder replaced below */);
+  // simpler back arrow text:
+  backBtn = el("a", { class: "link-btn", style: "display:inline-block;margin-bottom:14px;", onclick: function () { STATE.screen = "courseMap"; render(); } }, "\u2190 Back to Course Map");
+
+  if (isActivityDone(act)) {
+    return el("div", { class: "wrap", style: "max-width:640px;" }, [
+      backBtn,
+      el("div", { class: "card card-white", style: "text-align:center;padding:40px 20px;" }, [
+        el("div", { style: "font-size:34px;color:var(--success);margin-bottom:10px;" }, U.check),
+        el("h2", { style: "font-size:20px;margin-bottom:8px;" }, "Already completed"),
+        el("p", { class: "muted-small" }, "You've already submitted this activity. Head back to the Course Map to continue."),
+        el("button", { class: "btn btn-primary", style: "margin-top:16px;", onclick: function () { STATE.screen = "courseMap"; render(); } }, "Back to Course Map")
+      ])
+    ]);
+  }
+
+  if (act.mode === "group" && !STATE.student.group[act.id]) {
+    return el("div", { class: "wrap", style: "max-width:520px;" }, [
+      backBtn,
+      el("div", { class: "card card-white" }, [
+        el("h2", { style: "font-size:20px;margin-bottom:10px;" }, "Choose your group"),
+        el("p", { class: "muted-small", style: "margin-bottom:14px;" }, "This is a GROUP activity. Pick your group number " + U.dash + " you can change it later if needed."),
+        buildGroupPicker(act)
+      ])
+    ]);
+  }
+
+  var body = el("div", { class: "card card-white" });
+  var header = el("div", {}, [
+    el("span", { class: "badge " + (act.mode === "group" ? "badge-group" : "badge-indiv") }, act.mode === "group" ? "GROUP - Group " + STATE.student.group[act.id] : "INDIVIDUAL"),
+    el("h2", { style: "font-size:22px;margin:10px 0 16px;" }, act.title)
+  ]);
+  body.appendChild(header);
+
+  var sstate = getSubmitState(act.id);
+  if (sstate.error) {
+    body.appendChild(el("div", { class: "inline-error" }, [
+      text(U.warn + " Couldn't save " + U.dash + " Try Again"),
+      el("div", { class: "tech-detail" }, sstate.error)
+    ]));
+  }
+
+  if (act.reference && act.reference.length) {
+    body.appendChild(buildReferenceCard(act.reference));
+  }
+
+  var formNode = buildActivityForm(act, body, sstate);
+  body.appendChild(formNode);
+
+  return el("div", { class: "wrap", style: "max-width:680px;" }, [backBtn, body]);
+}
+
+// A short in-context reference card (e.g. the 5 teacher profiles for the
+// syllabus-guideline group task) - so a group can answer without relying
+// purely on memory of the reading or the lecture slide.
+function buildReferenceCard(items) {
+  var rows = items.map(function (item) {
+    return el("div", { style: "margin-bottom:8px;" }, [
+      el("strong", {}, item.name + ": "),
+      text(item.desc)
+    ]);
+  });
+  return el("div", { style: "background:var(--indiv-bg);border-radius:10px;padding:14px 16px;margin-bottom:16px;" }, [
+    el("div", { class: "muted-small", style: "font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;" }, "Quick reference"),
+    el("div", { style: "font-size:14px;" }, rows)
+  ]);
+}
+
+function buildGroupPicker(act) {
+  var n = CONFIG.groupCount(STATE.student.cls);
+  var wrap = el("div", {});
+  var grid = el("div", { style: "display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:10px;" });
+  for (var i = 1; i <= n; i++) {
+    (function (num) {
+      grid.appendChild(el("button", {
+        class: "btn btn-outline",
+        style: "padding:16px 8px;font-size:16px;",
+        onclick: async function () {
+          // single tap selects AND confirms - no separate native <select> + Continue step
+          STATE.student.group[act.id] = String(num);
+          var v = await quickGetOrNull(groupKey(STATE.student.cls, num, act.id));
+          STATE.student.groupDone[act.id] = !!v;
+          render();
+        }
+      }, "Group " + num));
+    })(i);
+  }
+  wrap.appendChild(grid);
+  return wrap;
+}
+
+function buildActivityForm(act, containerRef, sstate) {
+  var wrap = el("div", {});
+  var getPayload = null;
+
+  if (act.type === "poll") {
+    var chosen = { value: null };
+    var rows = act.options.map(function (opt, i) {
+      var row = el("div", { class: "option-row", onclick: function () { chosen.value = i; updateSelected(); } }, [
+        el("input", { type: "radio", name: "poll", disabled: false }),
+        el("div", {}, opt)
+      ]);
+      row._idx = i;
+      return row;
+    });
+    function updateSelected() {
+      rows.forEach(function (r) { r.className = "option-row" + (r._idx === chosen.value ? " selected" : ""); r.querySelector("input").checked = r._idx === chosen.value; });
+    }
+    wrap.appendChild(el("p", { style: "font-weight:600;margin-bottom:12px;" }, act.question));
+    rows.forEach(function (r) { wrap.appendChild(r); });
+    getPayload = function () {
+      if (chosen.value === null) return { error: "Please choose an option." };
+      return { data: { choice: chosen.value, choiceText: act.options[chosen.value] } };
+    };
+  }
+
+  else if (act.type === "matching") {
+    var selects = act.terms.map(function (term, i) {
+      var s = el("select", {}, [el("option", { value: "" }, "Choose a definition...")].concat(
+        act.optionBank.map(function (opt, j) { return el("option", { value: j }, opt); })
+      ));
+      return { term: term, select: s };
+    });
+    wrap.appendChild(el("p", { style: "font-weight:600;margin-bottom:12px;" }, "Match each item to the correct definition."));
+    selects.forEach(function (pair) {
+      wrap.appendChild(el("div", { style: "margin-bottom:14px;" }, [
+        el("div", { style: "font-size:14px;margin-bottom:5px;" }, pair.term),
+        pair.select
+      ]));
+    });
+    getPayload = function () {
+      var answers = [];
+      for (var i = 0; i < selects.length; i++) {
+        if (selects[i].select.value === "") return { error: "Please match every item before submitting." };
+        answers.push(parseInt(selects[i].select.value, 10));
+      }
+      return { data: { answers: answers } };
+    };
+  }
+
+  else if (act.type === "scenario") {
+    var qState = act.questions.map(function () { return { value: null }; });
+    act.questions.forEach(function (q, qi) {
+      wrap.appendChild(el("div", { style: "margin-bottom:18px;" }, [
+        el("p", { style: "font-weight:600;margin-bottom:8px;" }, (qi + 1) + ". " + q.stem),
+        (function () {
+          var box = el("div", {});
+          var rows = q.options.map(function (opt, oi) {
+            var row = el("div", {
+              class: "option-row",
+              onclick: function () { qState[qi].value = oi; rows.forEach(function (r, ri) { r.className = "option-row" + (ri === oi ? " selected" : ""); }); }
+            }, opt);
+            return row;
+          });
+          rows.forEach(function (r) { box.appendChild(r); });
+          return box;
+        })()
+      ]));
+    });
+    getPayload = function () {
+      for (var i = 0; i < qState.length; i++) if (qState[i].value === null) return { error: "Please answer all " + qState.length + " questions." };
+      return { data: { answers: qState.map(function (s) { return s.value; }) } };
+    };
+  }
+
+  else if (act.type === "ordering") {
+    var order = act.initialOrder.slice();
+    var listBox = el("div", {});
+    function renderOrder() {
+      listBox.innerHTML = "";
+      order.forEach(function (item, i) {
+        listBox.appendChild(el("div", { class: "order-item" }, [
+          el("span", {}, (i + 1) + ". " + item),
+          el("div", { class: "order-btns" }, [
+            el("button", { disabled: i === 0, onclick: function () { if (i > 0) { var t = order[i - 1]; order[i - 1] = order[i]; order[i] = t; renderOrder(); } } }, U.triUp),
+            el("button", { disabled: i === order.length - 1, onclick: function () { if (i < order.length - 1) { var t = order[i + 1]; order[i + 1] = order[i]; order[i] = t; renderOrder(); } } }, U.triDown)
+          ])
+        ]));
+      });
+    }
+    renderOrder();
+    wrap.appendChild(el("p", { style: "font-weight:600;margin-bottom:12px;" }, act.instructions));
+    wrap.appendChild(listBox);
+    getPayload = function () { return { data: { order: order } }; };
+  }
+
+  else if (act.type === "spectrum") {
+    wrap.appendChild(el("p", { style: "margin-bottom:10px;" }, act.prompt));
+    wrap.appendChild(el("p", { style: "font-weight:600;margin-bottom:10px;" }, act.question));
+
+    // A custom drag-controlled slider (Pointer Events, not a native
+    // <input type="range">) - this keeps the familiar drag interaction
+    // students expect, while every step of the value flow stays in our own
+    // code instead of depending on how each browser/device implements the
+    // native control.
+    var posState = { value: 50 };
+    var valueLabel = el("div", { style: "text-align:center;font-weight:700;font-size:28px;color:var(--gold);margin:6px 0;" }, "50");
+    var fill = el("div", { class: "spectrum-fill", style: "width:50%;" });
+    var thumb = el("div", { class: "spectrum-thumb", style: "left:50%;" });
+    var track = el("div", { class: "spectrum-track" }, [fill, thumb]);
+
+    function setPos(v) {
+      posState.value = Math.max(0, Math.min(100, Math.round(v)));
+      valueLabel.textContent = String(posState.value);
+      fill.style.width = posState.value + "%";
+      thumb.style.left = posState.value + "%";
+    }
+    function posFromClientX(clientX) {
+      var rect = track.getBoundingClientRect();
+      if (rect.width === 0) return posState.value;
+      var ratio = (clientX - rect.left) / rect.width;
+      return ratio * 100;
+    }
+    function onMove(e) { setPos(posFromClientX(e.clientX)); }
+    function onUp(e) {
+      track.removeEventListener("pointermove", onMove);
+      track.removeEventListener("pointerup", onUp);
+      track.removeEventListener("pointercancel", onUp);
+      try { track.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    }
+    track.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      setPos(posFromClientX(e.clientX));
+      try { track.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+      track.addEventListener("pointermove", onMove);
+      track.addEventListener("pointerup", onUp);
+      track.addEventListener("pointercancel", onUp);
+    });
+
+    wrap.appendChild(valueLabel);
+    wrap.appendChild(track);
+    wrap.appendChild(el("div", { class: "muted-small", style: "margin-top:6px;" }, act.leftLabel));
+    wrap.appendChild(el("div", { class: "muted-small", style: "text-align:right;" }, act.rightLabel));
+    var presetRow = el("div", { style: "display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;" }, [0, 25, 50, 75, 100].map(function (p) {
+      return el("button", { class: "btn btn-outline", type: "button", style: "padding:8px 12px;font-size:13px;", onclick: function () { setPos(p); } }, String(p));
+    }));
+    wrap.appendChild(el("div", { class: "muted-small", style: "text-align:center;margin-top:10px;" }, "Drag the handle above, or jump to a value:"));
+    wrap.appendChild(presetRow);
+    wrap.appendChild(el("p", { style: "font-weight:600;margin:14px 0 6px;" }, act.justifyLabel));
+    var ta = el("textarea", { placeholder: "Explain your group's reasoning..." });
+    wrap.appendChild(ta);
+    getPayload = function () {
+      if (!ta.value.trim()) return { error: "Please add a short justification before submitting." };
+      return { data: { position: posState.value, justification: ta.value.trim() } };
+    };
+  }
+
+  else if (act.type === "freetext") {
+    if (act.prompt) wrap.appendChild(el("p", { style: "margin-bottom:10px;" }, act.prompt));
+    wrap.appendChild(el("p", { style: "font-weight:600;margin-bottom:10px;" }, act.question));
+    var fta = el("textarea", { placeholder: act.placeholder || "Type your answer..." });
+    wrap.appendChild(fta);
+    getPayload = function () {
+      if (!fta.value.trim()) return { error: "Please write a response before submitting." };
+      return { data: { text: fta.value.trim() } };
+    };
+  }
+
+  var submitBtn = el("button", {
+    class: "btn btn-primary btn-block",
+    style: "margin-top:18px;",
+    disabled: sstate.loading,
+    onclick: async function () {
+      var result = getPayload();
+      if (result.error) {
+        await showModal({ title: "Almost there", body: result.error, buttons: [{ label: "OK", value: true }] });
+        return;
+      }
+      sstate.loading = true; sstate.error = null;
+      render();
+      var payload = JSON.stringify({
+        who: act.mode === "group" ? "Group " + STATE.student.group[act.id] : STATE.student.name,
+        cls: STATE.student.cls,
+        answer: result.data,
+        submittedAt: new Date().toISOString()
+      });
+      var key = act.mode === "group" ? groupKey(STATE.student.cls, STATE.student.group[act.id], act.id) : indivKey(STATE.student.cls, STATE.student.name, act.id);
+      var res = await safeSet(key, payload);
+      sstate.loading = false;
+      if (!res.ok) {
+        sstate.error = res.error || "Unknown error";
+        render();
+        return;
+      }
+      if (act.mode === "group") STATE.student.groupDone[act.id] = true;
+      else STATE.student.individualDone[act.id] = true;
+      render();
+      var nextAct = ACTIVITIES.filter(function (a) { return a.order > act.order; }).sort(function (x, y) { return x.order - y.order; })[0];
+      var choice = await showModal({
+        title: "Submitted!",
+        body: "Your response has been saved.",
+        buttons: nextAct ? [
+          { label: "Back to Course Map", value: "map", variant: "outline" },
+          { label: "Next activity", value: "next", variant: "primary" }
+        ] : [{ label: "Back to Course Map", value: "map", variant: "primary" }]
+      });
+      if (choice === "next" && nextAct) { STATE.activeActivityId = nextAct.id; render(); }
+      else { STATE.screen = "courseMap"; render(); }
+    }
+  }, [sstate.loading ? el("span", { class: "spinner" }) : null, sstate.loading ? "Saving..." : "Submit"]);
+
+  wrap.appendChild(submitBtn);
+  return wrap;
+}
+
+/* ---------- Instructor auth ---------- */
+function screenInstructorAuth() {
+  var input;
+  var container = el("div", { class: "wrap", style: "max-width:380px;padding-top:100px;text-align:center;" }, [
+    el("h2", { style: "font-size:22px;margin-bottom:16px;" }, "Instructor sign-in")
+  ]);
+  if (STATE.authError) container.appendChild(el("div", { class: "inline-error" }, STATE.authError));
+  input = el("input", { type: "password", placeholder: "Password" });
+  input.style.textAlign = "center";
+  container.appendChild(el("div", { style: "margin:14px 0;" }, [input]));
+  container.appendChild(el("button", {
+    class: "btn btn-gold btn-block",
+    onclick: function () {
+      if (input.value === CONFIG.password) {
+        STATE.instructorAuthed = true;
+        STATE.authError = null;
+        STATE.screen = "dashboard";
+        render();
+        loadDashboard();
+      } else {
+        STATE.authError = "Incorrect password. Try again.";
+        render();
+      }
+    }
+  }, "Sign in"));
+  return container;
+}
+
+/* ---------- Dashboard ---------- */
+async function loadDashboard() {
+  var cls = STATE.dashboard.cls;
+  STATE.dashboard.loading = true;
+  STATE.dashboard.error = null;
+  render();
+
+  var indRes = await safeListVerify(indivPrefixForClass(cls));
+  var grpRes = await safeListVerify(groupPrefixForClass(cls));
+  if (!indRes.ok || !grpRes.ok) {
+    STATE.dashboard.loading = false;
+    STATE.dashboard.error = "Could not load results (storage layer unreachable). Try Refresh All again.";
+    render();
+    return;
+  }
+  var allKeys = indRes.keys.concat(grpRes.keys);
+  var fetched = await mapLimited(allKeys, 6, async function (key) {
+    var v = await safeGet(key);
+    return { key: key, value: v };
+  });
+  var byActivity = {};
+  fetched.forEach(function (item) {
+    if (item.value === null) return; // skip unreadable single item rather than failing the whole dashboard
+    var parts = item.key.split(":");
+    var activityId = parts[parts.length - 1];
+    if (!byActivity[activityId]) byActivity[activityId] = [];
+    try {
+      byActivity[activityId].push(JSON.parse(item.value));
+    } catch (e) { /* skip malformed record */ }
+  });
+  STATE.dashboard.data = byActivity;
+  STATE.dashboard.loading = false;
+  render();
+}
+
+function screenDashboard() {
+  if (STATE.resetInProgress) {
+    return el("div", { class: "wrap-wide" }, [
+      el("h2", { style: "font-size:24px;margin-bottom:16px;" }, "Instructor Dashboard"),
+      el("div", { class: "card" }, [
+        el("div", {}, [el("span", { class: "spinner" }), text("Resetting... " + STATE.resetProgress.done + " / " + STATE.resetProgress.total)]),
+        el("div", { class: "muted-small", style: "margin-top:8px;" }, "Please wait " + U.dash + " Refresh All and Reset All are locked until this finishes.")
+      ])
+    ]);
+  }
+
+  var container = el("div", { class: "wrap-wide" }, [
+    el("div", { style: "display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:10px;" }, [
+      el("h2", { style: "font-size:24px;" }, "Instructor Dashboard"),
+      el("div", { style: "display:flex;gap:10px;" }, [
+        el("button", {
+          class: "btn btn-outline",
+          disabled: STATE.dashboard.loading,
+          onclick: function () { loadDashboard(); }
+        }, [text(U.refresh + " Refresh All")]),
+        el("button", {
+          class: "btn btn-danger",
+          disabled: STATE.dashboard.loading,
+          onclick: confirmResetAll
+        }, [text(U.trash + " Reset All")])
+      ])
+    ])
+  ]);
+
+  container.appendChild(el("div", { class: "tabs" }, ["A", "B"].map(function (c) {
+    return el("button", {
+      class: "tab-btn " + (STATE.dashboard.cls === c ? "active" : ""),
+      onclick: function () { STATE.dashboard.cls = c; STATE.dashboard.data = null; render(); loadDashboard(); }
+    }, c + " Class");
+  })));
+
+  if (STATE.resetProgress.error) {
+    container.appendChild(el("div", { class: "inline-error" }, [
+      text(STATE.resetProgress.error),
+      el("div", {}, [el("button", { class: "btn btn-outline", style: "margin-top:10px;", onclick: function () { STATE.resetProgress.error = null; render(); } }, "Dismiss")])
+    ]));
+  }
+
+  if (STATE.dashboard.loading) {
+    container.appendChild(el("div", { class: "card" }, [el("span", { class: "spinner spinner-dark" }), text("Loading results...")]));
+    return container;
+  }
+  if (STATE.dashboard.error) {
+    container.appendChild(el("div", { class: "inline-error" }, [
+      text(STATE.dashboard.error),
+      el("div", {}, [el("button", { class: "btn btn-outline", style: "margin-top:10px;", onclick: loadDashboard }, "Try again")])
+    ]));
+    return container;
+  }
+
+  var data = STATE.dashboard.data || {};
+  ["A", "B", "SY"].forEach(function (b) {
+    container.appendChild(el("div", { class: "block-header" }, BLOCK_LABELS[b]));
+    ACTIVITIES.filter(function (a) { return a.block === b; }).sort(function (x, y) { return x.order - y.order; }).forEach(function (act) {
+      container.appendChild(buildResultCard(act, data[act.id] || []));
+    });
+  });
+
+  return container;
+}
+
+function denominatorFor(act) {
+  return act.mode === "group" ? CONFIG.groupCount(STATE.dashboard.cls) : CONFIG.classSize[STATE.dashboard.cls];
+}
+
+function buildResultCard(act, records) {
+  var denom = denominatorFor(act);
+  var card = el("div", { class: "card" }, [
+    el("div", { style: "display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;" }, [
+      el("div", { style: "font-weight:700;" }, [
+        el("span", { class: "badge " + (act.mode === "group" ? "badge-group" : "badge-indiv") }, act.mode === "group" ? "GROUP" : "INDIVIDUAL"),
+        text("  " + act.title)
+      ]),
+      el("span", { class: "progress-pill" }, records.length + " / " + denom + " submitted")
+    ])
+  ]);
+
+  if (act.type === "poll") {
+    var counts = act.options.map(function () { return 0; });
+    records.forEach(function (r) { if (r.answer && typeof r.answer.choice === "number") counts[r.answer.choice]++; });
+    act.options.forEach(function (opt, i) {
+      var pct = records.length ? Math.round((counts[i] / records.length) * 100) : 0;
+      card.appendChild(buildBarRow(opt, counts[i], pct, false));
+    });
+  } else if (act.type === "scenario") {
+    var perQ = act.questions.map(function () { return 0; });
+    records.forEach(function (r) {
+      if (!r.answer || !r.answer.answers) return;
+      r.answer.answers.forEach(function (a, qi) { if (a === act.questions[qi].correct) perQ[qi]++; });
+    });
+    act.questions.forEach(function (q, qi) {
+      var pct = records.length ? Math.round((perQ[qi] / records.length) * 100) : 0;
+      card.appendChild(el("div", { style: "margin:10px 0 4px;font-size:13px;" }, (qi + 1) + ". " + q.stem));
+      card.appendChild(el("div", { class: "muted-small", style: "margin-bottom:2px;" }, "Correct answer: " + q.options[q.correct]));
+      card.appendChild(buildBarRow(pct + "% correct", perQ[qi], pct, true));
+    });
+  } else if (act.type === "matching") {
+    var correctCount = 0;
+    records.forEach(function (r) {
+      if (!r.answer || !r.answer.answers) return;
+      var allRight = true;
+      for (var i = 0; i < act.correct.length; i++) if (r.answer.answers[i] !== act.correct[i]) allRight = false;
+      if (allRight) correctCount++;
+    });
+    var pct = records.length ? Math.round((correctCount / records.length) * 100) : 0;
+    card.appendChild(el("div", { class: "muted-small", style: "margin:8px 0;" }, "Fully correct: " + correctCount + " / " + records.length + " submitted"));
+    card.appendChild(buildBarRow(pct + "% fully correct", correctCount, pct, true));
+  } else if (act.type === "ordering") {
+    var totalPosMatches = 0, totalPositions = 0, exactCount = 0;
+    records.forEach(function (r) {
+      if (!r.answer || !r.answer.order) return;
+      var ord = r.answer.order;
+      var exact = true;
+      for (var i = 0; i < act.correctOrder.length; i++) {
+        totalPositions++;
+        if (ord[i] === act.correctOrder[i]) totalPosMatches++; else exact = false;
+      }
+      if (exact) exactCount++;
+    });
+    var posPct = totalPositions ? Math.round((totalPosMatches / totalPositions) * 100) : 0;
+    card.appendChild(el("div", { class: "muted-small", style: "margin:8px 0;" }, "Exactly correct order: " + exactCount + " / " + records.length + " submitted"));
+    card.appendChild(buildBarRow(posPct + "% of item-positions correct (avg)", totalPosMatches, posPct, true));
+  } else if (act.type === "spectrum") {
+    var avg = records.length ? Math.round(records.reduce(function (s, r) { return s + ((r.answer && r.answer.position) || 0); }, 0) / records.length) : null;
+    card.appendChild(el("div", { class: "muted-small", style: "margin:8px 0;" }, avg === null ? "No submissions yet." : "Average position: " + avg + " / 100"));
+    records.forEach(function (r) {
+      card.appendChild(el("div", { class: "card-white", style: "border-radius:8px;padding:10px 12px;margin-top:6px;font-size:13px;" }, [
+        el("strong", {}, r.who + ": "), text((r.answer && r.answer.position) + " " + U.dash + " "), text((r.answer && r.answer.justification) || "")
+      ]));
+    });
+  } else if (act.type === "freetext") {
+    if (!records.length) card.appendChild(el("div", { class: "muted-small", style: "margin:8px 0;" }, "No submissions yet."));
+    records.forEach(function (r) {
+      card.appendChild(el("div", { class: "card-white", style: "border-radius:8px;padding:10px 12px;margin-top:6px;font-size:13px;" }, [
+        el("strong", {}, r.who + ": "), text((r.answer && r.answer.text) || "")
+      ]));
+    });
+  }
+
+  return card;
+}
+
+function buildBarRow(label, count, pct, accurate) {
+  return el("div", { style: "margin:6px 0;" }, [
+    el("div", { style: "display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px;" }, [
+      el("span", {}, label), el("span", {}, count + " (" + pct + "%)")
+    ]),
+    el("div", { class: "bar-track" }, [el("div", { class: "bar-fill" + (accurate ? " bar-fill-acc" : ""), style: "width:" + pct + "%;" })])
+  ]);
+}
+
+/* ---------- Reset All ---------- */
+async function confirmResetAll() {
+  var choice = await showModal({
+    title: "Reset all data?",
+    body: "This permanently clears every response for BOTH A Class and B Class, and sends any active student session back to the landing screen. This can't be undone. Are you sure?",
+    buttons: [
+      { label: "Cancel", value: false, variant: "outline" },
+      { label: "Yes, reset everything", value: true, variant: "danger" }
+    ]
+  });
+  if (choice) resetAll();
+}
+
+async function listAllTargetKeys() {
+  var listA = await safeListVerify(indivPrefixForClass("A"));
+  var listAg = await safeListVerify(groupPrefixForClass("A"));
+  var listB = await safeListVerify(indivPrefixForClass("B"));
+  var listBg = await safeListVerify(groupPrefixForClass("B"));
+  var ok = listA.ok && listAg.ok && listB.ok && listBg.ok;
+  var keys = listA.keys.concat(listAg.keys, listB.keys, listBg.keys);
+  return { ok: ok, keys: keys };
+}
+
+async function resetAll() {
+  if (STATE.resetInProgress) return;
+  STATE.resetInProgress = true;
+  STATE.resetProgress = { done: 0, total: 0, error: null };
+  render();
+
+  // one honest, fully-retried read before touching anything. If the storage layer
+  // is genuinely unreachable this fails fast and clearly - no point spinning an
+  // outer round loop around a call that can't succeed.
+  var initial = await listAllTargetKeys();
+  if (!initial.ok) {
+    STATE.resetInProgress = false;
+    STATE.resetProgress.error = "Couldn't read current data (storage layer unreachable). Nothing was changed " + U.dash + " try Reset All again.";
+    render();
+    return;
+  }
+
+  if (initial.keys.length === 0) {
+    STATE.resetInProgress = false;
+    STATE.dashboard.data = {};
+    render();
+    await showModal({ title: "Nothing to reset", body: "There was no response data stored for either class.", buttons: [{ label: "OK", value: true }] });
+    return;
+  }
+
+  // From here on, self-heal automatically across a few internal rounds rather than
+  // making the instructor click Reset All again: delete the known set, re-list to
+  // see what (if anything) survived - a submission landing mid-reset, a transient
+  // delete failure, or eventual-consistency lag - and repeat on just the leftovers.
+  var pending = initial.keys;
+  var maxRounds = 4;
+  var round = 0;
+  var hardFailMsg = null;
+
+  while (round < maxRounds && pending.length > 0) {
+    round++;
+    STATE.resetProgress.total = pending.length;
+    STATE.resetProgress.done = 0;
+    render();
+
+    var doneCount = 0;
+    var lastRenderAt = 0;
+    await mapLimited(pending, 5, async function (key) {
+      await safeDeleteKey(key);
+      doneCount++;
+      STATE.resetProgress.done = doneCount;
+      var now = Date.now();
+      if (now - lastRenderAt > 200 || doneCount === pending.length) {
+        lastRenderAt = now;
+        render();
+      }
+    });
+
+    // brief settle pause before verifying, in case of any eventual-consistency lag
+    await sleep(300);
+
+    var verify = await listAllTargetKeys();
+    if (!verify.ok) {
+      hardFailMsg = "Reset ran, but verification could not confirm success. Retrying automatically...";
+      await sleep(400);
+      continue; // keep retrying the same pending set - we don't know what actually survived
+    }
+    hardFailMsg = null;
+    pending = verify.keys;
+  }
+
+  STATE.resetInProgress = false;
+
+  if (hardFailMsg !== null) {
+    STATE.resetProgress.error = hardFailMsg + " If this keeps happening, try Reset All again in a moment.";
+    render();
+    return;
+  }
+  if (pending.length > 0) {
+    STATE.resetProgress.error = "Reset incomplete after several automatic attempts " + U.dash + " " + pending.length + " item(s) still remain. Try Reset All again.";
+    render();
+    return;
+  }
+
+  // genuine success: clear local student session state, keep instructor auth, go to landing
+  STATE.student = { name: "", cls: null, group: {}, individualDone: {}, groupDone: {} };
+  STATE.dashboard.data = {};
+  STATE.screen = "landing";
+  STATE.role = null;
+  render();
+  await showModal({ title: "Reset complete", body: "All response data has been cleared for both A Class and B Class.", buttons: [{ label: "OK", value: true }] });
+  STATE.role = "instructor";
+  STATE.screen = "dashboard";
+  render();
+  loadDashboard();
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+async function init() {
+  await waitForStorageReady(4000);
+  STATE.storageWarning = !window.storage;
+  render();
+}
+
+// expose a couple of internals for the Playwright QA harness only (no behavior change)
+window.__toolkitTestHooks = { STATE: STATE, ACTIVITIES: ACTIVITIES, safeGet: safeGet, safeSet: safeSet, safeDeleteKey: safeDeleteKey, safeList: safeList, safeListVerify: safeListVerify, mapLimited: mapLimited, indivKey: indivKey, groupKey: groupKey, indivPrefixForClass: indivPrefixForClass, groupPrefixForClass: groupPrefixForClass, render: render, resetAll: resetAll };
+
+init();
+
+})();
+</script>
+</body>
+</html>
