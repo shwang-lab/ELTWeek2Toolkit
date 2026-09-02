@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 2 — ELT Live Toolkit</title>
+<style>
+  :root{
+    --bg:#F7F8FA;
+    --card:#FFFFFF;
+    --ink:#1B2430;
+    --ink-soft:#5B6472;
+    --line:#E3E6EB;
+    --accent:#2F6F62;
+    --accent-soft:#E3EEEA;
+    --accent-strong:#1F4E44;
+    --gold:#C98A2B;
+    --gold-soft:#F6E9D3;
+    --danger:#B3441E;
+    --danger-soft:#F5E1D8;
+    --board:#182821;
+    --board-card:#20362D;
+    --board-ink:#F2EFE6;
+    --board-line:#33473D;
+    --board-accent:#E8C468;
+    --radius:14px;
+    --font-display:Georgia,'Iowan Old Style','Palatino Linotype',serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      linear-gradient(var(--bg),var(--bg)),
+      repeating-linear-gradient(0deg, rgba(47,111,98,0.035) 0px, rgba(47,111,98,0.035) 1px, transparent 1px, transparent 28px),
+      repeating-linear-gradient(90deg, rgba(47,111,98,0.035) 0px, rgba(47,111,98,0.035) 1px, transparent 1px, transparent 28px);
+    color:var(--ink);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:920px;margin:0 auto;padding:28px 20px 60px;}
+  .eyebrow{
+    font-family:var(--font-body);
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--accent-strong); font-weight:700; margin:0 0 6px;
+  }
+  h1{font-family:var(--font-display); font-size:30px; margin:0 0 4px; line-height:1.15;}
+  h2{font-family:var(--font-display); font-size:22px; margin:0 0 10px; line-height:1.25;}
+  h3{font-family:var(--font-display); font-size:17px; margin:0 0 8px;}
+  p{line-height:1.55; color:var(--ink-soft); margin:0 0 12px;}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px;
+    margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(20,30,25,0.04);
+  }
+  .btn{
+    font-family:var(--font-body); font-weight:600; font-size:14.5px;
+    padding:12px 20px; border-radius:10px; border:1.5px solid var(--accent);
+    background:var(--accent); color:#fff; cursor:pointer; transition:transform .08s ease, background .15s ease;
+  }
+  .btn:hover{background:var(--accent-strong); border-color:var(--accent-strong);}
+  .btn:active{transform:scale(0.98);}
+  .btn.secondary{background:#fff; color:var(--accent); border-color:var(--accent);}
+  .btn.secondary:hover{background:var(--accent-soft);}
+  .btn.ghost{background:transparent; color:var(--ink-soft); border-color:var(--line);}
+  .btn.ghost:hover{border-color:var(--ink-soft); color:var(--ink);}
+  .btn.danger{background:#fff; color:var(--danger); border-color:var(--danger);}
+  .btn.danger:hover{background:var(--danger-soft);}
+  .btn:disabled{opacity:.4; cursor:not-allowed;}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+  input[type=text], input[type=password], textarea, select{
+    width:100%; font-family:var(--font-body); font-size:15px; padding:12px 14px;
+    border-radius:10px; border:1.5px solid var(--line); background:#fff; color:var(--ink);
+    outline:none; transition:border-color .15s ease;
+  }
+  input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus{border-color:var(--accent);}
+  label{display:block; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.02em;}
+  .field{margin-bottom:16px;}
+  textarea{resize:vertical; min-height:80px;}
+  .role-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px;}
+  @media (max-width:600px){.role-grid{grid-template-columns:1fr;}}
+  .role-card{
+    background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius);
+    padding:26px 20px; text-align:left; cursor:pointer; transition:border-color .15s ease, transform .1s ease;
+  }
+  .role-card:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .role-card .icon{font-size:26px; margin-bottom:10px; display:block;}
+  .role-card h3{margin-bottom:4px;}
+  .role-card p{margin:0; font-size:13.5px;}
+  .badge{
+    display:inline-block; font-size:12px; font-weight:700; padding:4px 10px;
+    border-radius:20px; background:var(--accent-soft); color:var(--accent-strong); margin-right:6px;
+  }
+  .badge.gold{background:var(--gold-soft); color:#8a5c14;}
+  .option-btn{
+    display:block; width:100%; text-align:left; padding:14px 16px; margin-bottom:9px;
+    border-radius:10px; border:1.5px solid var(--line); background:#fff; color:var(--ink);
+    font-family:var(--font-body); font-size:14.5px; cursor:pointer; transition:all .12s ease;
+  }
+  .option-btn:hover{border-color:var(--accent);}
+  .option-btn.selected{border-color:var(--gold); background:var(--gold-soft); font-weight:700;}
+  .confirm-box{text-align:center; padding:34px 20px;}
+  .confirm-box .check{font-size:40px; margin-bottom:10px; display:block;}
+  .snapshot-box{
+    background:var(--accent-soft); border-radius:10px; padding:16px 18px; margin-bottom:16px;
+    border:1px solid #cfe1da;
+  }
+  .snapshot-box .who{font-weight:700; color:var(--accent-strong); font-size:15px; margin-bottom:4px;}
+  .snapshot-box p{margin:0; color:var(--ink); font-size:14.5px;}
+  .track{
+    position:relative; height:118px; background:#fff; border:1.5px solid var(--line); border-radius:12px;
+    margin:14px 0 22px; padding:0 18px;
+  }
+  .track .rail{position:absolute; left:18px; right:18px; top:34px; height:3px; background:var(--line); border-radius:2px;}
+  .track .tick{position:absolute; top:10px; font-size:11px; color:var(--ink-soft); font-weight:700; transform:translateX(-50%);}
+  .chip{
+    position:absolute; top:76px; transform:translate(-50%,-50%);
+    background:var(--accent); color:#fff; font-size:12.5px; font-weight:700;
+    padding:7px 12px; border-radius:20px; cursor:grab; touch-action:none;
+    box-shadow:0 2px 6px rgba(20,30,25,0.25); user-select:none; white-space:nowrap;
+    transition:box-shadow .12s ease;
+  }
+  .chip:hover{box-shadow:0 3px 10px rgba(20,30,25,0.35);}
+  .pair-row{display:flex; gap:10px; margin-bottom:14px;}
+  .pair-btn{
+    flex:1; padding:13px 10px; text-align:center; border-radius:10px; border:1.5px solid var(--line);
+    background:#fff; cursor:pointer; font-weight:700; font-size:14.5px; transition:all .12s ease;
+  }
+  .pair-btn.selected{border-color:var(--gold); background:var(--gold-soft);}
+  .method-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:14px 16px; margin-bottom:8px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .method-card .num{
+    width:26px; height:26px; border-radius:50%; background:var(--accent-soft); color:var(--accent-strong);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0;
+  }
+  .method-card .name{font-weight:700; flex:1; font-size:14.5px;}
+  .arrow-btns{display:flex; gap:4px;}
+  .arrow-btns button{
+    width:30px; height:30px; border-radius:7px; border:1.5px solid var(--line); background:#fff; cursor:pointer; font-size:14px;
+  }
+  .arrow-btns button:hover{border-color:var(--accent);}
+  select.match-select{margin-top:8px;}
+  .feed-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:10px; padding:12px 16px; margin-bottom:8px; font-size:14px;
+  }
+  .feed-card .meta{font-size:11px; color:var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.03em; margin-bottom:4px;}
+  .top-bar{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;}
+  .top-bar .who{font-size:13px; color:var(--ink-soft);}
+  .top-bar .who b{color:var(--ink);}
+  .top-bar .links{display:flex; gap:16px; align-items:center;}
+  .mode-switch{display:flex; justify-content:flex-end; gap:6px; margin-bottom:18px; max-width:920px; margin-left:auto; margin-right:auto; padding-top:4px;}
+  .mode-switch button{
+    padding:7px 16px; border-radius:20px; border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
+    font-family:var(--font-body); font-weight:700; font-size:12.5px; cursor:pointer; transition:all .12s ease;
+  }
+  .mode-switch button:hover{border-color:var(--accent);}
+  .mode-switch button.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .board .mode-switch{max-width:1100px;}
+  .board .mode-switch button{background:transparent; border-color:var(--board-line); color:#B7C2BB;}
+  .board .mode-switch button:hover{border-color:var(--board-accent);}
+  .board .mode-switch button.active{background:var(--board-accent); border-color:var(--board-accent); color:#20362D;}
+  .link-btn{background:none; border:none; color:var(--ink-soft); font-size:12.5px; cursor:pointer; text-decoration:underline; padding:0;}
+  .breadcrumb{font-size:12px; color:var(--ink-soft); font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-bottom:10px;}
+
+  /* Map / directory screen */
+  .block-section{margin-bottom:22px;}
+  .block-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; flex-wrap:wrap; gap:6px;}
+  .block-head h2{margin-bottom:0;}
+  .block-progress{font-size:12px; font-weight:700; color:var(--accent-strong); background:var(--accent-soft); padding:4px 12px; border-radius:20px;}
+  .block-progress.gold{color:#8a5c14; background:var(--gold-soft);}
+  .map-row{
+    display:flex; align-items:center; gap:14px; padding:15px 16px; border:1.5px solid var(--line);
+    border-radius:12px; margin-bottom:9px; cursor:pointer; background:#fff; transition:border-color .12s ease, transform .08s ease;
+  }
+  .map-row:hover{border-color:var(--accent); transform:translateX(2px);}
+  .map-row .num{
+    width:30px; height:30px; border-radius:50%; background:var(--accent-soft); color:var(--accent-strong);
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13.5px; flex-shrink:0;
+  }
+  .map-row.done .num{background:var(--accent); color:#fff;}
+  .map-row .info{flex:1; min-width:0;}
+  .map-row .info .t{font-weight:700; font-size:14.5px; color:var(--ink);}
+  .map-row .info .b{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .map-row .grouptag{font-size:10.5px; font-weight:700; color:var(--gold); background:var(--gold-soft); padding:2px 8px; border-radius:10px; margin-left:8px; vertical-align:middle;}
+  .map-row .status{font-size:19px; flex-shrink:0;}
+  .group-badge{
+    display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700;
+    background:var(--gold-soft); color:#8a5c14; padding:5px 12px; border-radius:20px; margin-bottom:14px;
+  }
+  .group-badge button{background:none; border:none; color:#8a5c14; text-decoration:underline; cursor:pointer; font-size:12px; font-weight:700; padding:0;}
+
+  /* status area (saving / error) */
+  .status-area{margin-top:14px;}
+  .saving-row{display:flex; align-items:center; gap:9px; color:var(--ink-soft); font-size:13.5px; padding:6px 0;}
+  .spinner{
+    width:15px; height:15px; border-radius:50%; border:2px solid var(--line); border-top-color:var(--accent);
+    animation:spin .7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .board .spinner{border-color:var(--board-line); border-top-color:var(--board-accent);}
+
+  /* Custom modal (replaces native alert/confirm, which can be blocked in sandboxed environments) */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,20,18,0.55); display:flex; align-items:center; justify-content:center;
+    z-index:1000; padding:20px; animation:fadein .12s ease;
+  }
+  @keyframes fadein{from{opacity:0;} to{opacity:1;}}
+  .modal-box{
+    background:#fff; border-radius:var(--radius); padding:26px; max-width:420px; width:100%;
+    box-shadow:0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal-box p{color:var(--ink); margin-bottom:20px; line-height:1.55;}
+  .modal-box .btn-row{margin-top:0;}
+  .error-row{
+    background:var(--danger-soft); color:var(--danger); padding:13px 15px; border-radius:10px; font-size:13.5px;
+    display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .error-row .btn{padding:8px 16px; font-size:13px;}
+
+  /* Instructor board theme */
+  .board{background:var(--board); min-height:100vh;}
+  .board #app{max-width:1100px;}
+  .board-card{
+    background:var(--board-card); border:1px solid var(--board-line); border-radius:var(--radius);
+    padding:22px; margin-bottom:16px; color:var(--board-ink);
+  }
+  .board h1, .board h2, .board h3{color:var(--board-ink); font-family:var(--font-display);}
+  .board p{color:#B7C2BB;}
+  .board-eyebrow{color:var(--board-accent); font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:700;}
+  .tab-row{display:flex; gap:8px; margin-bottom:20px;}
+  .tab{
+    padding:10px 22px; border-radius:9px; border:1.5px solid var(--board-line); background:transparent;
+    color:#B7C2BB; font-weight:700; cursor:pointer; font-size:14px;
+  }
+  .tab.active{background:var(--board-accent); color:#20362D; border-color:var(--board-accent);}
+  .board-btn{
+    padding:8px 16px; border-radius:8px; border:1.5px solid var(--board-line); background:transparent;
+    color:var(--board-ink); font-weight:700; font-size:12.5px; cursor:pointer;
+  }
+  .board-btn:hover{border-color:var(--board-accent); color:var(--board-accent);}
+  .board-btn:disabled{opacity:.4; cursor:not-allowed;}
+  .board-btn.danger{color:#E38B67;}
+  .board-btn.danger:hover{border-color:#E38B67; color:#E38B67;}
+  .tab:disabled{opacity:.5; cursor:not-allowed;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:8px;}
+  .resp-count{font-size:12px; color:var(--board-accent); font-weight:700; background:rgba(232,196,104,0.12); padding:4px 10px; border-radius:20px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .bar-label{width:150px; font-size:13px; color:#D7DED9; flex-shrink:0;}
+  .bar-track{flex:1; background:var(--board-line); border-radius:6px; height:20px; position:relative; overflow:hidden;}
+  .bar-fill{background:var(--board-accent); height:100%; border-radius:6px; transition:width .3s ease;}
+  .bar-count{width:34px; text-align:right; font-size:12.5px; color:#D7DED9; font-weight:700;}
+  .mini-note{background:rgba(255,255,255,0.04); border:1px solid var(--board-line); border-radius:9px; padding:12px 14px; margin-bottom:8px; font-size:13.5px; color:#D7DED9;}
+  .mini-note b{color:var(--board-ink);}
+  .empty-msg{color:#7E8B83; font-size:13.5px; font-style:italic; padding:8px 0;}
+  .scatter-track{position:relative; height:44px; background:rgba(255,255,255,0.04); border:1px solid var(--board-line); border-radius:10px; margin:8px 0 4px;}
+  .scatter-track .avgline{position:absolute; top:0; bottom:0; width:2px; background:var(--board-accent);}
+  .scatter-track .dot2{position:absolute; top:50%; width:8px; height:8px; border-radius:50%; background:#8FB3A5; transform:translate(-50%,-50%);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================= CONTENT CONFIG ============================= */
+
+/* 여기에 1단계에서 배포한 새 KV용 Apps Script Web App URL을 넣어주세요. */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJc_RFDdhCU4_VB41uMefmy6cKgjg4DVwqVk1xBDa5MDAA0aMq53VinzQf1iZKyy4i/exec";
+
+const CLASS_SIZE = { A: 26, B: 20 };
+const GROUP_COUNT = { A: 6, B: 5 };
+
+const SNAPSHOTS = [
+  { name:'Andrea', desc:"34 fourteen-year-olds have been rearranged into groups of six or seven for a persuasive group task. Andrea walks around, listens quietly, and only steps in with a quick hint when a group is truly stuck." },
+  { name:'Maia', desc:"Eight students sit in a circle, chatting fairly naturally about recent news. Maia does little visible correcting, but subtly manages the conversation — drawing in quieter students and rephrasing hard-to-understand sentences." },
+  { name:'Lee', desc:"Eleven young adults face the front. Lee uses a wall picture to elicit 'going to' sentences, correcting briefly and getting students to repeat — while talking surprisingly little himself." },
+  { name:'Paoli', desc:"Adult evening-class students work in pairs on an information-gap vocabulary task. Participation varies from pair to pair, and Paoli circulates, watching for problems and encouraging pairs to stay on task." }
+];
+
+const POLLS = {
+  poll1: {
+    title:"Have You Experienced T ≠ L?",
+    prompt:"Think about it — as a learner, or as someone who has taught or helped others learn.",
+    options:["Yes — as a teacher","Yes — as a student","Not sure","Not yet, but I can imagine it"]
+  },
+  poll2: {
+    title:"Which Method Felt Closest to Your Own English Classes?",
+    prompt:"Think back to your school English lessons.",
+    options:["Grammar-Translation","Audiolingualism","Direct Method","Communicative Approach","A mix of these"]
+  }
+};
+
+const QUIZZES = {
+  quizA: {
+    title:"Spot the Teacher Type",
+    questions:[
+      { stem:"A teacher lectures fluently and entertainingly on phrasal verbs for 20 minutes. Students listen and take notes, then complete a worksheet alone.",
+        options:["Explainer","Involver","Enabler"], correct:0 },
+      { stem:"A teacher sets up an information-gap task, circulates to help only when asked, and closes with whole-class feedback.",
+        options:["Explainer","Involver","Enabler"], correct:1 },
+      { stem:"A teacher lets the class decide how to run a project, and becomes 'hardly visible' once the work is under way.",
+        options:["Explainer","Involver","Enabler"], correct:2 },
+      { stem:"A teacher plans a role-play, gives clear instructions, monitors quietly, and steps in briefly only to model a phrase.",
+        options:["Explainer","Involver","Enabler"], correct:1 }
+    ]
+  },
+  quizB: {
+    title:"Name That Method",
+    questions:[
+      { stem:"Students repeat model dialogues many times, drilling substitution patterns with no grammar explanation.",
+        options:["Grammar-Translation","Direct Method","Audiolingualism","Communicative Approach"], correct:2 },
+      { stem:"The lesson runs entirely in English from minute one; the teacher mimes and points rather than translating.",
+        options:["Grammar-Translation","Direct Method","Audiolingualism","Communicative Approach"], correct:1 },
+      { stem:"Students translate a literary passage and complete exercises testing the grammar rule just explained.",
+        options:["Grammar-Translation","Direct Method","Audiolingualism","Communicative Approach"], correct:0 },
+      { stem:"Learners plan an imaginary trip together to solve a real problem; the teacher clarifies grammar only when confusion comes up.",
+        options:["Grammar-Translation","Direct Method","Audiolingualism","Communicative Approach"], correct:3 }
+    ]
+  }
+};
+
+const EPIC_PAIRS = [
+  { id:'p1', a:'fall', b:'autumn', correct:'b' },
+  { id:'p2', a:'truck', b:'lorry', correct:'a' },
+  { id:'p3', a:'do you have', b:'have you got', correct:'a' },
+  { id:'p4', a:'program', b:'programme', correct:'a' },
+  { id:'p5', a:'elevator', b:'lift', correct:'a' }
+];
+
+const METHODS = [
+  { id:'gt', name:'Grammar-Translation', theory:'Language = grammar + vocabulary + phonology + spelling, taught through explicit rules and translation.' },
+  { id:'dm', name:'Direct Method', theory:'Oral skills prioritized. The whole lesson runs in the target language (no L1, no translation).' },
+  { id:'al', name:'Audiolingualism', theory:'Language = a set of habits. Grammatical patterns are automatized through drilling and mimicry.' },
+  { id:'ca', name:'Communicative Approach', theory:'Language = a means of communication. Acquired through meaningful communicative activity.' }
+];
+const CORRECT_ORDER = ['gt','dm','al','ca'];
+
+const GROUP_ACTIVITIES = new Set(['snapshot','timeline']);
+
+const BLOCK_A = [
+  { id:'poll1', title:'T ≠ L Poll', blurb:'A quick check-in on your own experience.' },
+  { id:'snapshot', title:'Snapshot Analysis', blurb:'Group work — analyze your assigned classroom.', group:true },
+  { id:'sorting', title:'Spectrum Sort', blurb:'Place four classrooms on a spectrum.' },
+  { id:'quizA', title:'Spot the Teacher Type', blurb:'A 4-question scenario quiz.' },
+  { id:'reflectionA', title:'Reflection', blurb:'One sentence on the teacher you want to be.' }
+];
+const BLOCK_B = [
+  { id:'epic', title:'EPIC Word Choice', blurb:'Pick the better word for international English.' },
+  { id:'timeline', title:'Method Timeline', blurb:'Group work — order 4 methods & match theory.', group:true },
+  { id:'quizB', title:'Name That Method', blurb:'A 4-question scenario quiz.' },
+  { id:'poll2', title:'Poll: My Own Class', blurb:'Which method felt closest to your schooling?' }
+];
+const BLOCK_S = [
+  { id:'feed', title:'Synthesis Feed', blurb:'Share what "principled eclecticism" means to you.' }
+];
+const ALL_BLOCKS = [
+  { key:'A', label:'Concept Block A', items:BLOCK_A },
+  { key:'B', label:'Concept Block B', items:BLOCK_B },
+  { key:'S', label:'Synthesis', items:BLOCK_S }
+];
+function findActivityMeta(id){
+  for(const b of ALL_BLOCKS){ const f = b.items.find(x=>x.id===id); if(f) return {...f, block:b.key, blockLabel:b.label}; }
+  return null;
+}
+
+/* ============================= STATE ============================= */
+
+function freshState(){
+  return {
+    screen:'login',            // login | studentName | studentClass | map | activity | instructorAuth | dashboard
+    mode:null,                 // 'student' | 'instructor' — which side of the toggle is active
+    instructorAuthed:false,
+    name:'',
+    cls:null,
+    group:null,
+    studentId:null,
+    currentActivity:null,
+    completed:new Set(),
+    instrClass:'A',
+    dashboardLoading:false,
+    // ephemeral per-activity working state
+    quizIndex:0,
+    quizAnswers:[],
+    epicChoices:{},
+    sortPositions:{ Andrea:10, Maia:37, Lee:63, Paoli:90 },
+    dragging:null,
+    timelineOrder:['al','gt','ca','dm'],
+    timelineMatch:{},
+    pendingGroupFor:null      // activity id currently awaiting group pick
+  };
+}
+let state = freshState();
+
+/* ============================= STORAGE HELPERS =============================
+   Backed by Google Apps Script (a KV store over a Google Sheet), reached via
+   plain fetch() from this static page. This runs OUTSIDE the Claude artifact
+   sandbox, so fetch is not blocked, and it is not subject to Anthropic's
+   window.storage backend limits during high-concurrency classroom submits.
+
+   Design unchanged from before: ONE KEY PER SUBMITTER (student or group),
+   e.g. "w2:poll1:A:jisu_8x2f1a" — so concurrent submissions never race
+   against each other. */
+
+function keyPrefix(activityId, cls){ return 'w2:' + activityId + ':' + cls + ':'; }
+
+function slugifyForKey(s){
+  return String(s).trim().replace(/[\s\/\\'"]+/g, '_').replace(/[^a-zA-Z0-9_\-\.]/g, '').slice(0, 60) || 'anon';
+}
+
+async function kvSet(key, value){
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight
+    body: JSON.stringify({ action: 'set', key: key, value: value })
+  });
+  const data = await res.json();
+  if(data.status !== 'ok') throw new Error(data.message || 'set failed');
+  return data;
+}
+
+async function kvGet(key){
+  const res = await fetch(APPS_SCRIPT_URL + '?action=get&key=' + encodeURIComponent(key));
+  const data = await res.json();
+  if(data.status !== 'ok') throw new Error(data.message || 'get failed');
+  return data.value;
+}
+
+async function kvList(prefix){
+  const res = await fetch(APPS_SCRIPT_URL + '?action=list&prefix=' + encodeURIComponent(prefix));
+  const data = await res.json();
+  if(data.status !== 'ok') throw new Error(data.message || 'list failed');
+  return data.keys;
+}
+
+async function kvDelete(key){
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'delete', key: key })
+  });
+  const data = await res.json();
+  if(data.status !== 'ok') throw new Error(data.message || 'delete failed');
+  return data;
+}
+
+async function loadAllForPrefix(prefix, attempt){
+  attempt = attempt || 0;
+  try{
+    const keys = await kvList(prefix);
+    if(keys.length === 0) return [];
+    const values = await Promise.all(keys.map(async k => {
+      try{
+        const v = await kvGet(k);
+        return v ? JSON.parse(v) : null;
+      }catch(e){
+        return null;
+      }
+    }));
+    return values.filter(v => v !== null);
+  }catch(e){
+    if(attempt < 2){
+      await new Promise(r => setTimeout(r, 400 * (attempt + 1)));
+      return loadAllForPrefix(prefix, attempt + 1);
+    }
+    return [];
+  }
+}
+
+async function saveEntry(key, entry, attempt){
+  attempt = attempt || 0;
+  try{
+    await kvSet(key, JSON.stringify(entry));
+    return true;
+  }catch(e){
+    if(attempt < 4){
+      // longer, jittered backoff to ride out brief Apps Script contention
+      await new Promise(r => setTimeout(r, 700 * (attempt + 1) + Math.random() * 500));
+      return saveEntry(key, entry, attempt + 1);
+    }
+    console.error('storage set failed after retries:', e);
+    return false;
+  }
+}
+
+async function resetActivity(activityId, cls){
+  const prefix = keyPrefix(activityId, cls);
+  try{
+    const keys = await kvList(prefix);
+    if(keys.length === 0) return true;
+    await Promise.all(keys.map(k => kvDelete(k).catch(()=>{})));
+    return true;
+  }catch(e){
+    console.warn('Could not fully clear responses for', prefix, e);
+    return false;
+  }
+}
+
+/* Generic submit runner with saving/error UI, used by every activity's submit button.
+   `key` must already be the FULL per-submitter key (prefix + student/group id). */
+async function runSubmit(statusElId, key, entry, onSuccess){
+  const statusEl = document.getElementById(statusElId);
+  if(statusEl) statusEl.innerHTML = `<div class="saving-row"><div class="spinner"></div>Saving your answer…</div>`;
+  const ok = await saveEntry(key, entry);
+  if(ok){
+    onSuccess();
+  }else{
+    if(statusEl){
+      statusEl.innerHTML = `
+        <div class="error-row">
+          <span>⚠️ Couldn't save your answer. Please check your connection and try again.</span>
+          <button class="btn" id="retry-btn">Try Again</button>
+        </div>`;
+      document.getElementById('retry-btn').onclick = () => runSubmit(statusElId, key, entry, onSuccess);
+    }
+  }
+}
+
+/* ============================= RENDER ROOT ============================= */
+
+function render(){
+  const app = document.getElementById('app');
+  document.body.className = (state.mode === 'instructor' && state.screen === 'dashboard') ? 'board' : '';
+  let html = '';
+  if(state.screen !== 'login') html += modeToggleBar();
+  html += screens[state.screen] ? screens[state.screen]() : '<p>Unknown screen</p>';
+  app.innerHTML = html;
+  afterRender[state.screen] && afterRender[state.screen]();
+}
+const screens = {};
+const afterRender = {};
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* Custom alert/confirm — native window.alert/confirm can be silently blocked
+   inside sandboxed iframe environments, so we render our own modal instead. */
+function closeModal(){
+  const el = document.getElementById('custom-modal');
+  if(el) el.remove();
+}
+function showAlert(message){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.id = 'custom-modal';
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <p>${escapeHtml(message)}</p>
+      <div class="btn-row" style="justify-content:flex-end;">
+        <button class="btn" id="modal-ok-btn">OK</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.getElementById('modal-ok-btn').onclick = closeModal;
+  overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+}
+function showConfirm(message, onConfirm){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.id = 'custom-modal';
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <p>${escapeHtml(message)}</p>
+      <div class="btn-row" style="justify-content:flex-end;">
+        <button class="btn ghost" id="modal-cancel-btn">Cancel</button>
+        <button class="btn danger" id="modal-confirm-btn">Confirm</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.getElementById('modal-cancel-btn').onclick = closeModal;
+  document.getElementById('modal-confirm-btn').onclick = () => { closeModal(); onConfirm(); };
+  overlay.addEventListener('click', e => { if(e.target === overlay) closeModal(); });
+}
+
+/* ---- LOGIN ---- */
+screens.login = () => `
+  <div style="text-align:center; padding:40px 0 10px;">
+    <p class="eyebrow">Week 2 · Live Toolkit</p>
+    <h1>What Is English Language Teaching?</h1>
+    <p style="max-width:520px; margin:0 auto;">Choose your role to get started.</p>
+  </div>
+  <div class="role-grid">
+    <div class="role-card" onclick="switchMode('student')">
+      <span class="icon">🧑‍🎓</span>
+      <h3>Enter as Student</h3>
+      <p>Enter your name and class, then work through today's activities.</p>
+    </div>
+    <div class="role-card" onclick="switchMode('instructor')">
+      <span class="icon">🧑‍🏫</span>
+      <h3>Enter as Instructor</h3>
+      <p>Enter the password to view the live response dashboard.</p>
+    </div>
+  </div>
+`;
+async function switchMode(mode){
+  state.mode = mode;
+  if(mode === 'student'){
+    state.screen = (state.name && state.cls) ? 'map' : (state.name ? 'studentClass' : 'studentName');
+    render();
+  }else{
+    if(state.instructorAuthed){
+      state.screen = 'dashboard';
+      state.dashboardLoading = true;
+      render();
+      await loadDashboardData();
+      state.dashboardLoading = false;
+      render();
+    }else{
+      state.screen = 'instructorAuth';
+      render();
+    }
+  }
+}
+function modeToggleBar(){
+  return `
+    <div class="mode-switch">
+      <button class="${state.mode==='student'?'active':''}" onclick="switchMode('student')">🧑‍🎓 Student</button>
+      <button class="${state.mode==='instructor'?'active':''}" onclick="switchMode('instructor')">🧑‍🏫 Instructor</button>
+    </div>
+  `;
+}
+
+/* ---- STUDENT NAME ---- */
+screens.studentName = () => `
+  <div class="card" style="max-width:440px; margin:60px auto;">
+    <p class="eyebrow">Student Login</p>
+    <h2>What's Your Name?</h2>
+    <div class="field">
+      <input type="text" id="in-name" placeholder="e.g. Siti Rahayu" value="${state.name}">
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="submitName()">Continue</button>
+    </div>
+  </div>
+`;
+afterRender.studentName = () => {
+  const el = document.getElementById('in-name');
+  el.focus();
+  el.addEventListener('keydown', e => { if(e.key==='Enter') submitName(); });
+};
+function submitName(){
+  const name = document.getElementById('in-name').value.trim();
+  if(!name){ showAlert('Please enter your name.'); return; }
+  state.name = name;
+  state.screen = 'studentClass';
+  render();
+}
+
+/* ---- STUDENT CLASS SECTION ---- */
+screens.studentClass = () => `
+  <div style="text-align:center; padding:20px 0 6px;">
+    <p class="eyebrow">Student Login</p>
+    <h2>Select Your Class Section</h2>
+    <p style="max-width:480px; margin:0 auto;">Each class's responses are kept completely separate.</p>
+  </div>
+  <div class="role-grid">
+    <div class="role-card" onclick="chooseClass('A')">
+      <h3>A Class</h3>
+      <p>${CLASS_SIZE.A} students</p>
+    </div>
+    <div class="role-card" onclick="chooseClass('B')">
+      <h3>B Class</h3>
+      <p>${CLASS_SIZE.B} students</p>
+    </div>
+  </div>
+  <div class="btn-row" style="justify-content:center;">
+    <button class="btn ghost" onclick="state.screen='studentName'; render();">Back</button>
+  </div>
+`;
+function chooseClass(cls){
+  state.cls = cls;
+  // Slug used directly as part of storage keys — must be whitespace/slash/quote-free.
+  state.studentId = slugifyForKey(state.name) + '_' + Math.random().toString(36).slice(2,8);
+  state.screen = 'map';
+  render();
+}
+
+/* ============================= COURSE MAP ============================= */
+
+screens.map = () => {
+  const blocks = [
+    { key:'A', label:'Concept Block A', items:BLOCK_A },
+    { key:'B', label:'Concept Block B', items:BLOCK_B },
+    { key:'S', label:'Synthesis', items:BLOCK_S }
+  ];
+  return `
+    <div class="top-bar">
+      <div class="who">${state.name} · <b>${state.cls} Class</b></div>
+    </div>
+    <div style="margin-bottom:22px;">
+      <p class="eyebrow">Course Map</p>
+      <h1 style="font-size:26px;">Today's Activities</h1>
+      <p>Work through each Concept Block in order. Your instructor will let you know when to start each block. Click any activity to begin.</p>
+    </div>
+    ${blocks.map(b => renderBlockSection(b)).join('')}
+  `;
+};
+function renderBlockSection(b){
+  const doneCount = b.items.filter(it => state.completed.has(it.id)).length;
+  const pillClass = b.key === 'S' ? 'block-progress gold' : 'block-progress';
+  return `
+    <div class="block-section">
+      <div class="block-head">
+        <h2>${b.label}</h2>
+        <span class="${pillClass}">${doneCount} / ${b.items.length} done</span>
+      </div>
+      ${b.items.map((it,i) => `
+        <div class="map-row ${state.completed.has(it.id)?'done':''}" onclick="openActivity('${it.id}')">
+          <div class="num">${state.completed.has(it.id) ? '✓' : (i+1)}</div>
+          <div class="info">
+            <div class="t">${it.title} ${it.group ? '<span class="grouptag">GROUP</span>' : ''}</div>
+            <div class="b">${it.blurb}</div>
+          </div>
+          <div class="status">${state.completed.has(it.id) ? '✅' : '›'}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function openActivity(id){
+  const meta = findActivityMeta(id);
+  if(meta.group && !state.group){
+    state.pendingGroupFor = id;
+    state.screen = 'groupPick';
+    render();
+    return;
+  }
+  resetActivityWorkingState();
+  state.currentActivity = id;
+  state.screen = 'activity';
+  render();
+}
+function resetActivityWorkingState(){
+  state.quizIndex = 0;
+  state.quizAnswers = [];
+}
+
+/* ---- GROUP PICK (shown once, before first group activity) ---- */
+screens.groupPick = () => {
+  const n = GROUP_COUNT[state.cls];
+  let opts = '';
+  for(let i=1;i<=n;i++) opts += `<option value="${i}">Group ${i}</option>`;
+  return `
+    <div class="card" style="max-width:440px; margin:60px auto;">
+      <p class="eyebrow">Group Activity</p>
+      <h2>Select Your Group</h2>
+      <p>This activity is answered once per group — pick your assigned group number.</p>
+      <div class="field">
+        <select id="in-groupnum">
+          <option value="">Select a group</option>
+          ${opts}
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="confirmGroup()">Continue</button>
+        <button class="btn ghost" onclick="state.screen='map'; render();">Back to Map</button>
+      </div>
+    </div>
+  `;
+};
+function confirmGroup(){
+  const v = document.getElementById('in-groupnum').value;
+  if(!v){ showAlert('Please select your group.'); return; }
+  state.group = parseInt(v,10);
+  const id = state.pendingGroupFor;
+  state.pendingGroupFor = null;
+  resetActivityWorkingState();
+  state.currentActivity = id;
+  state.screen = 'activity';
+  render();
+}
+
+/* ============================= ACTIVITY SCREEN WRAPPER ============================= */
+
+screens.activity = () => {
+  const meta = findActivityMeta(state.currentActivity);
+  return `
+    <div class="top-bar">
+      <div class="who">${state.name} · <b>${state.cls} Class</b>${state.group ? ' · Group ' + state.group : ''}</div>
+      <div class="links">
+        <button class="link-btn" onclick="state.screen='map'; render();">← Course Map</button>
+      </div>
+    </div>
+    <div class="breadcrumb">${meta.blockLabel} — ${meta.title}</div>
+    ${meta.group ? `<div class="group-badge">Group ${state.group} <button onclick="changeGroup()">change</button></div>` : ''}
+    <div id="activity-slot">${renderActivityBody(meta)}</div>
+  `;
+};
+afterRender.activity = () => { attachActivityHandlers(state.currentActivity); };
+function changeGroup(){
+  state.pendingGroupFor = state.currentActivity;
+  state.screen = 'groupPick';
+  render();
+}
+function attachActivityHandlers(id){
+  if(id === 'sorting') attachSortingHandlers();
+}
+function renderActivityBody(meta){
+  switch(meta.id){
+    case 'poll1': case 'poll2': return renderPoll(meta.id);
+    case 'snapshot': return renderSnapshot();
+    case 'sorting': return renderSorting();
+    case 'quizA': case 'quizB': return renderQuiz(meta.id);
+    case 'reflectionA': return renderReflection();
+    case 'epic': return renderEpic();
+    case 'timeline': return renderTimeline();
+    case 'feed': return renderFeed();
+    default: return '<p>—</p>';
+  }
+}
+function markDoneAndShow(id, html){
+  state.completed.add(id);
+  document.getElementById('activity-slot').innerHTML = html;
+}
+function doneCard(title, msg){
+  const meta = findActivityMeta(state.currentActivity);
+  let blockItems = meta.block==='A' ? BLOCK_A : (meta.block==='B' ? BLOCK_B : BLOCK_S);
+  const idx = blockItems.findIndex(x=>x.id===meta.id);
+  const next = blockItems[idx+1];
+  return `
+    <div class="card confirm-box">
+      <span class="check">✅</span>
+      <h2>${title}</h2>
+      <p>${msg}</p>
+      <div class="btn-row" style="justify-content:center;">
+        <button class="btn" onclick="state.screen='map'; render();">Back to Course Map</button>
+        ${next ? `<button class="btn secondary" onclick="openActivity('${next.id}')">Next: ${next.title} →</button>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+/* ---- POLL (per-student key) ---- */
+function renderPoll(id){
+  const cfg = POLLS[id];
+  return `
+    <div class="card">
+      <h2>${cfg.title}</h2>
+      <p>${cfg.prompt}</p>
+      <div>
+        ${cfg.options.map((o,i)=>`<button class="option-btn" onclick="selectPoll('${id}',${i})">${o}</button>`).join('')}
+      </div>
+      <div class="status-area" id="poll-status"></div>
+    </div>
+  `;
+}
+function selectPoll(id, idx){
+  const cfg = POLLS[id];
+  const entry = { id: state.studentId, name: state.name, choice: cfg.options[idx], ts: Date.now() };
+  const key = keyPrefix(id, state.cls) + state.studentId;
+  runSubmit('poll-status', key, entry, () => {
+    markDoneAndShow(id, doneCard('Submitted!', 'Your answer has been recorded.'));
+  });
+}
+
+/* ---- SNAPSHOT (group — one key per group) ---- */
+function renderSnapshot(){
+  const snap = SNAPSHOTS[(state.group - 1) % 4];
+  return `
+    <div class="card">
+      <h2>Snapshot Analysis</h2>
+      <p>Read your group's assigned classroom snapshot together and answer the questions below. Only one submission is needed per group.</p>
+      <div class="snapshot-box">
+        <div class="who">${snap.name}'s Classroom</div>
+        <p>${snap.desc}</p>
+      </div>
+      <div class="field">
+        <label>Two things this teacher is actively managing</label>
+        <textarea id="snap-managing" placeholder="e.g. group composition, participation level..."></textarea>
+      </div>
+      <div class="field">
+        <label>One thing this teacher deliberately does NOT do</label>
+        <textarea id="snap-notdoing" placeholder="e.g. does not explain grammar directly..."></textarea>
+      </div>
+      <button class="btn" onclick="submitSnapshot()">Submit Group Answer</button>
+      <div class="status-area" id="snapshot-status"></div>
+    </div>
+  `;
+}
+function submitSnapshot(){
+  const managing = document.getElementById('snap-managing').value.trim();
+  const notdoing = document.getElementById('snap-notdoing').value.trim();
+  if(!managing || !notdoing){ showAlert('Please fill in both fields.'); return; }
+  const snap = SNAPSHOTS[(state.group - 1) % 4];
+  const entry = { group: state.group, snapshotName: snap.name, managing, notdoing, submittedBy: state.name, ts: Date.now() };
+  const key = keyPrefix('snapshot', state.cls) + 'group' + state.group;
+  runSubmit('snapshot-status', key, entry, () => {
+    markDoneAndShow('snapshot', doneCard(`Group ${state.group} Submitted!`, 'Your group\'s answer has been recorded.'));
+  });
+}
+
+/* ---- SORTING (drag, per-student key) ---- */
+function renderSorting(){
+  const names = SNAPSHOTS.map(s=>s.name);
+  return `
+    <div class="card">
+      <h2>Spectrum Sort</h2>
+      <p>Drag each classroom onto the <b>Explainer — Involver — Enabler</b> spectrum.</p>
+      <div class="track" id="chip-track">
+        <div class="rail"></div>
+        <div class="tick" style="left:0%;">Explainer</div>
+        <div class="tick" style="left:50%;">Involver</div>
+        <div class="tick" style="left:100%; transform:translateX(-100%);">Enabler</div>
+        ${names.map(n => `<div class="chip" data-name="${n}" style="left:${state.sortPositions[n]}%;">${n}</div>`).join('')}
+      </div>
+      <button class="btn" onclick="submitSorting()">Done Placing — Submit</button>
+      <div class="status-area" id="sorting-status"></div>
+    </div>
+  `;
+}
+function attachSortingHandlers(){
+  const track = document.getElementById('chip-track');
+  if(!track) return;
+  const chips = track.querySelectorAll('.chip');
+  chips.forEach(chip => {
+    chip.addEventListener('pointerdown', e => {
+      chip.setPointerCapture(e.pointerId);
+      state.dragging = chip.dataset.name;
+    });
+    chip.addEventListener('pointermove', e => {
+      if(state.dragging !== chip.dataset.name) return;
+      const rect = track.getBoundingClientRect();
+      let pct = ((e.clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(2, Math.min(98, pct));
+      state.sortPositions[chip.dataset.name] = pct;
+      chip.style.left = pct + '%';
+    });
+    chip.addEventListener('pointerup', () => { state.dragging = null; });
+    chip.addEventListener('pointercancel', () => { state.dragging = null; });
+  });
+}
+function submitSorting(){
+  const entry = { id: state.studentId, name: state.name, positions: {...state.sortPositions}, ts: Date.now() };
+  const key = keyPrefix('sorting', state.cls) + state.studentId;
+  runSubmit('sorting-status', key, entry, () => {
+    markDoneAndShow('sorting', doneCard('Submitted!', 'Your placements have been recorded.'));
+  });
+}
+
+/* ---- QUIZ (shared, no reveal, per-student key) ---- */
+function renderQuiz(id){
+  const cfg = QUIZZES[id];
+  const total = cfg.questions.length;
+  if(state.quizIndex >= total){
+    return `
+      <div class="card">
+        <h2>${cfg.title} <span class="badge">All ${total} answered</span></h2>
+        <p>Ready to submit your answers? Your instructor will review the correct answers together with the class afterward.</p>
+        <button class="btn" onclick="submitQuiz('${id}')">Submit Answers</button>
+        <div class="status-area" id="quiz-status"></div>
+      </div>
+    `;
+  }
+  const q = cfg.questions[state.quizIndex];
+  const picked = state.quizAnswers[state.quizIndex];
+  return `
+    <div class="card">
+      <h2>${cfg.title} <span class="badge">${state.quizIndex+1} / ${total}</span></h2>
+      <p>${q.stem}</p>
+      <div>
+        ${q.options.map((o,i)=>`<button class="option-btn ${picked===i?'selected':''}" onclick="pickQuiz('${id}',${i})">${o}</button>`).join('')}
+      </div>
+      <div class="btn-row">
+        <button class="btn" ${picked===undefined?'disabled':''} onclick="advanceQuiz('${id}')">${state.quizIndex===total-1 ? 'Review' : 'Next Question'}</button>
+      </div>
+    </div>
+  `;
+}
+function pickQuiz(id, idx){
+  state.quizAnswers[state.quizIndex] = idx;
+  render();
+}
+function advanceQuiz(id){
+  state.quizIndex++;
+  render();
+}
+function submitQuiz(id){
+  const cfg = QUIZZES[id];
+  let score = 0;
+  cfg.questions.forEach((q,i) => { if(state.quizAnswers[i] === q.correct) score++; });
+  const entry = { id: state.studentId, name: state.name, answers: state.quizAnswers, score, total: cfg.questions.length, ts: Date.now() };
+  const key = keyPrefix(id, state.cls) + state.studentId;
+  runSubmit('quiz-status', key, entry, () => {
+    markDoneAndShow(id, doneCard('Submitted!', 'Your answers have been recorded. Your instructor will review the correct answers with the class.'));
+  });
+}
+
+/* ---- REFLECTION (per-student key) ---- */
+function renderReflection(){
+  return `
+    <div class="card">
+      <h2>Reflection</h2>
+      <p>In one sentence: which would you like to become — <b>Explainer, Involver, or Enabler</b> — and why?</p>
+      <div class="field">
+        <textarea id="refl-text" placeholder="e.g. I want to become an Involver because..."></textarea>
+      </div>
+      <button class="btn" onclick="submitReflection()">Submit</button>
+      <div class="status-area" id="refl-status"></div>
+    </div>
+  `;
+}
+function submitReflection(){
+  const text = document.getElementById('refl-text').value.trim();
+  if(!text){ showAlert('Please write something.'); return; }
+  const entry = { id: state.studentId, name: state.name, text, ts: Date.now() };
+  const key = keyPrefix('reflectionA', state.cls) + state.studentId;
+  runSubmit('refl-status', key, entry, () => {
+    markDoneAndShow('reflectionA', doneCard('Submitted!', 'Your reflection has been recorded.'));
+  });
+}
+
+/* ---- EPIC GAME (no reveal, per-student key) ---- */
+function renderEpic(){
+  const allChosen = EPIC_PAIRS.every(p => state.epicChoices[p.id]);
+  return `
+    <div class="card">
+      <h2>EPIC: Which Word Should You Teach?</h2>
+      <p>Choose the expression that is clearer, more widely used, and more broadly accepted internationally.</p>
+      ${EPIC_PAIRS.map(p => `
+        <div class="pair-row">
+          <button class="pair-btn ${state.epicChoices[p.id]==='a'?'selected':''}" onclick="chooseEpic('${p.id}','a')">${p.a}</button>
+          <button class="pair-btn ${state.epicChoices[p.id]==='b'?'selected':''}" onclick="chooseEpic('${p.id}','b')">${p.b}</button>
+        </div>
+      `).join('')}
+      <button class="btn" ${allChosen?'':'disabled'} onclick="submitEpic()">All Chosen — Submit</button>
+      <div class="status-area" id="epic-status"></div>
+    </div>
+  `;
+}
+function chooseEpic(id, val){ state.epicChoices[id] = val; render(); }
+function submitEpic(){
+  const entry = { id: state.studentId, name: state.name, choices: {...state.epicChoices}, ts: Date.now() };
+  const key = keyPrefix('epic', state.cls) + state.studentId;
+  runSubmit('epic-status', key, entry, () => {
+    markDoneAndShow('epic', doneCard('Submitted!', 'Your choices have been recorded. Your instructor will go over the reasoning with the class.'));
+  });
+}
+
+/* ---- TIMELINE (group — one key per group) ---- */
+function renderTimeline(){
+  return `
+    <div class="card">
+      <h2>Method Timeline</h2>
+      <p>Arrange the four methods in the <b>order they were introduced</b>, and match each one to its core theory. Only one submission is needed per group.</p>
+      ${state.timelineOrder.map((mid,i) => {
+        const m = METHODS.find(x=>x.id===mid);
+        return `
+          <div class="method-card">
+            <div class="num">${i+1}</div>
+            <div class="name">${m.name}</div>
+            <div class="arrow-btns">
+              <button onclick="moveTimeline(${i},-1)" ${i===0?'disabled':''}>↑</button>
+              <button onclick="moveTimeline(${i},1)" ${i===state.timelineOrder.length-1?'disabled':''}>↓</button>
+            </div>
+          </div>
+          <select class="match-select" onchange="matchTimeline('${mid}', this.value)">
+            <option value="">— Select core theory —</option>
+            ${METHODS.map(t=>`<option value="${t.id}" ${state.timelineMatch[mid]===t.id?'selected':''}>${t.theory}</option>`).join('')}
+          </select>
+          <div style="height:10px;"></div>
+        `;
+      }).join('')}
+      <button class="btn" style="margin-top:8px;" onclick="submitTimeline()">Submit Group Answer</button>
+      <div class="status-area" id="timeline-status"></div>
+    </div>
+  `;
+}
+function moveTimeline(i, dir){
+  const arr = state.timelineOrder;
+  const j = i + dir;
+  if(j<0 || j>=arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+  render();
+}
+function matchTimeline(mid, val){ state.timelineMatch[mid] = val; }
+function submitTimeline(){
+  const allMatched = METHODS.every(m => state.timelineMatch[m.id]);
+  if(!allMatched){ showAlert('Please match a core theory to every method.'); return; }
+  const entry = { group: state.group, order: [...state.timelineOrder], match: {...state.timelineMatch}, submittedBy: state.name, ts: Date.now() };
+  const key = keyPrefix('timeline', state.cls) + 'group' + state.group;
+  runSubmit('timeline-status', key, entry, () => {
+    markDoneAndShow('timeline', doneCard(`Group ${state.group} Submitted!`, 'Your group\'s timeline has been recorded.'));
+  });
+}
+
+/* ---- SYNTHESIS FEED (per-student key) ---- */
+function renderFeed(){
+  return `
+    <div class="card">
+      <h2>Synthesis Feed</h2>
+      <p>Answer briefly — <b>what does "principled eclecticism" mean to YOU as a future teacher?</b></p>
+      <div class="field">
+        <textarea id="feed-text" placeholder="A few words, or one sentence..."></textarea>
+      </div>
+      <button class="btn" onclick="submitFeed()">Submit</button>
+      <div class="status-area" id="feed-status"></div>
+    </div>
+  `;
+}
+function submitFeed(){
+  const text = document.getElementById('feed-text').value.trim();
+  if(!text){ showAlert('Please write something.'); return; }
+  const entry = { id: state.studentId, name: state.name, text, ts: Date.now() };
+  const key = keyPrefix('feed', state.cls) + state.studentId;
+  runSubmit('feed-status', key, entry, () => {
+    markDoneAndShow('feed', doneCard('Submitted!', 'Your answer has been recorded. Your instructor will share highlights with the class.'));
+  });
+}
+
+/* ============================= INSTRUCTOR AUTH ============================= */
+
+screens.instructorAuth = () => `
+  <div class="card" style="max-width:420px; margin:60px auto;">
+    <p class="eyebrow">Instructor Login</p>
+    <h2>Enter the Password</h2>
+    <div class="field">
+      <input type="password" id="in-pw" placeholder="Password">
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="submitInstructorAuth()">Enter</button>
+      <button class="btn ghost" onclick="switchMode('student')">Back</button>
+    </div>
+  </div>
+`;
+afterRender.instructorAuth = () => {
+  document.getElementById('in-pw').addEventListener('keydown', e => { if(e.key==='Enter') submitInstructorAuth(); });
+};
+async function submitInstructorAuth(){
+  const pw = document.getElementById('in-pw').value;
+  if(pw !== 'ELT100'){ showAlert('Incorrect password.'); return; }
+  state.instructorAuthed = true;
+  state.mode = 'instructor';
+  state.screen = 'dashboard';
+  state.dashboardLoading = true;
+  render();
+  await loadDashboardData();
+  state.dashboardLoading = false;
+  render();
+}
+
+/* ============================= INSTRUCTOR DASHBOARD ============================= */
+
+let DASH_DATA = {};
+const ACTIVITY_IDS = [...BLOCK_A, ...BLOCK_B, ...BLOCK_S].map(x=>x.id);
+
+async function loadDashboardData(){
+  const cls = state.instrClass;
+  const results = await Promise.all(ACTIVITY_IDS.map(id => loadAllForPrefix(keyPrefix(id, cls))));
+  const fresh = {};
+  ACTIVITY_IDS.forEach((id, i) => { fresh[id] = results[i]; });
+  DASH_DATA = fresh;
+}
+screens.dashboard = () => {
+  const cls = state.instrClass;
+  const busy = state.dashboardLoading;
+  return `
+    <div style="padding-top:20px;">
+      <div class="section-head">
+        <div>
+          <p class="board-eyebrow">Instructor Dashboard</p>
+          <h1>Week 2 Live Results</h1>
+        </div>
+        <div class="btn-row" style="margin-top:0;">
+          <button class="board-btn" ${busy?'disabled':''} onclick="refreshDashboard()">🔄 Refresh All</button>
+          <button class="board-btn danger" ${busy?'disabled':''} onclick="resetAllData()">🗑️ Reset All</button>
+        </div>
+      </div>
+      <div class="tab-row">
+        <button class="tab ${cls==='A'?'active':''}" ${busy?'disabled':''} onclick="switchInstrClass('A')">A Class (${CLASS_SIZE.A} students)</button>
+        <button class="tab ${cls==='B'?'active':''}" ${busy?'disabled':''} onclick="switchInstrClass('B')">B Class (${CLASS_SIZE.B} students)</button>
+      </div>
+      ${busy ? `
+        <div class="board-card">
+          <div class="saving-row" style="color:#B7C2BB; font-size:14.5px;"><div class="spinner"></div>Loading responses…</div>
+        </div>
+      ` : `
+      <h3 style="color:var(--board-accent); margin:20px 0 8px;">Concept Block A</h3>
+      ${renderDashPoll('poll1')}
+      ${renderDashSnapshot()}
+      ${renderDashSorting()}
+      ${renderDashQuiz('quizA')}
+      ${renderDashReflection()}
+      <h3 style="color:var(--board-accent); margin:20px 0 8px;">Concept Block B</h3>
+      ${renderDashEpic()}
+      ${renderDashTimeline()}
+      ${renderDashQuiz('quizB')}
+      ${renderDashPoll('poll2')}
+      <h3 style="color:var(--board-accent); margin:20px 0 8px;">Synthesis</h3>
+      ${renderDashFeed()}
+      `}
+    </div>
+  `;
+};
+async function switchInstrClass(cls){
+  if(state.dashboardLoading) return;
+  state.instrClass = cls;
+  state.dashboardLoading = true;
+  render();
+  await loadDashboardData();
+  state.dashboardLoading = false;
+  render();
+}
+async function refreshDashboard(){
+  if(state.dashboardLoading) return;
+  state.dashboardLoading = true;
+  render();
+  await loadDashboardData();
+  state.dashboardLoading = false;
+  render();
+}
+function dashHeader(title, activityId, count){
+  const cls = state.instrClass;
+  return `
+    <div class="section-head">
+      <h3>${title}</h3>
+      <span class="resp-count">${count} / ${CLASS_SIZE[cls]} responses</span>
+    </div>
+  `;
+}
+function resetAllData(){
+  if(state.dashboardLoading) return;
+  showConfirm(
+    'This will permanently delete ALL student responses for both A Class and B Class, across every activity, and clear your own in-progress work. This cannot be undone. Continue?',
+    async () => {
+      state.dashboardLoading = true;
+      render();
+      const results = await Promise.all(
+        ACTIVITY_IDS.flatMap(id => [resetActivity(id, 'A'), resetActivity(id, 'B')])
+      );
+      // Clear this browser session's local student progress too, so switching to
+      // Student view reflects the reset instead of showing stale checkmarks/answers.
+      state.completed = new Set();
+      state.group = null;
+      state.pendingGroupFor = null;
+      state.quizIndex = 0;
+      state.quizAnswers = [];
+      state.epicChoices = {};
+      state.sortPositions = { Andrea:10, Maia:37, Lee:63, Paoli:90 };
+      state.timelineOrder = ['al','gt','ca','dm'];
+      state.timelineMatch = {};
+      await loadDashboardData();
+      state.dashboardLoading = false;
+      render();
+      if(results.some(r => r === false)){
+        showAlert('Some responses could not be deleted due to a connection issue. Please press Reset All again to finish clearing them.');
+      }
+    }
+  );
+}
+function renderDashPoll(id){
+  const cfg = POLLS[id];
+  const data = DASH_DATA[id] || [];
+  const counts = {};
+  cfg.options.forEach(o => counts[o] = 0);
+  data.forEach(d => { if(counts[d.choice] !== undefined) counts[d.choice]++; });
+  const max = Math.max(1, ...Object.values(counts));
+  return `
+    <div class="board-card">
+      ${dashHeader(cfg.title, id, data.length)}
+      ${cfg.options.map(o => `
+        <div class="bar-row">
+          <div class="bar-label">${o}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(counts[o]/max*100)}%;"></div></div>
+          <div class="bar-count">${counts[o]}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+function renderDashSnapshot(){
+  const data = DASH_DATA['snapshot'] || [];
+  return `
+    <div class="board-card">
+      ${dashHeader('Snapshot Analysis (by Group)', 'snapshot', data.length)}
+      ${data.length ? data.slice().sort((a,b)=>a.group-b.group).map(d => `
+        <div class="mini-note">
+          <b>Group ${d.group} — ${d.snapshotName}</b><br>
+          Managing: ${escapeHtml(d.managing)}<br>
+          Not doing: ${escapeHtml(d.notdoing)}
+        </div>
+      `).join('') : '<div class="empty-msg">No groups have submitted yet.</div>'}
+    </div>
+  `;
+}
+function renderDashSorting(){
+  const data = DASH_DATA['sorting'] || [];
+  const names = SNAPSHOTS.map(s=>s.name);
+  let avgHtml = '';
+  names.forEach(n => {
+    const vals = data.map(d => d.positions[n]).filter(v => v !== undefined);
+    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length) : 50;
+    avgHtml += `
+      <div style="margin-bottom:14px;">
+        <div class="bar-label" style="width:auto; margin-bottom:4px;">${n} — avg ${avg.toFixed(0)}%</div>
+        <div class="scatter-track">
+          <div class="avgline" style="left:${avg}%;"></div>
+          ${vals.map(v => `<div class="dot2" style="left:${v}%;"></div>`).join('')}
+        </div>
+      </div>
+    `;
+  });
+  return `
+    <div class="board-card">
+      ${dashHeader('Spectrum Sort (Explainer 0% — Enabler 100%)', 'sorting', data.length)}
+      ${data.length ? avgHtml : '<div class="empty-msg">No responses yet.</div>'}
+    </div>
+  `;
+}
+function renderDashQuiz(id){
+  const cfg = QUIZZES[id];
+  const data = DASH_DATA[id] || [];
+  const perQ = cfg.questions.map((q,qi) => {
+    const correctCount = data.filter(d => d.answers && d.answers[qi] === q.correct).length;
+    const pct = data.length ? Math.round(correctCount/data.length*100) : 0;
+    return { qi, pct };
+  });
+  const avgScore = data.length ? (data.reduce((a,d)=>a+d.score,0)/data.length).toFixed(1) : '—';
+  return `
+    <div class="board-card">
+      ${dashHeader(cfg.title + ` (avg ${avgScore} / ${cfg.questions.length})`, id, data.length)}
+      ${data.length ? perQ.map(p => `
+        <div class="bar-row">
+          <div class="bar-label">Q${p.qi+1} correct rate</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${p.pct}%;"></div></div>
+          <div class="bar-count">${p.pct}%</div>
+        </div>
+      `).join('') : '<div class="empty-msg">No responses yet.</div>'}
+    </div>
+  `;
+}
+function renderDashReflection(){
+  const data = DASH_DATA['reflectionA'] || [];
+  return `
+    <div class="board-card">
+      ${dashHeader('Reflection: What Kind of Teacher Do I Want to Be', 'reflectionA', data.length)}
+      ${data.length ? data.slice().reverse().map(d => `<div class="mini-note"><b>${d.name}</b><br>${escapeHtml(d.text)}</div>`).join('') : '<div class="empty-msg">No responses yet.</div>'}
+    </div>
+  `;
+}
+function renderDashEpic(){
+  const data = DASH_DATA['epic'] || [];
+  return `
+    <div class="board-card">
+      ${dashHeader('EPIC Word Choice', 'epic', data.length)}
+      ${EPIC_PAIRS.map(p => {
+        const countA = data.filter(d => d.choices[p.id]==='a').length;
+        const countB = data.filter(d => d.choices[p.id]==='b').length;
+        const max = Math.max(1, countA, countB);
+        return `
+          <div style="margin-bottom:12px;">
+            <div class="bar-label" style="width:auto; margin-bottom:4px;">${p.a} vs ${p.b} <span style="color:var(--board-accent); font-weight:700;">(correct: ${p.correct==='a'?p.a:p.b})</span></div>
+            <div class="bar-row"><div class="bar-label">${p.a}</div><div class="bar-track"><div class="bar-fill" style="width:${countA/max*100}%;"></div></div><div class="bar-count">${countA}</div></div>
+            <div class="bar-row"><div class="bar-label">${p.b}</div><div class="bar-track"><div class="bar-fill" style="width:${countB/max*100}%;"></div></div><div class="bar-count">${countB}</div></div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+function renderDashTimeline(){
+  const data = DASH_DATA['timeline'] || [];
+  const correctGroups = data.filter(d => JSON.stringify(d.order) === JSON.stringify(CORRECT_ORDER)).length;
+  return `
+    <div class="board-card">
+      ${dashHeader(`Method Timeline (groups with correct order: ${correctGroups}/${data.length || 0})`, 'timeline', data.length)}
+      <p style="font-size:12.5px; margin-bottom:12px;">Correct order: ${CORRECT_ORDER.map(id=>METHODS.find(m=>m.id===id).name).join(' → ')}</p>
+      ${data.length ? data.slice().sort((a,b)=>a.group-b.group).map(d => {
+        const isCorrect = JSON.stringify(d.order) === JSON.stringify(CORRECT_ORDER);
+        return `
+          <div class="mini-note">
+            <b>Group ${d.group}</b> ${isCorrect ? '✅' : '❌'}<br>
+            ${d.order.map(id=>METHODS.find(m=>m.id===id).name).join(' → ')}
+          </div>
+        `;
+      }).join('') : '<div class="empty-msg">No groups have submitted yet.</div>'}
+    </div>
+  `;
+}
+function renderDashFeed(){
+  const data = DASH_DATA['feed'] || [];
+  return `
+    <div class="board-card">
+      ${dashHeader('Synthesis Feed', 'feed', data.length)}
+      ${data.length ? data.slice().reverse().map(d => `<div class="mini-note"><b>${d.name}</b><br>${escapeHtml(d.text)}</div>`).join('') : '<div class="empty-msg">No responses yet.</div>'}
+    </div>
+  `;
+}
+
+/* ============================= INIT ============================= */
+render();
+</script>
+</body>
+</html>
