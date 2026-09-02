@@ -1265,8 +1265,38 @@ function renderResultCard(a, responses, klass){
     });
   } else if (a.type === "group"){
     if (a.id === "a3"){
+      // Class-wide tally: for each of the 8 items, how many groups put it in
+      // Bucket 1 vs Bucket 2 (previously this per-item data was saved but
+      // never rendered anywhere on the dashboard - only the free-text
+      // justification was shown).
+      var itemTally = a.items.map(function(){ return { b1:0, b2:0 }; });
       responses.forEach(function(r){
-        card.appendChild(el("div", { class:"resp-line" }, ["Group " + r.groupNum + ": " + (r.justification||"").slice(0,140)]));
+        (a.items || []).forEach(function(item, idx){
+          var v = r.answers ? r.answers[item] : null;
+          if (v === "1") itemTally[idx].b1++;
+          else if (v === "2") itemTally[idx].b2++;
+        });
+      });
+      var tallyWrap = el("div", { style:"margin-bottom:12px;" });
+      a.items.forEach(function(item, idx){
+        var t = itemTally[idx];
+        tallyWrap.appendChild(el("div", { style:"font-size:12.5px; color:#D7DED9; margin-bottom:4px;" }, [
+          (idx+1) + ". " + item + " \u2014 Bucket 1: " + t.b1 + " / Bucket 2: " + t.b2,
+        ]));
+      });
+      card.appendChild(tallyWrap);
+
+      responses.forEach(function(r){
+        var perGroupLine = (a.items || []).map(function(item, idx){
+          var v = r.answers ? r.answers[item] : null;
+          return (idx+1) + "\u2192" + (v === "1" ? "B1" : v === "2" ? "B2" : "?");
+        }).join("  ");
+        card.appendChild(el("div", { class:"resp-line" }, [
+          "Group " + r.groupNum + ": " + perGroupLine,
+        ]));
+        card.appendChild(el("div", { class:"resp-line", style:"font-style:italic; color:#B7C2BB;" }, [
+          (r.justification||"").slice(0,140),
+        ]));
       });
     } else {
       // b3: show each group's per-member self-ID tally (not just one value) alongside the debate answer
