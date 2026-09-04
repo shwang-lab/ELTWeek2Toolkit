@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 Toolkit &mdash; Bilingual Education &amp; Language Policy</title>
+<style>
+:root{
+  --teal:#1F4E44; --teal-acc:#2F6F62; --gold:#C98A2B; --gold-lt:#E8C468;
+  --ink:#1B2430; --cream:#F2EFE6; --white:#FFFFFF; --cardbg:#F3F1EC; --muted:#6B7280;
+  --success:#7BC67E; --error:#A23B33; --error-bg:#FDEDEA;
+  --mint:#E4EFEC; --goldtan:#FBF0DC;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--white);color:var(--ink);
+  font-family:"Segoe UI", Arial, sans-serif;}
+h1,h2,h3,.serif{font-family:Georgia, "Times New Roman", serif;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+#app{min-height:600px;padding-bottom:60px;}
+.app-content{max-width:920px;margin:0 auto;padding:84px 20px 40px 20px;}
+.app-content.wide{max-width:1180px;}
+
+/* ---- top toggle pill ---- */
+.top-toggle{position:fixed;top:16px;right:16px;z-index:500;display:flex;
+  background:var(--white);border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  overflow:hidden;border:1px solid #ddd;}
+.top-toggle button{border:none;background:transparent;padding:8px 18px;font-size:13px;
+  font-weight:700;color:var(--muted);}
+.top-toggle button.active{background:var(--teal);color:var(--white);}
+
+/* ---- buttons ---- */
+.btn{border:none;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:700;
+  transition:opacity .15s;}
+.btn:disabled{opacity:.55;cursor:not-allowed;}
+.btn-primary{background:var(--teal);color:var(--white);}
+.btn-primary:hover:not(:disabled){opacity:.9;}
+.btn-secondary{background:var(--cardbg);color:var(--ink);}
+.btn-secondary:hover:not(:disabled){opacity:.85;}
+.btn-danger{background:var(--error);color:var(--white);}
+.btn-gold{background:var(--gold);color:var(--ink);}
+.btn-block{width:100%;}
+.btn-sm{padding:6px 12px;font-size:13px;border-radius:8px;}
+.btn-link{background:none;border:none;color:var(--teal-acc);font-weight:700;
+  font-size:14px;padding:4px 0;text-decoration:underline;}
+
+/* ---- cards / layout ---- */
+.card{background:var(--cardbg);border-radius:14px;padding:24px;margin-bottom:16px;}
+.card-white{background:var(--white);border:1px solid #e6e3da;border-radius:14px;padding:20px;margin-bottom:14px;}
+.section-title{color:var(--teal);font-size:22px;font-weight:700;margin:28px 0 12px 0;
+  border-bottom:2px solid var(--teal);padding-bottom:6px;}
+.muted{color:var(--muted);}
+.center{text-align:center;}
+
+/* ---- pills / badges ---- */
+.pill{display:inline-block;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700;}
+.pill-progress{background:var(--gold);color:var(--ink);}
+.badge-group{background:var(--gold-lt);color:var(--ink);}
+.badge-individual{background:var(--mint);color:var(--teal-acc);}
+.check{color:var(--success);font-weight:900;font-size:18px;}
+
+/* ---- landing ---- */
+.landing-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding-top:70px;}
+.landing-cards{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;
+  width:100%;max-width:700px;margin-top:36px;}
+.landing-card{background:var(--teal);color:var(--cream);border-radius:16px;padding:34px 20px;
+  text-align:center;cursor:pointer;border:none;font-size:18px;font-weight:700;}
+.landing-card:hover{opacity:.92;}
+.landing-card .sub{display:block;font-weight:400;font-size:13px;color:var(--gold-lt);
+  margin-top:8px;}
+
+/* ---- course map ---- */
+.map-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  gap:10px;margin-bottom:8px;}
+.activity-row{display:flex;align-items:center;gap:14px;background:var(--white);
+  border:1px solid #e6e3da;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;}
+.activity-row:hover{background:var(--mint);}
+.activity-num{width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;}
+.activity-body{flex:1;min-width:0;}
+.activity-title{font-weight:700;font-size:15px;}
+.activity-blurb{color:var(--muted);font-size:13px;margin-top:2px;}
+.activity-right{display:flex;align-items:center;gap:10px;flex:none;}
+
+/* ---- forms ---- */
+.field-label{font-weight:700;font-size:14px;margin-bottom:6px;display:block;}
+.text-input{width:100%;padding:12px 14px;border:1px solid #ccc;border-radius:10px;font-size:15px;}
+.select-input{width:100%;padding:10px 12px;border:1px solid #ccc;border-radius:10px;font-size:14px;background:var(--white);}
+.textarea-input{width:100%;padding:12px 14px;border:1px solid #ccc;border-radius:10px;font-size:14px;
+  min-height:90px;resize:vertical;}
+
+/* ---- activity content blocks ---- */
+.option-row{display:flex;align-items:center;gap:12px;background:var(--cardbg);border-radius:10px;
+  padding:12px 16px;margin-bottom:10px;cursor:pointer;border:2px solid transparent;}
+.option-row.selected{border-color:var(--teal-acc);background:var(--mint);}
+.option-letter{font-weight:700;color:var(--gold);width:20px;flex:none;}
+.match-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:14px;margin-bottom:12px;
+  align-items:center;}
+.match-term{background:var(--teal);color:var(--white);border-radius:8px;padding:12px 14px;
+  font-weight:700;font-size:14px;}
+.order-row{display:flex;align-items:center;gap:12px;background:var(--cardbg);border-radius:10px;
+  padding:12px 16px;margin-bottom:10px;}
+.order-num{width:28px;height:28px;border-radius:50%;background:var(--teal-acc);color:var(--white);
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;}
+.order-text{flex:1;font-size:14px;}
+.order-btns{display:flex;flex-direction:column;gap:2px;flex:none;}
+.order-btns button{width:28px;height:22px;border:1px solid #ccc;background:var(--white);
+  border-radius:5px;font-size:11px;padding:0;}
+.quiz-item{margin-bottom:22px;}
+.quiz-q{font-weight:700;margin-bottom:10px;font-size:15px;}
+
+/* ---- banners ---- */
+.banner-error{background:var(--error-bg);color:var(--error);border-radius:10px;padding:12px 16px;
+  font-size:14px;margin:14px 0;font-weight:600;}
+.banner-error .tech{display:block;margin-top:4px;font-weight:400;font-size:12px;opacity:.85;}
+.banner-mint{background:var(--mint);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px;}
+.banner-gold{background:var(--goldtan);border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px;}
+
+/* ---- submitted screen ---- */
+.submitted-wrap{text-align:center;padding-top:60px;}
+.submitted-check{font-size:60px;color:var(--success);}
+
+/* ---- spinner ---- */
+.spinner{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+.spinner.dark{border:2.5px solid rgba(0,0,0,.15);border-top-color:var(--teal);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ---- modal ---- */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.modal-card{background:var(--white);border-radius:14px;padding:26px;max-width:440px;width:100%;}
+.modal-title{font-weight:700;font-size:18px;margin-bottom:10px;}
+.modal-body{font-size:14px;color:var(--ink);line-height:1.5;margin-bottom:20px;}
+.modal-btns{display:flex;justify-content:flex-end;gap:10px;}
+
+/* ---- instructor dashboard ---- */
+.dash{background:var(--teal);min-height:600px;color:var(--cream);}
+.dash .app-content{max-width:1180px;}
+.dash-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  margin-bottom:18px;}
+.dash-tabs{display:flex;gap:8px;}
+.dash-tab{padding:9px 22px;border-radius:10px;border:none;font-weight:700;font-size:14px;
+  background:#173D36;color:var(--cream);}
+.dash-tab.active{background:var(--gold-lt);color:var(--ink);}
+.dash-actions{display:flex;gap:10px;}
+.dash-block-title{color:var(--gold-lt);font-size:19px;font-weight:700;margin:26px 0 12px 0;
+  border-bottom:1px solid #3a6a5f;padding-bottom:6px;}
+.dash-card{background:#173D36;border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.dash-card-title{font-weight:700;font-size:15px;margin-bottom:10px;}
+.dash-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:13px;}
+.dash-bar-track{flex:1;background:#0f2b26;border-radius:6px;height:16px;overflow:hidden;}
+.dash-bar-fill{height:100%;background:var(--gold-lt);}
+.dash-bar-fill.correct{background:var(--success);}
+.dash-acc-pill{display:inline-block;background:var(--success);color:#0f2b26;font-weight:700;
+  border-radius:999px;padding:2px 10px;font-size:12px;}
+.dash-empty{color:#9db3ac;font-style:italic;font-size:13px;}
+.dash-group-item{background:#0f2b26;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;}
+.dash-group-item b{color:var(--gold-lt);}
+.dash-progress-wrap{background:#0f2b26;border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px;}
+
+/* ---- misc ---- */
+.two-col{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;}
+@media (max-width:640px){
+  .two-col{grid-template-columns:minmax(0,1fr);}
+  .match-row{grid-template-columns:minmax(0,1fr);}
+  .landing-cards{grid-template-columns:minmax(0,1fr);}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   CONFIG
+   ========================================================= */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJc_RFDdhCU4_VB41uMefmy6cKgjg4DVwqVk1xBDa5MDAA0aMq53VinzQf1iZKyy4i/exec";
+const WEEK = "week6";
+const INSTRUCTOR_PASSWORD = "ELT100";
+const CLASS_SIZES = { A: 24, B: 20 };
+
+/* =========================================================
+   ACTIVITIES DATA (mirrors the finalized slide deck text)
+   ========================================================= */
+const ACTIVITIES = [
+  { id:"A1", block:"A", num:1, type:"poll", tag:"INDIVIDUAL",
+    title:"Poll \u2014 What Does a Maintenance Program Need?",
+    blurb:"Quick single-select check.",
+    prompt:"Based on what we just covered \u2014 which of these is a requirement for a maintenance (late-exit) bilingual program?",
+    options:[
+      "A sufficient number of certified bilingual teachers",
+      "Native-language materials limited to just the first year",
+      "No student assessment until high school",
+      "Instruction in only one language after 2nd grade"
+    ] },
+  { id:"A2", block:"A", num:2, type:"matching", tag:"INDIVIDUAL",
+    title:"Matching \u2014 Program Type \u2192 Real Goal",
+    blurb:"Match each program type to its real goal.",
+    instruction:"Match each program type to its actual goal, exactly as stated in the chapter\u2019s Table 1.",
+    pairs:[
+      { term:"Early-exit (Transitional)", def:"Proficiency in language of wider communication (L2)" },
+      { term:"Developmental (Maintenance/Late-exit)", def:"Literacy and academic language proficiency in language of wider communication (L2) and in home language (L1)" },
+      { term:"Immersion", def:"Literacy and academic language proficiency in L1 and L2" },
+      { term:"Two-Way Immersion", def:"Literacy and academic language proficiency in language of wider communication and home language/foreign language" },
+      { term:"Newcomer", def:"Proficiency in language of wider communication (L2) and content-area knowledge in home language" }
+    ] },
+  { id:"A3", block:"A", num:3, type:"group-spectrum", tag:"GROUP",
+    title:"GROUP \u2014 Where Does This Program Sit?",
+    blurb:"Group slider + justification.",
+    instruction:"Your group has been assigned a program type below. Place it on the subtractive \u2194 additive spectrum using the slider, then write 1\u20132 sentences justifying your placement using evidence from the chapter.",
+    discussion:"\uD83D\uDCAC What would have to change about this program for it to move further toward the other end of the spectrum?",
+    groupPrograms:["Early-exit (Transitional)","Developmental (Maintenance)","Immersion","Two-Way Immersion"] },
+  { id:"A4", block:"A", num:4, type:"ordering", tag:"INDIVIDUAL",
+    title:"Ordering \u2014 Two-Way Immersion Language Shift",
+    blurb:"Put the stages in order.",
+    instruction:"Put these five stages in order, from Kindergarten/1st grade to 5th grade, using the \u25B2\u25BC buttons.",
+    items:[
+      "Kindergarten & 1st grade: 90% partner language / 10% English",
+      "2nd grade: 80% partner language / 20% English",
+      "3rd grade: 70% partner language / 30% English",
+      "4th grade: 60% partner language / 40% English",
+      "5th grade: 50% partner language / 50% English"
+    ] },
+  { id:"A5", block:"A", num:5, type:"quiz", tag:"INDIVIDUAL",
+    title:"Scenario Quiz \u2014 Pick the Right Program",
+    blurb:"4 short scenarios, pick the right model.",
+    items:[
+      { q:"A school has 30 recent immigrant students, ages 14\u201317, who all arrived this semester and share no common first language among most of them, but every student needs to build basic English quickly. Which program type best fits?",
+        options:["Two-way immersion","Newcomer program","Maintenance bilingual education","Vocational training program"], correct:1 },
+      { q:"A district wants students to leave elementary school proficient AND literate in both English and Spanish, and is willing to commit to a K\u20136 program length. Which model fits best?",
+        options:["Early-exit (Transitional)","Pull-out ESL","Developmental (Maintenance)","Submersion"], correct:2 },
+      { q:"An elementary school has roughly equal numbers of native English speakers and native Spanish speakers, and wants both groups to become bilingual and biliterate together in the same classroom. Which model fits?",
+        options:["Two-way immersion","Heritage language program","Content-based immersion","Early-exit (Transitional)"], correct:0 },
+      { q:"A district\u2019s main goal is simply to get language-minority students into English-only mainstream classrooms as quickly as possible, ideally within 1\u20133 years. Which model matches this goal?",
+        options:["Developmental (Maintenance)","Two-way immersion","Early-exit (Transitional)","Heritage language program"], correct:2 }
+    ] },
+  { id:"B1", block:"B", num:1, type:"poll", tag:"INDIVIDUAL",
+    title:"Poll \u2014 Which Type of Planning Is This?",
+    blurb:"Quick single-select check.",
+    prompt:"Deciding which language will be used to teach math and science in a school \u2014 which type of planning is this primarily?",
+    options:["Corpus planning","Status planning","Language acquisition planning","Prestige planning"] },
+  { id:"B2", block:"B", num:2, type:"matching", tag:"INDIVIDUAL",
+    title:"Matching \u2014 Policy Category \u2192 Real Example",
+    blurb:"Match each policy category to its example.",
+    instruction:"Match each policy category to the real example the chapter gives.",
+    pairs:[
+      { term:"Promotion-oriented", def:"Official governmental use/spread of a favored language \u2014 e.g., Spanish has co-official status in New Mexico and Puerto Rico" },
+      { term:"Expediency-oriented", def:"Accommodating minority languages for communication, not promotion \u2014 e.g., providing interpreters in legal proceedings" },
+      { term:"Tolerance-oriented", def:"No state agenda either way \u2014 minority communities maintain their language with no government support or restriction" },
+      { term:"Restriction-oriented", def:"Making rights or benefits contingent on using the dominant language" },
+      { term:"Repression-oriented", def:"Overt attempt to eliminate a minority language \u2014 e.g., Native American boarding schools forbidding native languages" }
+    ] },
+  { id:"B3", block:"B", num:3, type:"group-structured", tag:"GROUP",
+    title:"GROUP \u2014 Analyze Mwaniki\u2019s Case",
+    blurb:"Group discussion, 3 short answers.",
+    instruction:"Discuss Munene Mwaniki\u2019s early schooling as a group (Kenya \u2014 family language Kimbeere, mother\u2019s language Kikamba, school\u2019s \u201cmother tongue\u201d instruction in Kikuyu), then submit your group\u2019s answers.",
+    discussion:"\uD83D\uDCAC Have you seen a case in your own context where \u201cmother tongue\u201d instruction didn\u2019t match a student\u2019s actual home language?",
+    fields:[
+      "1. Using Baker\u2019s weak/strong schema, which program category does the chapter say his early instruction was intended to resemble?",
+      "2. What mismatch does the chapter describe between this intended model and what Mwaniki actually experienced?",
+      "3. What would need to be true for this to actually work as a genuine accommodation?"
+    ] },
+  { id:"B4", block:"B", num:4, type:"quiz", tag:"INDIVIDUAL",
+    title:"Scenario Quiz \u2014 Classify the Policy",
+    blurb:"4 short scenarios, classify the policy.",
+    items:[
+      { q:"A national government requires all court proceedings to be conducted in the national language, but also funds interpreters for non-speakers so they can access the legal system. Which policy type best fits the interpreter provision?",
+        options:["Repression-oriented","Expediency-oriented","Promotion-oriented","Erasure"], correct:1 },
+      { q:"A government funds no minority-language programs and imposes no restrictions either \u2014 minority families maintain their heritage languages entirely on their own, through community schools and media, without any state involvement.",
+        options:["Tolerance-oriented","Restriction-oriented","Null policy","Promotion-oriented"], correct:0 },
+      { q:"A law makes government job eligibility, voting access, and school enrollment all conditional on demonstrated proficiency in the dominant language.",
+        options:["Expediency-oriented","Restriction-oriented","Tolerance-oriented","Promotion-oriented"], correct:1 },
+      { q:"According to Baker\u2019s schema, a program where a language-minority child is placed in an English-only classroom with no native-language support, aiming for assimilation, would be classified as:",
+        options:["A strong program (Two-Way/Dual Language)","A weak program (Submersion)","A strong program (Maintenance/Heritage Language)","A weak program (Majority Language + Foreign Language)"], correct:1 }
+    ] },
+  { id:"S1", block:"S", num:1, type:"matching", tag:"INDIVIDUAL",
+    title:"Matching \u2014 Program Type \u2192 Policy Category",
+    blurb:"Bridge both readings \u2014 no writing needed.",
+    instruction:"Match each Primary-reading program type to the Secondary-reading policy category it best illustrates.",
+    pairs:[
+      { term:"Two-Way Immersion", def:"Promotion-oriented \u2014 actively spreads bilingual proficiency for both groups involved" },
+      { term:"Early-exit (Transitional)", def:"Expediency-oriented \u2014 accommodates L1 just long enough to transition to the dominant language" },
+      { term:"Newcomer", def:"Expediency-oriented \u2014 accommodates recent arrivals\u2019 L1 while building L2 quickly" },
+      { term:"Developmental (Maintenance)", def:"Promotion-oriented \u2014 actively sustains and grows the minority language long-term" }
+    ] }
+];
+
+const BLOCK_LABELS = { A:"Block A \u2014 Primary (Program Models)", B:"Block B \u2014 Secondary (Policy & Planning)", S:"Synthesis" };
+const BLOCK_ORDER = ["A","B","S"];
+
+function activityById(id){ return ACTIVITIES.find(a => a.id === id); }
+function groupCount(cls){ return Math.ceil(CLASS_SIZES[cls] / 4); }
+
+/* =========================================================
+   STORAGE SHIM (Apps Script backend) + adaptive throttle + retry
+   ========================================================= */
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+const throttle = { minGap: 150, okStreak: 0 };
+let lastDispatch = 0;
+let dispatchChain = Promise.resolve();
+
+function scheduleDispatch(fn){
+  const runner = dispatchChain.then(async () => {
+    const wait = Math.max(0, lastDispatch + throttle.minGap - Date.now());
+    if (wait > 0) await sleep(wait);
+    lastDispatch = Date.now();
+    return fn();
+  });
+  dispatchChain = runner.then(() => {}, () => {});
+  return runner;
+}
+function throttleSuccess(){
+  throttle.okStreak++;
+  if (throttle.okStreak > 3) throttle.minGap = Math.max(60, Math.round(throttle.minGap * 0.85));
+}
+function throttleFailure(){
+  throttle.okStreak = 0;
+  throttle.minGap = Math.min(3000, Math.round(throttle.minGap * 2));
+}
+
+async function rawRequest(url, opts){
+  return scheduleDispatch(async () => {
+    try {
+      const res = await fetch(url, opts);
+      throttleSuccess();
+      return res;
+    } catch (e) {
+      throttleFailure();
+      throw e;
+    }
+  });
+}
+
+async function withRetry(fn, retries, baseDelay){
+  let lastErr;
+  for (let i = 0; i <= retries; i++){
+    try { return await fn(); }
+    catch (e) {
+      lastErr = e;
+      if (i < retries) await sleep(baseDelay * Math.pow(2, i) + Math.random() * 120);
+    }
+  }
+  throw lastErr;
+}
+
+async function kvGet(key){
+  try {
+    return await withRetry(async () => {
+      const res = await rawRequest(APPS_SCRIPT_URL + "?action=get&key=" + encodeURIComponent(key));
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "get failed");
+      return data.value;
+    }, 3, 300);
+  } catch (e) {
+    console.warn("kvGet failed after retries, treating as null:", key, e);
+    return null;
+  }
+}
+async function kvSet(key, value){
+  try {
+    return await withRetry(async () => {
+      const res = await rawRequest(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "set", key, value })
+      });
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "set failed");
+      return true;
+    }, 4, 350);
+  } catch (e) {
+    console.error("kvSet failed permanently:", key, e);
+    return { error: (e && e.message) ? e.message : String(e) };
+  }
+}
+async function kvListRaw(prefix){
+  try {
+    return await withRetry(async () => {
+      const res = await rawRequest(APPS_SCRIPT_URL + "?action=list&prefix=" + encodeURIComponent(prefix));
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "list failed");
+      return data.keys;
+    }, 3, 300);
+  } catch (e) {
+    console.warn("kvList failed after retries:", prefix, e);
+    return null; // null = could not verify (distinct from a genuinely empty [])
+  }
+}
+async function kvDelete(key){
+  try {
+    await withRetry(async () => {
+      const res = await rawRequest(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "delete", key })
+      });
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error(data.message || "delete failed");
+      return true;
+    }, 4, 350);
+    return true;
+  } catch (e) {
+    return { error: (e && e.message) ? e.message : String(e) };
+  }
+}
+
+async function mapLimited(items, limit, fn){
+  const results = new Array(items.length);
+  let idx = 0;
+  async function worker(){
+    while (idx < items.length){
+      const i = idx++;
+      results[i] = await fn(items[i], i);
+    }
+  }
+  const workers = [];
+  for (let w = 0; w < Math.min(limit, items.length); w++) workers.push(worker());
+  await Promise.all(workers);
+  return results;
+}
+
+/* =========================================================
+   KEY HELPERS
+   ========================================================= */
+function slugify(name){
+  return String(name).trim().toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "student";
+}
+function indivKey(cls, slug, activityId){ return `${WEEK}:resp:${cls}:${slug}:${activityId}`; }
+function indivPrefix(cls, slug){ return `${WEEK}:resp:${cls}:${slug}:`; }
+function classIndivPrefix(cls){ return `${WEEK}:resp:${cls}:`; }
+function groupKey(cls, groupNum, activityId){ return `${WEEK}:groupresp:${cls}:g${groupNum}:${activityId}`; }
+function classGroupPrefix(cls){ return `${WEEK}:groupresp:${cls}:`; }
+
+/* =========================================================
+   GLOBAL STATE
+   ========================================================= */
+const STATE = {
+  screen: "landing",
+  role: null,
+  studentName: "",
+  studentClass: null,
+  studentSlug: "",
+  instructorAuthed: false,
+  instructorPasswordError: "",
+  currentActivityId: null,
+  groupSelections: {},      // { A: 3, B: 2 }  (per class, chosen group number)
+  groupPicking: {},         // { activityId: true } -> show picker before content
+  completedIndiv: {},       // Set-like: `${cls}:${activityId}` -> true
+  completedGroupCache: {},  // `${cls}:${activityId}` -> true/false once checked
+  draft: {},                // activityId -> in-progress form data
+  submitError: {},          // activityId -> error message
+  submitting: {},           // activityId -> bool
+  mapLoading: false,
+  mapLoadError: "",
+  dashboard: {
+    classTab: "A",
+    loading: false,
+    loadError: "",
+    data: {},              // activityId -> aggregated result
+    resetInProgress: false,
+    resetProgress: null,
+    resetError: "",
+    refreshToken: 0
+  }
+};
+
+/* =========================================================
+   MODAL SYSTEM (never native alert/confirm/prompt)
+   ========================================================= */
+function renderModal(){
+  const root = document.getElementById("modal-root");
+  if (!STATE._modal){ root.innerHTML = ""; return; }
+  const m = STATE._modal;
+  root.innerHTML = `
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-card">
+        ${m.title ? `<div class="modal-title">${escapeHtml(m.title)}</div>` : ""}
+        <div class="modal-body">${m.bodyHtml}</div>
+        <div class="modal-btns">${m.buttons.map((b,i) => `<button class="btn ${b.variant==="primary"?"btn-primary":b.variant==="danger"?"btn-danger":"btn-secondary"}" data-mbtn="${i}">${escapeHtml(b.label)}</button>`).join("")}</div>
+      </div>
+    </div>`;
+  m.buttons.forEach((b, i) => {
+    root.querySelector(`[data-mbtn="${i}"]`).addEventListener("click", b.onClick);
+  });
+}
+function showModal({ title=null, bodyHtml, buttons }){
+  STATE._modal = { title, bodyHtml, buttons };
+  renderModal();
+}
+function hideModal(){
+  STATE._modal = null;
+  renderModal();
+}
+function showAlert(message, onClose){
+  showModal({
+    bodyHtml: escapeHtml(message),
+    buttons: [{ label: "OK", variant: "primary", onClick: () => { hideModal(); if (onClose) onClose(); } }]
+  });
+}
+function showConfirm(message, onConfirm, opts){
+  opts = opts || {};
+  showModal({
+    title: opts.title || null,
+    bodyHtml: escapeHtml(message),
+    buttons: [
+      { label: opts.cancelLabel || "Cancel", variant: "secondary", onClick: hideModal },
+      { label: opts.confirmLabel || "Confirm", variant: opts.danger ? "danger" : "primary",
+        onClick: () => { hideModal(); onConfirm(); } }
+    ]
+  });
+}
+
+function escapeHtml(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/* =========================================================
+   RENDER DISPATCH
+   ========================================================= */
+function render(){
+  const app = document.getElementById("app");
+  let html = "";
+  if (STATE.screen === "landing"){
+    html = renderLanding();
+  } else if (STATE.screen === "student-name"){
+    html = wrapStudentChrome(renderStudentName());
+  } else if (STATE.screen === "student-class"){
+    html = wrapStudentChrome(renderStudentClass());
+  } else if (STATE.screen === "course-map"){
+    html = wrapStudentChrome(renderCourseMap());
+  } else if (STATE.screen === "activity"){
+    html = wrapStudentChrome(renderActivityScreen());
+  } else if (STATE.screen === "submitted"){
+    html = wrapStudentChrome(renderSubmitted());
+  } else if (STATE.screen === "instructor-auth"){
+    html = wrapInstructorChrome(renderInstructorAuth());
+  } else if (STATE.screen === "instructor-dashboard"){
+    html = renderInstructorDashboard();
+  }
+  app.innerHTML = html;
+  attachHandlers();
+  renderModal();
+}
+
+function toggleHtml(){
+  const studentActive = STATE.screen !== "instructor-auth" && STATE.screen !== "instructor-dashboard";
+  return `
+    <div class="top-toggle">
+      <button data-toggle="student" class="${studentActive ? "active" : ""}">Student</button>
+      <button data-toggle="instructor" class="${!studentActive ? "active" : ""}">Instructor</button>
+    </div>`;
+}
+
+function wrapStudentChrome(inner){
+  return `${toggleHtml()}<div class="app-content">${inner}</div>`;
+}
+function wrapInstructorChrome(inner){
+  return `${toggleHtml()}<div class="app-content" style="max-width:520px;padding-top:140px;">${inner}</div>`;
+}
+
+/* =========================================================
+   LANDING
+   ========================================================= */
+function renderLanding(){
+  return `
+    <div class="landing-wrap">
+      <div style="font-size:13px;font-weight:700;letter-spacing:2px;color:var(--gold);">WEEK 6</div>
+      <h1 class="serif" style="color:var(--teal);margin:8px 0 0 0;font-size:30px;text-align:center;">
+        Bilingual Education &amp; the Policies Behind Them
+      </h1>
+      <div class="landing-cards">
+        <button class="landing-card" data-land="student">
+          Enter as Student
+          <span class="sub">Poll, matching, quizzes &amp; group activities</span>
+        </button>
+        <button class="landing-card" data-land="instructor" style="background:#173D36;">
+          Enter as Instructor
+          <span class="sub">Live results dashboard</span>
+        </button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   STUDENT: NAME
+   ========================================================= */
+function renderStudentName(){
+  return `
+    <div class="card" style="max-width:480px;margin:40px auto 0 auto;">
+      <h2 class="serif" style="color:var(--teal);margin-top:0;">What's your name?</h2>
+      <label class="field-label">Name</label>
+      <input type="text" class="text-input" id="nameInput" placeholder="e.g. Siti Rahmawati"
+        value="${escapeHtml(STATE.studentName)}" />
+      <button class="btn btn-primary btn-block" style="margin-top:18px;" id="nameContinueBtn">Continue</button>
+    </div>`;
+}
+
+/* =========================================================
+   STUDENT: CLASS
+   ========================================================= */
+function renderStudentClass(){
+  return `
+    <div class="card" style="max-width:480px;margin:40px auto 0 auto;">
+      <h2 class="serif" style="color:var(--teal);margin-top:0;">Which class are you in?</h2>
+      <p class="muted" style="font-size:13px;">Class A and Class B data are kept completely separate.</p>
+      <div style="display:flex;gap:14px;margin-top:16px;">
+        <button class="btn btn-secondary" style="flex:1;font-size:20px;" data-class="A">Class A</button>
+        <button class="btn btn-secondary" style="flex:1;font-size:20px;" data-class="B">Class B</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   COURSE MAP
+   ========================================================= */
+function totalDoneCount(){
+  let done = 0;
+  ACTIVITIES.forEach(a => {
+    if (isActivityDone(a)) done++;
+  });
+  return done;
+}
+function isActivityDone(a){
+  const cls = STATE.studentClass;
+  if (a.type === "group-spectrum" || a.type === "group-structured"){
+    return !!STATE.completedGroupCache[`${cls}:${a.id}`];
+  }
+  return !!STATE.completedIndiv[`${cls}:${a.id}`];
+}
+
+function renderCourseMap(){
+  const done = totalDoneCount();
+  const total = ACTIVITIES.length;
+  let body = `
+    <div class="map-header">
+      <div>
+        <div style="font-weight:700;font-size:20px;">Hi, ${escapeHtml(STATE.studentName)}!</div>
+        <div class="muted" style="font-size:13px;">Class ${escapeHtml(STATE.studentClass)}</div>
+      </div>
+      <div class="pill pill-progress">${done}/${total} done</div>
+    </div>`;
+
+  if (STATE.mapLoading){
+    body += `<div class="muted" style="margin-top:20px;"><span class="spinner dark"></span> Loading your progress&hellip;</div>`;
+    return body;
+  }
+  if (STATE.mapLoadError){
+    body += `<div class="banner-error">Couldn\u2019t load your progress. <span class="tech">${escapeHtml(STATE.mapLoadError)}</span></div>
+      <button class="btn btn-secondary" id="retryMapLoad">Try Again</button>`;
+  }
+
+  BLOCK_ORDER.forEach(block => {
+    const acts = ACTIVITIES.filter(a => a.block === block);
+    body += `<div class="section-title">${BLOCK_LABELS[block]}</div>`;
+    acts.forEach(a => {
+      const doneFlag = isActivityDone(a);
+      body += `
+        <div class="activity-row" data-open-activity="${a.id}">
+          <div class="activity-num">${a.tag === "GROUP" ? "\uD83D\uDC65" : a.num}</div>
+          <div class="activity-body">
+            <div class="activity-title">${escapeHtml(a.title)}</div>
+            <div class="activity-blurb">${escapeHtml(a.blurb)}</div>
+          </div>
+          <div class="activity-right">
+            ${a.tag === "GROUP" ? `<span class="pill badge-group">GROUP</span>` : `<span class="pill badge-individual">INDIVIDUAL</span>`}
+            ${doneFlag ? `<span class="check">&#10003;</span>` : ``}
+          </div>
+        </div>`;
+    });
+  });
+  return body;
+}
+
+async function loadCourseMapProgress(){
+  STATE.mapLoading = true;
+  STATE.mapLoadError = "";
+  render();
+  const cls = STATE.studentClass;
+  const keys = await kvListRaw(indivPrefix(cls, STATE.studentSlug));
+  if (keys === null){
+    STATE.mapLoading = false;
+    STATE.mapLoadError = "Network issue \u2014 showing activities as not-yet-done for now.";
+    render();
+    return;
+  }
+  keys.forEach(k => {
+    const parts = k.split(":");
+    const activityId = parts[parts.length - 1];
+    STATE.completedIndiv[`${cls}:${activityId}`] = true;
+  });
+  // check group completion only for groups the student already picked this session
+  const groupNum = STATE.groupSelections[cls];
+  if (groupNum){
+    const gKeys = await kvListRaw(`${WEEK}:groupresp:${cls}:g${groupNum}:`);
+    if (gKeys){
+      gKeys.forEach(k => {
+        const parts = k.split(":");
+        const activityId = parts[parts.length - 1];
+        STATE.completedGroupCache[`${cls}:${activityId}`] = true;
+      });
+    }
+  }
+  STATE.mapLoading = false;
+  render();
+}
+
+/* =========================================================
+   ACTIVITY SCREEN
+   ========================================================= */
+function renderActivityScreen(){
+  const a = activityById(STATE.currentActivityId);
+  if (!a) return `<p>Activity not found.</p>`;
+
+  let head = `
+    <button class="btn-link" id="backToMap">&larr; Back to Course Map</button>
+    <div style="display:flex;align-items:center;gap:10px;margin:14px 0 4px 0;">
+      <span class="pill ${a.tag === "GROUP" ? "badge-group" : "badge-individual"}">${a.tag}</span>
+      <span class="muted" style="font-size:13px;">${BLOCK_LABELS[a.block]}</span>
+    </div>
+    <h2 class="serif" style="color:var(--teal);margin:6px 0 18px 0;">${escapeHtml(a.title)}</h2>`;
+
+  const err = STATE.submitError[a.id];
+  const errHtml = err ? `<div class="banner-error">\u26A0\uFE0F Couldn\u2019t save \u2014 please try again.<span class="tech">${escapeHtml(err)}</span></div>` : "";
+
+  if (a.type === "group-spectrum" || a.type === "group-structured"){
+    const cls = STATE.studentClass;
+    const groupNum = STATE.groupSelections[cls];
+    if (!groupNum || STATE.groupPicking[a.id]){
+      return head + renderGroupPicker(a);
+    }
+    return head + errHtml + renderGroupActivityBody(a) ;
+  }
+
+  if (a.type === "poll") return head + errHtml + renderPollBody(a);
+  if (a.type === "matching") return head + errHtml + renderMatchingBody(a);
+  if (a.type === "ordering") return head + errHtml + renderOrderingBody(a);
+  if (a.type === "quiz") return head + errHtml + renderQuizBody(a);
+  return head + `<p>Unsupported activity type.</p>`;
+}
+
+function renderGroupPicker(a){
+  const cls = STATE.studentClass;
+  const n = groupCount(cls);
+  const opts = [];
+  for (let i = 1; i <= n; i++) opts.push(`<option value="${i}">Group ${i}</option>`);
+  return `
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:10px;">Pick your group</div>
+      <p class="muted" style="font-size:13px;">Class ${cls} has ${CLASS_SIZES[cls]} students &rarr; ${n} groups. Your choice is remembered for the rest of this session.</p>
+      <select class="select-input" id="groupPickSelect" style="max-width:220px;">
+        <option value="">Select a group&hellip;</option>
+        ${opts.join("")}
+      </select>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary" id="confirmGroupBtn">Confirm Group</button>
+      </div>
+    </div>`;
+}
+
+function renderGroupActivityBody(a){
+  const cls = STATE.studentClass;
+  const groupNum = STATE.groupSelections[cls];
+  const already = STATE.completedGroupCache[`${cls}:${a.id}`];
+  const changeLink = `<button class="btn-link" id="changeGroupLink" style="margin-bottom:14px;">Group ${groupNum} &middot; change group</button>`;
+
+  if (already){
+    return `${changeLink}
+      <div class="banner-mint">&#10003; Your group has already submitted this activity. Nice work \u2014 you can head back to the Course Map.</div>
+      <button class="btn btn-primary" id="backToMapBtn2">Back to Course Map</button>`;
+  }
+
+  const draft = STATE.draft[a.id] || {};
+
+  if (a.type === "group-spectrum"){
+    const assignedProgram = a.groupPrograms[(groupNum - 1) % a.groupPrograms.length];
+    const sliderVal = draft.slider != null ? draft.slider : 50;
+    return `${changeLink}
+      <div class="banner-gold">Your group's assigned program type: <b>${escapeHtml(assignedProgram)}</b></div>
+      <p>${escapeHtml(a.instruction)}</p>
+      <div style="margin:22px 0;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);">
+          <span>SUBTRACTIVE</span><span>ADDITIVE</span>
+        </div>
+        <input type="range" min="0" max="100" value="${sliderVal}" id="spectrumSlider" style="width:100%;" />
+        <div class="center muted" style="font-size:13px;" id="spectrumVal">Value: ${sliderVal}</div>
+      </div>
+      <label class="field-label">Justification (1\u20132 sentences)</label>
+      <textarea class="textarea-input" id="spectrumJustify" placeholder="Explain your placement using evidence from the chapter&hellip;">${escapeHtml(draft.justify || "")}</textarea>
+      <p class="muted" style="font-style:italic;font-size:13px;margin-top:14px;">${a.discussion}</p>
+      <button class="btn btn-primary" id="submitGroupSpectrum" style="margin-top:10px;">
+        ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+      </button>`;
+  }
+
+  if (a.type === "group-structured"){
+    const fieldsHtml = a.fields.map((f, i) => `
+      <label class="field-label">${escapeHtml(f)}</label>
+      <textarea class="textarea-input" data-gfield="${i}" style="margin-bottom:14px;">${escapeHtml((draft.fields && draft.fields[i]) || "")}</textarea>`).join("");
+    return `${changeLink}
+      <p>${escapeHtml(a.instruction)}</p>
+      ${fieldsHtml}
+      <p class="muted" style="font-style:italic;font-size:13px;">${a.discussion}</p>
+      <button class="btn btn-primary" id="submitGroupStructured" style="margin-top:10px;">
+        ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+      </button>`;
+  }
+}
+
+function renderPollBody(a){
+  const draft = STATE.draft[a.id] || {};
+  const letters = ["A","B","C","D"];
+  const optsHtml = a.options.map((opt, i) => `
+    <div class="option-row ${draft.choice === i ? "selected" : ""}" data-poll-opt="${i}">
+      <span class="option-letter">${letters[i]}.</span><span>${escapeHtml(opt)}</span>
+    </div>`).join("");
+  return `
+    <p style="font-weight:700;">${escapeHtml(a.prompt)}</p>
+    ${optsHtml}
+    <button class="btn btn-primary" id="submitPoll" style="margin-top:10px;">
+      ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+    </button>`;
+}
+
+function renderMatchingBody(a){
+  const draft = STATE.draft[a.id] || {};
+  if (!draft._shuffledDefs){
+    const defs = a.pairs.map(p => p.def);
+    draft._shuffledDefs = shuffleArray(defs.slice());
+    draft.selections = draft.selections || {};
+    STATE.draft[a.id] = draft;
+  }
+  const rows = a.pairs.map((p, i) => {
+    const sel = draft.selections[i] || "";
+    const opts = draft._shuffledDefs.map(d => `<option value="${escapeHtml(d)}" ${sel === d ? "selected" : ""}>${escapeHtml(d)}</option>`).join("");
+    return `
+      <div class="match-row">
+        <div class="match-term">${escapeHtml(p.term)}</div>
+        <select class="select-input" data-match-idx="${i}">
+          <option value="">Choose the matching definition&hellip;</option>
+          ${opts}
+        </select>
+      </div>`;
+  }).join("");
+  return `
+    <p class="muted" style="font-size:14px;font-style:italic;">${escapeHtml(a.instruction)}</p>
+    ${rows}
+    <button class="btn btn-primary" id="submitMatching" style="margin-top:10px;">
+      ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+    </button>`;
+}
+
+function renderOrderingBody(a){
+  const draft = STATE.draft[a.id] || {};
+  if (!draft.order){
+    draft.order = shuffleArray(a.items.map((_, i) => i));
+    STATE.draft[a.id] = draft;
+  }
+  const rows = draft.order.map((itemIdx, pos) => `
+    <div class="order-row">
+      <div class="order-num">${pos + 1}</div>
+      <div class="order-text">${escapeHtml(a.items[itemIdx])}</div>
+      <div class="order-btns">
+        <button data-order-up="${pos}" ${pos === 0 ? "disabled" : ""}>&#9650;</button>
+        <button data-order-down="${pos}" ${pos === draft.order.length - 1 ? "disabled" : ""}>&#9660;</button>
+      </div>
+    </div>`).join("");
+  return `
+    <p class="muted" style="font-size:14px;font-style:italic;">${escapeHtml(a.instruction)}</p>
+    ${rows}
+    <button class="btn btn-primary" id="submitOrdering" style="margin-top:10px;">
+      ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+    </button>`;
+}
+
+function renderQuizBody(a){
+  const draft = STATE.draft[a.id] || {};
+  draft.answers = draft.answers || {};
+  const letters = ["A","B","C","D"];
+  const itemsHtml = a.items.map((it, qi) => {
+    const optsHtml = it.options.map((opt, oi) => `
+      <div class="option-row ${draft.answers[qi] === oi ? "selected" : ""}" data-quiz-q="${qi}" data-quiz-opt="${oi}">
+        <span class="option-letter">${letters[oi]}.</span><span>${escapeHtml(opt)}</span>
+      </div>`).join("");
+    return `<div class="quiz-item"><div class="quiz-q">${qi + 1}. ${escapeHtml(it.q)}</div>${optsHtml}</div>`;
+  }).join("");
+  return `
+    ${itemsHtml}
+    <button class="btn btn-primary" id="submitQuiz" style="margin-top:6px;">
+      ${STATE.submitting[a.id] ? `<span class="spinner"></span> Submitting&hellip;` : "Submit"}
+    </button>`;
+}
+
+function shuffleArray(arr){
+  const a2 = arr.slice();
+  for (let i = a2.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a2[i], a2[j]] = [a2[j], a2[i]];
+  }
+  return a2;
+}
+
+/* =========================================================
+   SUBMITTED SCREEN
+   ========================================================= */
+function nextActivityId(currentId){
+  const idx = ACTIVITIES.findIndex(a => a.id === currentId);
+  if (idx >= 0 && idx < ACTIVITIES.length - 1) return ACTIVITIES[idx + 1].id;
+  return null;
+}
+function renderSubmitted(){
+  const nextId = nextActivityId(STATE._lastSubmittedId);
+  const nextA = nextId ? activityById(nextId) : null;
+  return `
+    <div class="submitted-wrap">
+      <div class="submitted-check">&#10003;</div>
+      <h2 class="serif" style="color:var(--teal);">Submitted!</h2>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+        <button class="btn btn-secondary" id="backToMapFromSubmit">Back to Course Map</button>
+        ${nextA ? `<button class="btn btn-primary" id="nextActivityBtn">Next: ${escapeHtml(nextA.title)} &rarr;</button>` : ""}
+      </div>
+    </div>`;
+}
+
+/* =========================================================
+   INSTRUCTOR AUTH
+   ========================================================= */
+function renderInstructorAuth(){
+  return `
+    <div class="card">
+      <h2 class="serif" style="color:var(--teal);margin-top:0;">Instructor Access</h2>
+      <label class="field-label">Password</label>
+      <input type="password" class="text-input" id="instrPassInput" />
+      ${STATE.instructorPasswordError ? `<div class="banner-error">${escapeHtml(STATE.instructorPasswordError)}</div>` : ""}
+      <button class="btn btn-primary btn-block" id="instrPassSubmit" style="margin-top:16px;">Enter</button>
+    </div>`;
+}
+
+/* =========================================================
+   INSTRUCTOR DASHBOARD
+   ========================================================= */
+function renderInstructorDashboard(){
+  const d = STATE.dashboard;
+  let inner = `
+    ${toggleHtml()}
+    <div class="app-content">
+      <div class="dash-header">
+        <div>
+          <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:var(--gold-lt);">INSTRUCTOR DASHBOARD</div>
+          <h2 class="serif" style="margin:4px 0 0 0;">Week 6 &mdash; Live Results</h2>
+        </div>
+        <div class="dash-actions">
+          <button class="btn btn-gold btn-sm" id="refreshAllBtn" ${d.resetInProgress ? "disabled" : ""}>
+            ${d.loading ? `<span class="spinner dark"></span>` : "\uD83D\uDD04"} Refresh All
+          </button>
+          <button class="btn btn-danger btn-sm" id="resetAllBtn" ${d.resetInProgress ? "disabled" : ""}>\uD83D\uDDD1 Reset All</button>
+        </div>
+      </div>
+      <div class="dash-tabs">
+        <button class="dash-tab ${d.classTab === "A" ? "active" : ""}" data-dtab="A" ${d.resetInProgress ? "disabled" : ""}>Class A</button>
+        <button class="dash-tab ${d.classTab === "B" ? "active" : ""}" data-dtab="B" ${d.resetInProgress ? "disabled" : ""}>Class B</button>
+      </div>`;
+
+  if (d.resetInProgress){
+    const p = d.resetProgress;
+    inner += `<div class="dash-progress-wrap"><span class="spinner"></span> Resetting&hellip; ${p ? `${p.done}/${p.total}` : ""}</div>`;
+  }
+  if (d.resetError){
+    inner += `<div class="banner-error" style="background:#3a1f1c;color:#ffb4a8;">${escapeHtml(d.resetError)}</div>`;
+  }
+  if (d.loadError){
+    inner += `<div class="banner-error" style="background:#3a1f1c;color:#ffb4a8;">${escapeHtml(d.loadError)}
+      <button class="btn btn-secondary btn-sm" id="retryDashLoad" style="margin-top:8px;">Try Again</button></div>`;
+  }
+
+  if (d.loading && !d.resetInProgress){
+    inner += `<div style="margin-top:30px;"><span class="spinner"></span> Loading results&hellip;</div>`;
+  } else if (!d.resetInProgress) {
+    BLOCK_ORDER.forEach(block => {
+      const acts = ACTIVITIES.filter(a => a.block === block);
+      inner += `<div class="dash-block-title">${BLOCK_LABELS[block]}</div>`;
+      acts.forEach(a => { inner += renderDashCard(a); });
+    });
+  }
+
+  inner += `</div>`;
+  return `<div class="dash">${inner}</div>`;
+}
+
+function renderDashCard(a){
+  const d = STATE.dashboard;
+  const result = d.data[a.id];
+  let body = "";
+
+  if (!result || result.count === 0){
+    body = `<div class="dash-empty">No submissions yet.</div>`;
+  } else if (a.type === "poll"){
+    const max = Math.max(1, ...result.counts);
+    body = a.options.map((opt, i) => {
+      const c = result.counts[i] || 0;
+      const pct = result.count ? Math.round((c / result.count) * 100) : 0;
+      return `<div class="dash-bar-row">
+        <div style="width:26px;">${String.fromCharCode(65+i)}</div>
+        <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${(c/max)*100}%;"></div></div>
+        <div style="width:70px;text-align:right;">${c} (${pct}%)</div>
+      </div>`;
+    }).join("") + `<div class="dash-empty" style="margin-top:6px;">${result.count} response(s)</div>`;
+  } else if (a.type === "matching" || a.type === "ordering"){
+    const pct = result.count ? Math.round((result.correctTotal / (result.count * result.slots)) * 100) : 0;
+    body = `<span class="dash-acc-pill">${pct}% avg. accuracy</span>
+      <div class="dash-empty" style="margin-top:8px;">${result.count} submission(s)</div>`;
+  } else if (a.type === "quiz"){
+    body = a.items.map((it, qi) => {
+      const c = result.perQuestion[qi];
+      const pct = result.count ? Math.round((c.correctCount / result.count) * 100) : 0;
+      return `<div style="margin-bottom:10px;">
+        <div style="font-size:13px;font-weight:700;">Q${qi+1}: ${escapeHtml(it.q.slice(0,70))}${it.q.length>70?"&hellip;":""}</div>
+        <div style="font-size:12px;color:var(--gold-lt);margin:2px 0 4px 0;">Correct: ${String.fromCharCode(65+it.correct)}. ${escapeHtml(it.options[it.correct])}</div>
+        <div class="dash-bar-row"><div class="dash-bar-track"><div class="dash-bar-fill correct" style="width:${pct}%;"></div></div>
+        <div style="width:80px;text-align:right;">${pct}% correct</div></div>
+      </div>`;
+    }).join("") + `<div class="dash-empty">${result.count} submission(s) total</div>`;
+  } else if (a.type === "group-spectrum"){
+    body = result.items.map(it => `<div class="dash-group-item"><b>Group ${it.group}</b> (${escapeHtml(it.program)}) &mdash; slider: ${it.slider}<br>${escapeHtml(it.justify)}</div>`).join("") || `<div class="dash-empty">No group submissions yet.</div>`;
+  } else if (a.type === "group-structured"){
+    body = result.items.map(it => `<div class="dash-group-item"><b>Group ${it.group}</b><br>${it.fields.map((f,i)=>`<div style="margin-top:4px;"><i>${escapeHtml(a.fields[i])}</i><br>${escapeHtml(f)}</div>`).join("")}</div>`).join("") || `<div class="dash-empty">No group submissions yet.</div>`;
+  }
+
+  return `<div class="dash-card">
+    <div class="dash-card-title">${a.tag === "GROUP" ? "\uD83D\uDC65 " : ""}${escapeHtml(a.id)} &middot; ${escapeHtml(a.title)}</div>
+    ${body}
+  </div>`;
+}
+
+async function loadDashboardData(){
+  const d = STATE.dashboard;
+  d.loading = true;
+  d.loadError = "";
+  render();
+  const cls = d.classTab;
+  const myToken = ++d.refreshToken;
+
+  const [indivKeys, groupKeys] = await Promise.all([
+    kvListRaw(classIndivPrefix(cls)),
+    kvListRaw(classGroupPrefix(cls))
+  ]);
+  if (myToken !== d.refreshToken) return; // a newer load superseded this one
+
+  if (indivKeys === null || groupKeys === null){
+    d.loading = false;
+    d.loadError = "Couldn\u2019t load results (network issue). Nothing was changed.";
+    render();
+    return;
+  }
+
+  const allKeys = [...indivKeys, ...groupKeys];
+  const values = await mapLimited(allKeys, 6, async (k) => {
+    const v = await kvGet(k);
+    return { key: k, value: v };
+  });
+  if (myToken !== d.refreshToken) return;
+
+  const data = {};
+  ACTIVITIES.forEach(a => {
+    if (a.type === "poll") data[a.id] = { count: 0, counts: a.options.map(() => 0) };
+    else if (a.type === "matching") data[a.id] = { count: 0, correctTotal: 0, slots: a.pairs.length };
+    else if (a.type === "ordering") data[a.id] = { count: 0, correctTotal: 0, slots: a.items.length };
+    else if (a.type === "quiz") data[a.id] = { count: 0, perQuestion: a.items.map(() => ({ correctCount: 0 })) };
+    else if (a.type === "group-spectrum" || a.type === "group-structured") data[a.id] = { count: 0, items: [] };
+  });
+
+  values.forEach(({ key, value }) => {
+    if (value == null) return;
+    let parsed;
+    try { parsed = JSON.parse(value); } catch (e) { return; }
+    const parts = key.split(":");
+    const activityId = parts[parts.length - 1];
+    const a = activityById(activityId);
+    if (!a) return;
+    const res = data[activityId];
+    if (!res) return;
+
+    if (a.type === "poll"){
+      res.count++;
+      if (typeof parsed.choice === "number" && parsed.choice >= 0 && parsed.choice < res.counts.length) res.counts[parsed.choice]++;
+    } else if (a.type === "matching"){
+      res.count++;
+      let correct = 0;
+      a.pairs.forEach((p, i) => { if (parsed.selections && parsed.selections[i] === p.def) correct++; });
+      res.correctTotal += correct;
+    } else if (a.type === "ordering"){
+      res.count++;
+      let correct = 0;
+      if (Array.isArray(parsed.order)){
+        parsed.order.forEach((itemIdx, pos) => { if (itemIdx === pos) correct++; });
+      }
+      res.correctTotal += correct;
+    } else if (a.type === "quiz"){
+      res.count++;
+      a.items.forEach((it, qi) => {
+        if (parsed.answers && parsed.answers[qi] === it.correct) res.perQuestion[qi].correctCount++;
+      });
+    } else if (a.type === "group-spectrum"){
+      res.count++;
+      res.items.push({ group: parts[3].replace("g",""), program: parsed.program, slider: parsed.slider, justify: parsed.justify });
+    } else if (a.type === "group-structured"){
+      res.count++;
+      res.items.push({ group: parts[3].replace("g",""), fields: parsed.fields || [] });
+    }
+  });
+
+  d.data = data;
+  d.loading = false;
+  render();
+}
+
+async function performResetAll(){
+  const d = STATE.dashboard;
+  d.resetInProgress = true;
+  d.resetError = "";
+  d.resetProgress = null;
+  render();
+  try {
+    const [respKeys, groupKeys] = await Promise.all([
+      kvListRaw(`${WEEK}:resp:`),
+      kvListRaw(`${WEEK}:groupresp:`)
+    ]);
+    if (respKeys === null || groupKeys === null){
+      throw new Error("Could not list existing data (network issue) \u2014 nothing was deleted.");
+    }
+    const allKeys = [...respKeys, ...groupKeys];
+    let done = 0;
+    d.resetProgress = { done, total: allKeys.length };
+    render();
+    const failedKeys = [];
+    await mapLimited(allKeys, 5, async (key) => {
+      const res = await kvDelete(key);
+      done++;
+      d.resetProgress = { done, total: allKeys.length };
+      render();
+      if (res !== true) failedKeys.push(key);
+    });
+
+    const [respKeys2, groupKeys2] = await Promise.all([
+      kvListRaw(`${WEEK}:resp:`),
+      kvListRaw(`${WEEK}:groupresp:`)
+    ]);
+    if (respKeys2 === null || groupKeys2 === null){
+      throw new Error("Deleted the data, but couldn\u2019t verify the reset completed (network issue during verification). Please press Reset All again to confirm.");
+    }
+    const remaining = respKeys2.length + groupKeys2.length;
+    if (remaining > 0){
+      throw new Error(`Reset finished, but ${remaining} item(s) still remain. Please press Reset All again.`);
+    }
+
+    d.resetInProgress = false;
+    d.resetProgress = null;
+    d.data = {};
+
+    // Clear local student-session state; instructor auth stays.
+    STATE.studentName = "";
+    STATE.studentClass = null;
+    STATE.studentSlug = "";
+    STATE.groupSelections = {};
+    STATE.groupPicking = {};
+    STATE.completedIndiv = {};
+    STATE.completedGroupCache = {};
+    STATE.draft = {};
+    STATE.submitError = {};
+
+    showModal({
+      title: "Reset complete",
+      bodyHtml: "All response data for both classes has been cleared, and the current session has been sent back to the landing screen.",
+      buttons: [{ label: "OK", variant: "primary", onClick: () => {
+        hideModal();
+        STATE.screen = "landing";
+        render();
+      } }]
+    });
+  } catch (e) {
+    d.resetInProgress = false;
+    d.resetError = (e && e.message) ? e.message : String(e);
+    render();
+  }
+}
+
+/* =========================================================
+   SUBMIT HANDLERS
+   ========================================================= */
+async function doSubmit(a, key, payloadObj, markGroup){
+  STATE.submitting[a.id] = true;
+  STATE.submitError[a.id] = "";
+  render();
+  const res = await kvSet(key, JSON.stringify(payloadObj));
+  STATE.submitting[a.id] = false;
+  if (res === true){
+    const cls = STATE.studentClass;
+    if (markGroup) STATE.completedGroupCache[`${cls}:${a.id}`] = true;
+    else STATE.completedIndiv[`${cls}:${a.id}`] = true;
+    STATE._lastSubmittedId = a.id;
+    STATE.screen = "submitted";
+    render();
+  } else {
+    STATE.submitError[a.id] = (res && res.error) ? res.error : "Unknown error";
+    render();
+  }
+}
+
+function submitPoll(a){
+  const draft = STATE.draft[a.id] || {};
+  if (draft.choice == null){
+    showAlert("Please select an option before submitting.");
+    return;
+  }
+  const cls = STATE.studentClass;
+  doSubmit(a, indivKey(cls, STATE.studentSlug, a.id), { choice: draft.choice }, false);
+}
+
+function submitMatching(a){
+  const draft = STATE.draft[a.id] || {};
+  const sel = draft.selections || {};
+  const missing = a.pairs.some((p, i) => !sel[i]);
+  if (missing){
+    showAlert("Please choose a definition for every term before submitting.");
+    return;
+  }
+  const cls = STATE.studentClass;
+  doSubmit(a, indivKey(cls, STATE.studentSlug, a.id), { selections: sel }, false);
+}
+
+function submitOrdering(a){
+  const draft = STATE.draft[a.id] || {};
+  const cls = STATE.studentClass;
+  doSubmit(a, indivKey(cls, STATE.studentSlug, a.id), { order: draft.order }, false);
+}
+
+function submitQuiz(a){
+  const draft = STATE.draft[a.id] || {};
+  const answers = draft.answers || {};
+  const missing = a.items.some((it, qi) => answers[qi] == null);
+  if (missing){
+    showAlert("Please answer every question before submitting.");
+    return;
+  }
+  const cls = STATE.studentClass;
+  doSubmit(a, indivKey(cls, STATE.studentSlug, a.id), { answers }, false);
+}
+
+function submitGroupSpectrum(a){
+  const draft = STATE.draft[a.id] || {};
+  const justify = (draft.justify || "").trim();
+  if (justify.length < 10){
+    showAlert("Please write a short (1\u20132 sentence) justification before submitting.");
+    return;
+  }
+  const cls = STATE.studentClass;
+  const groupNum = STATE.groupSelections[cls];
+  const program = a.groupPrograms[(groupNum - 1) % a.groupPrograms.length];
+  doSubmit(a, groupKey(cls, groupNum, a.id), { program, slider: draft.slider != null ? draft.slider : 50, justify }, true);
+}
+
+function submitGroupStructured(a){
+  const draft = STATE.draft[a.id] || {};
+  const fields = draft.fields || [];
+  const missing = a.fields.some((f, i) => !(fields[i] || "").trim());
+  if (missing){
+    showAlert("Please fill in all three answers before submitting.");
+    return;
+  }
+  const cls = STATE.studentClass;
+  const groupNum = STATE.groupSelections[cls];
+  doSubmit(a, groupKey(cls, groupNum, a.id), { fields }, true);
+}
+
+/* =========================================================
+   EVENT WIRING
+   ========================================================= */
+function attachHandlers(){
+  const app = document.getElementById("app");
+
+  // top toggle
+  app.querySelectorAll("[data-toggle]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.getAttribute("data-toggle");
+      if (target === "student"){
+        STATE.screen = STATE.studentClass ? "course-map" : (STATE.studentName ? "student-class" : "student-name");
+      } else {
+        STATE.screen = STATE.instructorAuthed ? "instructor-dashboard" : "instructor-auth";
+        if (STATE.screen === "instructor-dashboard") loadDashboardData();
+      }
+      render();
+    });
+  });
+
+  // landing
+  app.querySelectorAll("[data-land]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const which = btn.getAttribute("data-land");
+      if (which === "student"){ STATE.screen = "student-name"; }
+      else {
+        STATE.screen = STATE.instructorAuthed ? "instructor-dashboard" : "instructor-auth";
+        if (STATE.screen === "instructor-dashboard") loadDashboardData();
+      }
+      render();
+    });
+  });
+
+  // student name
+  const nameBtn = document.getElementById("nameContinueBtn");
+  if (nameBtn){
+    nameBtn.addEventListener("click", () => {
+      const val = document.getElementById("nameInput").value.trim();
+      if (!val){ showAlert("Please enter your name."); return; }
+      STATE.studentName = val;
+      STATE.screen = "student-class";
+      render();
+    });
+  }
+
+  // student class
+  app.querySelectorAll("[data-class]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      STATE.studentClass = btn.getAttribute("data-class");
+      STATE.studentSlug = slugify(STATE.studentName) + "-" + STATE.studentClass.toLowerCase();
+      STATE.screen = "course-map";
+      render();
+      loadCourseMapProgress();
+    });
+  });
+
+  // course map
+  app.querySelectorAll("[data-open-activity]").forEach(row => {
+    row.addEventListener("click", () => {
+      const id = row.getAttribute("data-open-activity");
+      STATE.currentActivityId = id;
+      const a = activityById(id);
+      if (a.type === "group-spectrum" || a.type === "group-structured"){
+        const cls = STATE.studentClass;
+        if (!STATE.groupSelections[cls]) STATE.groupPicking[id] = true;
+      }
+      STATE.screen = "activity";
+      render();
+    });
+  });
+  const retryMap = document.getElementById("retryMapLoad");
+  if (retryMap) retryMap.addEventListener("click", loadCourseMapProgress);
+
+  // activity: back
+  const backBtn = document.getElementById("backToMap");
+  if (backBtn) backBtn.addEventListener("click", () => { STATE.screen = "course-map"; render(); });
+
+  // group picker
+  const confirmGroupBtn = document.getElementById("confirmGroupBtn");
+  if (confirmGroupBtn){
+    confirmGroupBtn.addEventListener("click", () => {
+      const sel = document.getElementById("groupPickSelect").value;
+      if (!sel){ showAlert("Please select a group number."); return; }
+      const cls = STATE.studentClass;
+      STATE.groupSelections[cls] = parseInt(sel, 10);
+      STATE.groupPicking[STATE.currentActivityId] = false;
+      const a = activityById(STATE.currentActivityId);
+      // check if this group already submitted
+      checkGroupAlreadySubmitted(a, cls, STATE.groupSelections[cls]).then(render);
+    });
+  }
+  const changeGroupLink = document.getElementById("changeGroupLink");
+  if (changeGroupLink){
+    changeGroupLink.addEventListener("click", () => {
+      STATE.groupPicking[STATE.currentActivityId] = true;
+      render();
+    });
+  }
+  const backToMapBtn2 = document.getElementById("backToMapBtn2");
+  if (backToMapBtn2) backToMapBtn2.addEventListener("click", () => { STATE.screen = "course-map"; render(); });
+
+  // poll
+  app.querySelectorAll("[data-poll-opt]").forEach(row => {
+    row.addEventListener("click", () => {
+      const a = activityById(STATE.currentActivityId);
+      const i = parseInt(row.getAttribute("data-poll-opt"), 10);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].choice = i;
+      render();
+    });
+  });
+  const submitPollBtn = document.getElementById("submitPoll");
+  if (submitPollBtn) submitPollBtn.addEventListener("click", () => submitPoll(activityById(STATE.currentActivityId)));
+
+  // matching
+  app.querySelectorAll("[data-match-idx]").forEach(sel => {
+    sel.addEventListener("change", () => {
+      const a = activityById(STATE.currentActivityId);
+      const i = parseInt(sel.getAttribute("data-match-idx"), 10);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].selections = STATE.draft[a.id].selections || {};
+      STATE.draft[a.id].selections[i] = sel.value;
+    });
+  });
+  const submitMatchingBtn = document.getElementById("submitMatching");
+  if (submitMatchingBtn) submitMatchingBtn.addEventListener("click", () => submitMatching(activityById(STATE.currentActivityId)));
+
+  // ordering
+  app.querySelectorAll("[data-order-up]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = activityById(STATE.currentActivityId);
+      const pos = parseInt(btn.getAttribute("data-order-up"), 10);
+      const order = STATE.draft[a.id].order;
+      if (pos > 0){ [order[pos-1], order[pos]] = [order[pos], order[pos-1]]; }
+      render();
+    });
+  });
+  app.querySelectorAll("[data-order-down]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = activityById(STATE.currentActivityId);
+      const pos = parseInt(btn.getAttribute("data-order-down"), 10);
+      const order = STATE.draft[a.id].order;
+      if (pos < order.length - 1){ [order[pos+1], order[pos]] = [order[pos], order[pos+1]]; }
+      render();
+    });
+  });
+  const submitOrderingBtn = document.getElementById("submitOrdering");
+  if (submitOrderingBtn) submitOrderingBtn.addEventListener("click", () => submitOrdering(activityById(STATE.currentActivityId)));
+
+  // quiz
+  app.querySelectorAll("[data-quiz-q]").forEach(row => {
+    row.addEventListener("click", () => {
+      const a = activityById(STATE.currentActivityId);
+      const qi = parseInt(row.getAttribute("data-quiz-q"), 10);
+      const oi = parseInt(row.getAttribute("data-quiz-opt"), 10);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].answers = STATE.draft[a.id].answers || {};
+      STATE.draft[a.id].answers[qi] = oi;
+      render();
+    });
+  });
+  const submitQuizBtn = document.getElementById("submitQuiz");
+  if (submitQuizBtn) submitQuizBtn.addEventListener("click", () => submitQuiz(activityById(STATE.currentActivityId)));
+
+  // group spectrum
+  const spectrumSlider = document.getElementById("spectrumSlider");
+  if (spectrumSlider){
+    spectrumSlider.addEventListener("input", () => {
+      const a = activityById(STATE.currentActivityId);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].slider = parseInt(spectrumSlider.value, 10);
+      document.getElementById("spectrumVal").textContent = "Value: " + spectrumSlider.value;
+    });
+  }
+  const spectrumJustify = document.getElementById("spectrumJustify");
+  if (spectrumJustify){
+    spectrumJustify.addEventListener("input", () => {
+      const a = activityById(STATE.currentActivityId);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].justify = spectrumJustify.value;
+    });
+  }
+  const submitSpectrumBtn = document.getElementById("submitGroupSpectrum");
+  if (submitSpectrumBtn) submitSpectrumBtn.addEventListener("click", () => submitGroupSpectrum(activityById(STATE.currentActivityId)));
+
+  // group structured
+  app.querySelectorAll("[data-gfield]").forEach(ta => {
+    ta.addEventListener("input", () => {
+      const a = activityById(STATE.currentActivityId);
+      const i = parseInt(ta.getAttribute("data-gfield"), 10);
+      STATE.draft[a.id] = STATE.draft[a.id] || {};
+      STATE.draft[a.id].fields = STATE.draft[a.id].fields || [];
+      STATE.draft[a.id].fields[i] = ta.value;
+    });
+  });
+  const submitStructuredBtn = document.getElementById("submitGroupStructured");
+  if (submitStructuredBtn) submitStructuredBtn.addEventListener("click", () => submitGroupStructured(activityById(STATE.currentActivityId)));
+
+  // submitted screen
+  const backFromSubmit = document.getElementById("backToMapFromSubmit");
+  if (backFromSubmit) backFromSubmit.addEventListener("click", () => { STATE.screen = "course-map"; render(); loadCourseMapProgress(); });
+  const nextBtn = document.getElementById("nextActivityBtn");
+  if (nextBtn){
+    nextBtn.addEventListener("click", () => {
+      const id = nextActivityId(STATE._lastSubmittedId);
+      STATE.currentActivityId = id;
+      const a = activityById(id);
+      if (a.type === "group-spectrum" || a.type === "group-structured"){
+        const cls = STATE.studentClass;
+        if (!STATE.groupSelections[cls]) STATE.groupPicking[id] = true;
+      }
+      STATE.screen = "activity";
+      render();
+    });
+  }
+
+  // instructor auth
+  const instrSubmit = document.getElementById("instrPassSubmit");
+  if (instrSubmit){
+    instrSubmit.addEventListener("click", () => {
+      const val = document.getElementById("instrPassInput").value;
+      if (val === INSTRUCTOR_PASSWORD){
+        STATE.instructorAuthed = true;
+        STATE.instructorPasswordError = "";
+        STATE.screen = "instructor-dashboard";
+        render();
+        loadDashboardData();
+      } else {
+        STATE.instructorPasswordError = "Incorrect password. Please try again.";
+        render();
+      }
+    });
+    const pwInput = document.getElementById("instrPassInput");
+    pwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") instrSubmit.click(); });
+  }
+
+  // instructor dashboard
+  app.querySelectorAll("[data-dtab]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      STATE.dashboard.classTab = btn.getAttribute("data-dtab");
+      loadDashboardData();
+    });
+  });
+  const refreshBtn = document.getElementById("refreshAllBtn");
+  if (refreshBtn) refreshBtn.addEventListener("click", loadDashboardData);
+  const retryDash = document.getElementById("retryDashLoad");
+  if (retryDash) retryDash.addEventListener("click", loadDashboardData);
+  const resetBtn = document.getElementById("resetAllBtn");
+  if (resetBtn){
+    resetBtn.addEventListener("click", () => {
+      showConfirm(
+        "This permanently deletes ALL response data for BOTH Class A and Class B, and sends the current session back to the landing screen. This can\u2019t be undone. Are you sure?",
+        performResetAll,
+        { confirmLabel: "Yes, Reset All", cancelLabel: "Cancel", danger: true, title: "Reset All?" }
+      );
+    });
+  }
+}
+
+async function checkGroupAlreadySubmitted(a, cls, groupNum){
+  const val = await kvGet(groupKey(cls, groupNum, a.id));
+  if (val != null){
+    STATE.completedGroupCache[`${cls}:${a.id}`] = true;
+  }
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+render();
+</script>
+</body>
+</html>
