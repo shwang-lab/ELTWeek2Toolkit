@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 11 Toolkit &mdash; Rethinking Cheating &amp; Navigating Risks</title>
+<style>
+  :root {
+    --teal: #1F4E44;
+    --teal-acc: #2F6F62;
+    --gold: #C98A2B;
+    --gold-lt: #E8C468;
+    --ink: #1B2430;
+    --cream: #F2EFE6;
+    --white: #FFFFFF;
+    --cardbg: #F3F1EC;
+    --cardbg2: #EFF5F3;
+    --muted: #6B7280;
+    --toolkit-ind: #E4EFEC;
+    --toolkit-grp: #FBF0DC;
+    --success: #7BC67E;
+    --error: #A23B33;
+    --error-bg: #FDEDEA;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--ink);
+    background: var(--white);
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; margin: 0; }
+  button {
+    font-family: "Segoe UI", Arial, sans-serif;
+    cursor: pointer;
+    border: none;
+  }
+  button:disabled { cursor: not-allowed; opacity: 0.6; }
+  #app {
+    min-height: 100vh;
+    padding-top: 64px;
+  }
+  #app.instructor-theme {
+    background: var(--teal);
+    color: var(--cream);
+  }
+
+  /* ---------- toggle pill ---------- */
+  .toggle-pill {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 500;
+    display: flex;
+    background: var(--white);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .toggle-pill button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .toggle-pill button.active {
+    background: var(--teal);
+    color: var(--white);
+  }
+
+  /* ---------- landing ---------- */
+  .landing-wrap {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+  .landing-title { font-size: 32px; font-weight: 700; color: var(--teal); margin-bottom: 8px; }
+  .landing-sub { color: var(--muted); font-size: 15px; margin-bottom: 40px; }
+  .entry-cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .entry-card {
+    background: var(--cardbg2);
+    border-radius: 14px;
+    padding: 32px 28px;
+    width: 260px;
+    text-align: left;
+    transition: transform 0.15s ease;
+  }
+  .entry-card:hover { transform: translateY(-2px); }
+  .entry-card h3 { color: var(--teal); font-size: 20px; margin-bottom: 8px; }
+  .entry-card p { color: var(--muted); font-size: 13.5px; margin-bottom: 18px; line-height: 1.5; }
+  .entry-card button {
+    background: var(--teal);
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  /* ---------- generic screen containers ---------- */
+  .screen-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+  }
+  .wide-wrap { max-width: 1000px; }
+  .card {
+    background: var(--cardbg2);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .field-label { font-weight: 700; font-size: 14px; margin-bottom: 8px; display: block; color: var(--ink); }
+  input[type="text"], select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #D7DDDA;
+    font-size: 15px;
+    font-family: inherit;
+    margin-bottom: 16px;
+    background: var(--white);
+    color: var(--ink);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  .primary-btn {
+    background: var(--teal);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .secondary-btn {
+    background: var(--white);
+    color: var(--teal);
+    border: 1.5px solid var(--teal-acc) !important;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .danger-btn {
+    background: var(--error);
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .gold-btn {
+    background: var(--gold);
+    color: var(--white);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .page-title { font-size: 26px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+  .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* ---------- course map ---------- */
+  .progress-pill {
+    display: inline-block;
+    background: var(--teal);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .block-section { margin-bottom: 28px; }
+  .block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .block-header h2 { font-size: 18px; color: var(--teal); }
+  .activity-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid #E4E4DE;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+  .activity-row:hover { background: var(--cardbg2); }
+  .activity-check {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700;
+    background: #E4E4DE;
+    color: transparent;
+  }
+  .activity-check.done { background: var(--success); color: var(--white); }
+  .activity-body { flex: 1; min-width: 0; }
+  .activity-body .a-title { font-weight: 700; font-size: 14.5px; color: var(--ink); }
+  .activity-body .a-blurb { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .group-badge {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    background: var(--gold); color: var(--white);
+    padding: 3px 9px; border-radius: 999px; flex-shrink: 0;
+  }
+  .arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; }
+
+  /* ---------- activity screen ---------- */
+  .activity-kicker-row {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .pill-badge {
+    font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 999px; color: var(--white);
+  }
+  .pill-gold { background: var(--gold); }
+  .pill-teal { background: var(--teal-acc); }
+  .option-row {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--white); border: 1.5px solid #E4E4DE; border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+  }
+  .option-row.selected { border-color: var(--teal-acc); background: var(--toolkit-ind); }
+  .option-letter {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    background: var(--gold); color: var(--white); font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stem-block { margin-bottom: 22px; }
+  .stem-text { font-size: 14.5px; font-weight: 600; margin-bottom: 10px; }
+  .inline-options { display: flex; gap: 10px; flex-wrap: wrap; }
+  .inline-opt {
+    border: 1.5px solid #E4E4DE; border-radius: 8px; padding: 8px 12px; font-size: 13px;
+    cursor: pointer; background: var(--white);
+  }
+  .inline-opt.selected { border-color: var(--teal-acc); background: var(--toolkit-ind); font-weight: 700; }
+
+  .match-cols { display: flex; gap: 20px; flex-wrap: wrap; }
+  .match-col { flex: 1; min-width: 260px; }
+  .match-term-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white); border: 1px solid #E4E4DE; border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 10px;
+  }
+  .match-term-num {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--teal-acc); color: var(--white);
+    font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .match-term-row select { margin-bottom: 0; }
+  .match-def-row {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--white); border: 1px solid #E4E4DE; border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 10px;
+  }
+  .match-def-letter {
+    width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: var(--white);
+    font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .match-def-text { font-size: 13px; padding-top: 2px; }
+
+  .order-item {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--white); border: 1px solid #E4E4DE; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px;
+  }
+  .order-badge {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--teal-acc); color: var(--white);
+    font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .order-text { flex: 1; font-size: 13.5px; }
+  .order-controls { display: flex; gap: 4px; flex-shrink: 0; }
+  .order-controls button {
+    width: 30px; height: 30px; border-radius: 6px; background: var(--cardbg2); color: var(--teal);
+    font-size: 14px; font-weight: 700;
+  }
+  .order-controls button:disabled { opacity: 0.3; }
+
+  .bucket-items { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .bucket-item {
+    border: 1.5px solid #E4E4DE; border-radius: 8px; padding: 10px 14px; font-size: 13px;
+    background: var(--white); cursor: pointer; max-width: 320px;
+  }
+  .bucket-item.assigned { opacity: 0.45; }
+  .bucket-item.picked-for-assign { border-color: var(--gold); background: var(--toolkit-grp); }
+  .bucket-categories { display: flex; gap: 14px; flex-wrap: wrap; }
+  .bucket-cat {
+    flex: 1; min-width: 200px;
+    background: var(--cardbg2); border-radius: 10px; padding: 14px;
+  }
+  .bucket-cat h4 { font-size: 13.5px; color: var(--teal); margin-bottom: 8px; }
+  .bucket-cat .cat-items { min-height: 40px; }
+  .bucket-cat .cat-item {
+    background: var(--white); border-radius: 6px; padding: 6px 10px; font-size: 12px; margin-bottom: 6px;
+    display: flex; justify-content: space-between; align-items: center; gap: 6px;
+  }
+  .cat-item button { background: transparent; color: var(--error); font-size: 15px; font-weight: 700; }
+
+  .spectrum-item { margin-bottom: 22px; }
+  .spectrum-label { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .spectrum-track { width: 100%; margin-bottom: 4px; }
+  .spectrum-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+  .discussion-footer { font-style: italic; color: var(--muted); font-size: 13px; margin-top: 16px; }
+
+  /* ---------- modal ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-card {
+    background: var(--white); border-radius: 14px; padding: 26px; max-width: 420px; width: 100%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  }
+  .modal-card h3 { font-size: 18px; color: var(--teal); margin-bottom: 10px; }
+  .modal-card p { font-size: 14px; color: var(--ink); line-height: 1.5; margin-bottom: 20px; }
+  .modal-btn-row { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ---------- toast / inline errors ---------- */
+  .inline-error {
+    background: var(--error-bg); color: var(--error); border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .inline-error .tech-detail { font-size: 11px; color: #8a2f27; margin-top: 4px; }
+  .loading-spinner {
+    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5); border-top-color: #fff;
+    animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: -2px;
+  }
+  .loading-spinner.dark { border-color: rgba(31,78,68,0.25); border-top-color: var(--teal); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- instructor dashboard ---------- */
+  .dash-wrap { max-width: 1100px; margin: 0 auto; padding: 20px 24px 60px; }
+  .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .dash-title { font-size: 24px; font-weight: 700; color: var(--white); }
+  .class-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .class-tab {
+    padding: 8px 18px; border-radius: 999px; background: rgba(255,255,255,0.08); color: var(--cream);
+    font-size: 13px; font-weight: 600;
+  }
+  .class-tab.active { background: var(--gold); color: var(--white); }
+  .dash-actions { display: flex; gap: 10px; }
+  .dash-block { margin-bottom: 28px; }
+  .dash-block h3 { color: var(--gold-lt); font-size: 16px; margin-bottom: 12px; }
+  .result-card {
+    background: rgba(255,255,255,0.06); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px;
+  }
+  .result-card h4 { color: var(--white); font-size: 15px; margin-bottom: 4px; }
+  .result-meta { color: #A9C3BB; font-size: 12px; margin-bottom: 12px; }
+  .accuracy-badge {
+    display: inline-block; background: var(--success); color: var(--teal); font-weight: 700;
+    font-size: 12px; padding: 3px 10px; border-radius: 999px; margin-left: 8px;
+  }
+  .dash-stem { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .dash-stem:last-child { border-bottom: none; }
+  .dash-stem .q-text { color: var(--cream); font-size: 13px; margin-bottom: 6px; }
+  .dash-correct { color: var(--gold-lt); font-size: 12px; font-weight: 700; }
+  .dash-tally { color: #A9C3BB; font-size: 12px; margin-top: 4px; }
+  .empty-note { color: #A9C3BB; font-style: italic; font-size: 13px; }
+  .progress-line { width: 100%; background: rgba(255,255,255,0.15); border-radius: 999px; height: 8px; overflow: hidden; margin-top: 10px; }
+  .progress-line-fill { height: 100%; background: var(--gold); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   7a. Storage Backend - Reusable Pattern
+   ===================================================================== */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJc_RFDdhCU4_VB41uMefmy6cKgjg4DVwqVk1xBDa5MDAA0aMq53VinzQf1iZKyy4i/exec";
+
+async function rawKvGet(key) {
+  const res = await fetch(APPS_SCRIPT_URL + "?action=get&key=" + encodeURIComponent(key));
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "get failed");
+  return data.value;
+}
+async function rawKvSet(key, value) {
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "set", key, value })
+  });
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "set failed");
+  return true;
+}
+async function rawKvList(prefix) {
+  const res = await fetch(APPS_SCRIPT_URL + "?action=list&prefix=" + encodeURIComponent(prefix));
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "list failed");
+  return data.keys;
+}
+async function rawKvDelete(key) {
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "delete", key })
+  });
+  const data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "delete failed");
+  return true;
+}
+
+/* ---- adaptive throttle shared by every raw storage call ---- */
+const Throttle = {
+  minGap: 120,       // ms, shrinks on success
+  maxGap: 4000,       // ms ceiling
+  lastDispatch: 0,
+  pendingQueue: Promise.resolve(),
+  recordSuccess() {
+    this.minGap = Math.max(60, this.minGap * 0.85);
+  },
+  recordFailure() {
+    this.minGap = Math.min(this.maxGap, this.minGap * 2.2);
+  },
+  schedule(fn) {
+    const self = this;
+    const runner = async () => {
+      const wait = Math.max(0, self.minGap - (Date.now() - self.lastDispatch));
+      if (wait > 0) await sleep(wait);
+      self.lastDispatch = Date.now();
+      return fn();
+    };
+    // Chain onto the queue regardless of whether the previous link succeeded or
+    // failed (a rejected promise must not poison every future call), but keep
+    // the queue itself always resolved so later calls still run in order.
+    const resultPromise = this.pendingQueue.then(runner, runner);
+    this.pendingQueue = resultPromise.then(() => {}, () => {});
+    return resultPromise;
+  }
+};
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+
+async function withRetry(fn, { attempts = 4, baseDelay = 300, treatAsEmptyOnFail = false, emptyValue = null } = {}) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const result = await Throttle.schedule(fn);
+      Throttle.recordSuccess();
+      return result;
+    } catch (err) {
+      lastErr = err;
+      Throttle.recordFailure();
+      if (i < attempts - 1) await sleep(baseDelay * Math.pow(1.8, i));
+    }
+  }
+  if (treatAsEmptyOnFail) return emptyValue;
+  throw lastErr;
+}
+
+async function kvGet(key) {
+  return withRetry(() => rawKvGet(key), { attempts: 4, treatAsEmptyOnFail: true, emptyValue: null });
+}
+async function kvGetStrict(key) {
+  return withRetry(() => rawKvGet(key), { attempts: 4 });
+}
+async function kvSet(key, value) {
+  return withRetry(() => rawKvSet(key, value), { attempts: 5 });
+}
+async function kvList(prefix) {
+  return withRetry(() => rawKvList(prefix), { attempts: 4, treatAsEmptyOnFail: true, emptyValue: [] });
+}
+async function kvDelete(key) {
+  return withRetry(() => rawKvDelete(key), { attempts: 5 });
+}
+
+/* concurrency-limited batch executor */
+async function mapLimited(items, limit, fn, onProgress) {
+  const results = new Array(items.length);
+  let idx = 0, done = 0;
+  async function worker() {
+    while (idx < items.length) {
+      const my = idx++;
+      results[my] = await fn(items[my], my);
+      done++;
+      if (onProgress) onProgress(done, items.length);
+    }
+  }
+  const workers = [];
+  for (let i = 0; i < Math.min(limit, items.length); i++) workers.push(worker());
+  await Promise.all(workers);
+  return results;
+}
+
+/* =====================================================================
+   Constants & Activity Definitions
+   ===================================================================== */
+const WEEK = "week11";
+const CLASS_SIZES = { A: 24, B: 20 };
+const INSTRUCTOR_PASSWORD = "ELT100";
+
+function slugify(name) {
+  return name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "student";
+}
+function groupCountFor(cls) { return Math.ceil(CLASS_SIZES[cls] / 4); }
+
+/* ---- Block A ---- */
+const BLOCK_A = {
+  id: "blockA",
+  label: "Block A \u2014 Rethinking Cheating",
+  citation: "Forrester, Ch. 6 (Primary)",
+  activities: [
+    {
+      id: "a1-poll", type: "poll", group: false,
+      title: "Quick check: what have you actually used?",
+      blurb: "1-question poll \u2014 no right answer",
+      prompt: "Which of these have you personally used for schoolwork this term?",
+      options: [
+        "A chatbot like ChatGPT, Gemini, or Claude \u2014 to draft or explain something",
+        "A grammar/style checker with AI features (e.g., Grammarly-type tool)",
+        "A paraphrasing tool (e.g., Quillbot-style)",
+        "None of these"
+      ],
+      footer: "No right answer here \u2014 just a snapshot of the room."
+    },
+    {
+      id: "a2-quiz", type: "quiz", group: false,
+      title: "Spot the cheating type",
+      blurb: "5-question scenario quiz",
+      options: ["Unintentional plagiarism", "Intentional plagiarism", "Essay-mill outsourcing", "AI-generated text"],
+      stems: [
+        { text: "Jordan lifts several paragraphs nearly word-for-word from a course reading, adds a citation for just one of them, and turns it in confident that one citation covers all the borrowed material.", correct: 0 },
+        { text: "Aisha submits a paper with almost no citations and a reference list of just two random blog links, even though large sections are copied directly from a published article.", correct: 1 },
+        { text: "Overwhelmed before a deadline, Marcus finds a service online that produces a finished paper for a flat fee and turns it in exactly as delivered, without reading it closely.", correct: 2 },
+        { text: "Wanting to get past a blank page, Lily has a writing assistant draft a full response to the prompt, tweaks a few word choices for flow, and submits it \u2014 confident it won't match anything in a database, since none of the wording existed before.", correct: 3 },
+        { text: "Ben has a writing assistant produce a complete draft, then runs it through a separate rewording tool so it reads less mechanically \u2014 confident it will slip past both a same-text database check and a quick skim.", correct: 3 }
+      ]
+    },
+    {
+      id: "a3-matching", type: "matching", group: false,
+      title: "Match the vocabulary",
+      blurb: "5-term matching",
+      terms: ["Plagiarism", "Essay mill", "Turnitin", "AI arms race", "Cheaters' paradise"],
+      // displayed definitions, in shuffled (non-identity) order
+      displayedDefs: [
+        "Plagiarism-detection software that checks submissions against a massive database of published and prior student work.",
+        "The ongoing back-and-forth between AI-detection tools and new tools built to evade them.",
+        "Presenting someone else's work or ideas as your own, intentionally or not.",
+        "The chapter's term for the environment created when advanced AI tools make undetectable, original cheating easy.",
+        "A business that writes or sells pre-made assignments to students for a fee."
+      ],
+      // correctDefIndex[i] = index into displayedDefs that correctly matches terms[i]
+      correctDefIndex: [2, 4, 0, 1, 3]
+    },
+    {
+      id: "a4-groupsort", type: "bucket", group: true,
+      title: "Sort it: easy to outsource to AI, or not?",
+      blurb: "Group bucket sort",
+      instruction: "As a group, sort each assessment type into one of the two categories below. Be ready to defend one surprising placement.",
+      categories: ["Easily AI-Outsourced", "AI-Resistant"],
+      items: [
+        { text: "Traditional take-home essay", correct: 0 },
+        { text: "Take-home research paper", correct: 0 },
+        { text: "Weekly online discussion-board post, typed and submitted asynchronously", correct: 0 },
+        { text: "Written summary of an assigned reading, submitted online", correct: 0 },
+        { text: "Live oral exam", correct: 1 },
+        { text: "In-class timed written exam", correct: 1 },
+        { text: "In-class debate/simulation", correct: 1 },
+        { text: "Portfolio with required draft history and reflections", correct: 1 }
+      ],
+      footer: "Which one did your group disagree about the most \u2014 and why?"
+    },
+    {
+      id: "a5-ordering", type: "ordering", group: false,
+      title: "Put the phases of assessment technology in order",
+      blurb: "3-item chronological ordering",
+      items: [
+        "Generative AI \u2014 assessments must account for machine-replicated knowledge and performance.",
+        "Personal computer \u2014 assignments could be typed, formatted, and enhanced with spreadsheet functions.",
+        "Internet \u2014 assessment had to adapt to global research databases instead of just the campus library."
+      ],
+      // correctOrder = indices into items, in correct chronological order
+      correctOrder: [1, 2, 0]
+    }
+  ]
+};
+
+/* ---- Block B ---- */
+const BLOCK_B = {
+  id: "blockB",
+  label: "Block B \u2014 Navigating Risks",
+  citation: "Walczak & Cellary, Ch. 8 (Secondary)",
+  activities: [
+    {
+      id: "b1-poll", type: "poll", group: false,
+      title: "Be honest: how much do you check?",
+      blurb: "1-question poll \u2014 no right answer",
+      prompt: "How much do you double-check facts an AI chatbot gives you?",
+      options: ["Always", "Sometimes", "Rarely", "Never"],
+      footer: "No right answer here \u2014 just a snapshot of the room."
+    },
+    {
+      id: "b2-quiz", type: "quiz", group: false,
+      title: "Classify the AI failure",
+      blurb: "5-question scenario quiz",
+      options: ["Hallucination", "Bias", "Disinformation", "Privacy breach"],
+      stems: [
+        { text: "An AI chatbot states a historical figure died in a role that contradicts their well-documented biography \u2014 and says it with full confidence.", correct: 0 },
+        { text: "An AI image tool, without being asked, adds extra people of different ages and backgrounds into a simple \u201Ccity street\u201D scene to make the picture look more varied.", correct: 1 },
+        { text: "Someone deliberately floods the internet with false claims, which later get absorbed into an AI's training data and repeated as fact.", correct: 2 },
+        { text: "By piecing together small details mentioned across several unrelated posts, an AI chatbot correctly guesses which company someone works for, and shares that guess when asked about them.", correct: 3 },
+        { text: "Asked for a real professor's CV, an AI fabricates degrees, publications, and job titles with total confidence.", correct: 0 }
+      ]
+    },
+    {
+      id: "b3-matching", type: "matching", group: false,
+      title: "Match the bias type",
+      blurb: "4-term matching",
+      terms: ["Model bias", "Algorithmic bias", "Data bias", "Social bias"],
+      displayedDefs: [
+        "A skew toward certain outputs caused by the Transformer architecture and how the whole system is built.",
+        "Skewed or partial outputs caused by training data that doesn't accurately represent the real world.",
+        "Prejudiced assumptions or discrimination \u2014 reflecting real-world stereotypes \u2014 reproduced in AI responses.",
+        "An unavoidable statistical error built into how a neural network makes predictions."
+      ],
+      correctDefIndex: [3, 0, 1, 2]
+    },
+    {
+      id: "b4-groupsort", type: "bucket", group: true,
+      title: "Sort it: which risk is this?",
+      blurb: "Group bucket sort",
+      instruction: "As a group, sort each example into one of the four categories below. Some are close calls \u2014 be ready to defend your reasoning.",
+      categories: ["Inaccuracy", "Bias", "Disinformation", "Privacy"],
+      items: [
+        { text: "An AI states a made-up publication list for a real professor, with full confidence.", correct: 0 },
+        { text: "An AI image tool adds unrequested demographic details to \u201Cbalance\u201D a simple prompt.", correct: 1 },
+        { text: "A coordinated push floods forums with a fabricated claim, later absorbed into an AI's training data.", correct: 2 },
+        { text: "An AI chatbot combines scattered public posts to reveal someone's home city.", correct: 3 },
+        { text: "An AI's 4-digit multiplication answer is wrong, stated with total confidence.", correct: 0 },
+        { text: "An AI image generator, trying to seem more inclusive, produces historically inaccurate pictures (a female Pope) that get pulled offline.", correct: 1 },
+        { text: "A user pastes medical symptoms into a chatbot, and that data is later stored and reused.", correct: 3 },
+        { text: "An AI cites a real event but shifts the date so it appears to support a paid political narrative.", correct: 2 }
+      ],
+      footer: "Which example could plausibly fit two categories \u2014 and why?"
+    },
+    {
+      id: "b5-spectrum", type: "spectrum", group: false,
+      title: "How effective is each mitigation, really?",
+      blurb: "4-item spectrum sort",
+      instruction: "For each one, slide from \u201CNot at all effective\u201D to \u201CVery effective,\u201D then add one line on why.",
+      items: [
+        "Fact-checking AI claims against reputable outside sources",
+        "Writing precise, detailed prompts instead of vague ones",
+        "Trusting an AI's confident tone as a signal of accuracy",
+        "Cross-checking with a teacher or other trusted expert"
+      ]
+    },
+    {
+      id: "b6-ordering", type: "ordering", group: false,
+      title: "Order the knowledge rings, broadest to narrowest",
+      blurb: "4-item ordering",
+      items: [
+        "Knowledge on the internet",
+        "AI training knowledge",
+        "All knowledge of humanity",
+        "Digitized knowledge"
+      ],
+      correctOrder: [2, 3, 0, 1]
+    }
+  ]
+};
+
+/* ---- Synthesis ---- */
+const BLOCK_SYNTH = {
+  id: "blockSynth",
+  label: "Synthesis",
+  citation: "Both chapters",
+  activities: [
+    {
+      id: "synth-pick", type: "pick", group: false,
+      title: "Pick your one real habit",
+      blurb: "Structured pick + one-line justification",
+      prompt: "Pick the ONE habit you'll actually use this term when working with AI on schoolwork:",
+      options: [
+        "Always fact-check anything specific (names, dates, numbers) against another source",
+        "Disclose to instructors when and how I used AI on an assignment",
+        "Use AI to get past writer's block, then rewrite the ideas fully in my own words",
+        "Treat a confident-sounding AI answer with the same skepticism as an unconfident one"
+      ],
+      footer: "Then write one sentence on why that habit, specifically, is the one you'll keep."
+    }
+  ]
+};
+
+const BLOCKS = [BLOCK_A, BLOCK_B, BLOCK_SYNTH];
+function findActivity(id) {
+  for (const b of BLOCKS) {
+    for (const a of b.activities) if (a.id === id) return { activity: a, block: b };
+  }
+  return null;
+}
+
+/* =====================================================================
+   STATE
+   ===================================================================== */
+const STATE = {
+  screen: "landing",
+  role: null,               // 'student' | 'instructor'
+  instructorAuthed: false,
+  studentName: "",
+  studentSlug: "",
+  classSection: null,       // 'A' | 'B'
+  groupNumber: null,        // number, session-wide once chosen
+  currentActivityId: null,
+  courseMapDone: {},        // { activityId: true }
+  courseMapLoading: false,
+  submitInProgress: false,
+  submitError: null,
+  activityDraft: {},        // transient in-progress answer state, keyed by activityId
+  dashboard: {
+    classTab: "A",
+    data: {},                // { activityId: { individual: [...], group: [...] } }
+    loading: false,
+    resetInProgress: false,
+    resetProgress: null,
+    error: null
+  },
+  modal: null                // { title, body, confirmLabel, cancelLabel, onConfirm, onCancel, danger }
+};
+
+/* =====================================================================
+   Rendering helpers
+   ===================================================================== */
+const appEl = document.getElementById("app");
+
+function el(tag, attrs, children) {
+  const node = document.createElement(tag);
+  if (attrs) {
+    for (const k in attrs) {
+      if (k === "class") node.className = attrs[k];
+      else if (k === "html") node.innerHTML = attrs[k];
+      else if (k.startsWith("data-")) node.setAttribute(k, attrs[k]);
+      else node[k] = attrs[k];
+    }
+  }
+  (children || []).forEach((c) => {
+    if (c === null || c === undefined) return;
+    if (typeof c === "string") node.appendChild(document.createTextNode(c));
+    else node.appendChild(c);
+  });
+  return node;
+}
+
+function render() {
+  appEl.innerHTML = "";
+  appEl.className = STATE.role === "instructor" && STATE.screen !== "landing" ? "instructor-theme" : "";
+
+  if (STATE.screen !== "landing") {
+    appEl.appendChild(renderTogglePill());
+  }
+
+  let content;
+  switch (STATE.screen) {
+    case "landing": content = renderLanding(); break;
+    case "student-name": content = renderStudentName(); break;
+    case "student-class": content = renderStudentClass(); break;
+    case "course-map": content = renderCourseMap(); break;
+    case "activity": content = renderActivityScreen(); break;
+    case "submitted": content = renderSubmitted(); break;
+    case "instructor-password": content = renderInstructorPassword(); break;
+    case "instructor-dashboard": content = renderInstructorDashboard(); break;
+    default: content = el("div", {}, ["Unknown screen"]);
+  }
+  appEl.appendChild(content);
+
+  if (STATE.modal) {
+    appEl.appendChild(renderModal(STATE.modal));
+  }
+
+  bindDelegatedEvents();
+}
+
+function renderTogglePill() {
+  const pill = el("div", { class: "toggle-pill" }, [
+    el("button", {
+      class: STATE.role === "student" ? "active" : "",
+      "data-action": "toggle-role", "data-role": "student"
+    }, ["Student"]),
+    el("button", {
+      class: STATE.role === "instructor" ? "active" : "",
+      "data-action": "toggle-role", "data-role": "instructor"
+    }, ["Instructor"])
+  ]);
+  return pill;
+}
+
+function showModal(opts) {
+  STATE.modal = opts;
+  render();
+}
+function closeModal() {
+  STATE.modal = null;
+  render();
+}
+function renderModal(m) {
+  const overlay = el("div", { class: "modal-overlay" }, [
+    el("div", { class: "modal-card" }, [
+      el("h3", {}, [m.title]),
+      el("p", {}, [m.body]),
+      el("div", { class: "modal-btn-row" }, [
+        m.cancelLabel ? el("button", { class: "secondary-btn", "data-action": "modal-cancel" }, [m.cancelLabel]) : null,
+        el("button", { class: m.danger ? "danger-btn" : "primary-btn", "data-action": "modal-confirm" }, [m.confirmLabel || "OK"])
+      ])
+    ])
+  ]);
+  return overlay;
+}
+
+/* =====================================================================
+   LANDING
+   ===================================================================== */
+function renderLanding() {
+  return el("div", { class: "landing-wrap" }, [
+    el("div", { class: "landing-title" }, ["Week 11 Toolkit"]),
+    el("div", { class: "landing-sub" }, ["Rethinking Cheating in the Age of AI \u00B7 Navigating Risks: Inaccuracies, Bias, Disinformation, and Privacy"]),
+    el("div", { class: "entry-cards" }, [
+      el("div", { class: "entry-card" }, [
+        el("h3", {}, ["Enter as Student"]),
+        el("p", {}, ["Work through today's warm-up, activities, and exit ticket."]),
+        el("button", { "data-action": "enter-student" }, ["Enter as Student"])
+      ]),
+      el("div", { class: "entry-card" }, [
+        el("h3", {}, ["Enter as Instructor"]),
+        el("p", {}, ["View live class results and manage the session."]),
+        el("button", { "data-action": "enter-instructor" }, ["Enter as Instructor"])
+      ])
+    ])
+  ]);
+}
+
+/* =====================================================================
+   STUDENT: name -> class -> course map
+   ===================================================================== */
+function renderStudentName() {
+  return el("div", { class: "screen-wrap" }, [
+    el("div", { class: "kicker" }, ["Step 1 of 2"]),
+    el("h2", { class: "page-title" }, ["What's your name?"]),
+    el("div", { class: "page-sub" }, ["This is how your responses are saved \u2014 use your real name."]),
+    el("div", { class: "card" }, [
+      el("label", { class: "field-label" }, ["Name"]),
+      el("input", { type: "text", id: "name-input", placeholder: "e.g., Jamie Lee", value: STATE.studentName }),
+      el("div", { id: "name-error" }),
+      el("button", { class: "primary-btn", "data-action": "submit-name" }, ["Continue"])
+    ])
+  ]);
+}
+
+function renderStudentClass() {
+  return el("div", { class: "screen-wrap" }, [
+    el("div", { class: "kicker" }, ["Step 2 of 2"]),
+    el("h2", { class: "page-title" }, ["Which class section are you in?"]),
+    el("div", { class: "page-sub" }, ["A Class and B Class results are kept completely separate."]),
+    el("div", { class: "card" }, [
+      el("button", { class: "primary-btn", style: "width:100%; justify-content:center; margin-bottom:12px;", "data-action": "choose-class", "data-class": "A" }, ["A Class"]),
+      el("button", { class: "primary-btn", style: "width:100%; justify-content:center;", "data-action": "choose-class", "data-class": "B" }, ["B Class"])
+    ])
+  ]);
+}
+
+async function loadCourseMapDone() {
+  STATE.courseMapLoading = true;
+  render();
+  const prefix = `${WEEK}:resp:${STATE.classSection}:${STATE.studentSlug}:`;
+  const keys = await kvList(prefix);
+  const done = {};
+  keys.forEach((k) => {
+    const id = k.slice(prefix.length);
+    if (id) done[id] = true;
+  });
+  // group activities: if this student already has a group, check group submissions too
+  if (STATE.groupNumber) {
+    const gPrefix = `${WEEK}:groupresp:${STATE.classSection}:g${STATE.groupNumber}:`;
+    const gKeys = await kvList(gPrefix);
+    gKeys.forEach((k) => {
+      const id = k.slice(gPrefix.length);
+      if (id) done[id] = true;
+    });
+  }
+  STATE.courseMapDone = done;
+  STATE.courseMapLoading = false;
+  render();
+}
+
+function renderCourseMap() {
+  const wrap = el("div", { class: "screen-wrap wide-wrap" }, []);
+  const header = el("div", {}, [
+    el("div", { class: "kicker" }, [`Class ${STATE.classSection} \u00B7 ${STATE.studentName}`]),
+    el("h2", { class: "page-title" }, ["Course Map"]),
+    el("div", { class: "page-sub" }, ["Tap any activity to open it. Come back here any time."])
+  ]);
+  wrap.appendChild(header);
+
+  if (STATE.courseMapLoading) {
+    wrap.appendChild(el("p", {}, [
+      el("span", { class: "loading-spinner dark" }),
+      "Loading your progress..."
+    ]));
+    return wrap;
+  }
+
+  BLOCKS.forEach((block) => {
+    const total = block.activities.length;
+    const doneCount = block.activities.filter((a) => STATE.courseMapDone[a.id]).length;
+    const section = el("div", { class: "block-section" }, [
+      el("div", { class: "block-header" }, [
+        el("h2", {}, [block.label]),
+        el("span", { class: "progress-pill" }, [`${doneCount}/${total} done`])
+      ])
+    ]);
+    block.activities.forEach((a, idx) => {
+      const done = !!STATE.courseMapDone[a.id];
+      const row = el("div", { class: "activity-row", "data-action": "open-activity", "data-id": a.id }, [
+        el("div", { class: `activity-check ${done ? "done" : ""}` }, [done ? "\u2713" : String(idx + 1)]),
+        el("div", { class: "activity-body" }, [
+          el("div", { class: "a-title" }, [a.title]),
+          el("div", { class: "a-blurb" }, [a.blurb])
+        ]),
+        a.group ? el("span", { class: "group-badge" }, ["Group"]) : null,
+        el("span", { class: "arrow" }, ["\u203A"])
+      ]);
+      section.appendChild(row);
+    });
+    wrap.appendChild(section);
+  });
+
+  return wrap;
+}
+
+/* =====================================================================
+   ACTIVITY SCREEN (dispatches per type)
+   ===================================================================== */
+function renderActivityScreen() {
+  const found = findActivity(STATE.currentActivityId);
+  if (!found) return el("div", { class: "screen-wrap" }, ["Activity not found."]);
+  const { activity, block } = found;
+
+  const wrap = el("div", { class: "screen-wrap" }, []);
+  wrap.appendChild(el("button", { class: "secondary-btn", style: "margin-bottom:16px;", "data-action": "back-to-map" }, ["\u2190 Back to Course Map"]));
+
+  const badges = el("div", { class: "activity-kicker-row" }, [
+    el("span", { class: "pill-badge pill-gold" }, [block.label]),
+    el("span", { class: `pill-badge ${activity.group ? "pill-gold" : "pill-teal"}` }, [activity.group ? "GROUP" : "INDIVIDUAL"])
+  ]);
+  wrap.appendChild(badges);
+  wrap.appendChild(el("h2", { class: "page-title" }, [activity.title]));
+
+  if (activity.group && !STATE.groupNumber) {
+    wrap.appendChild(renderGroupPicker());
+    return wrap;
+  }
+  if (activity.group) {
+    wrap.appendChild(el("div", { class: "page-sub" }, [`You're in Group ${STATE.groupNumber}. `,
+      el("a", { href: "#", "data-action": "change-group", style: "color:var(--teal-acc); font-weight:600;" }, ["Change group"])
+    ]));
+  }
+
+  const draft = getDraft(activity);
+  let body;
+  switch (activity.type) {
+    case "poll": body = renderPoll(activity, draft); break;
+    case "quiz": body = renderQuiz(activity, draft); break;
+    case "matching": body = renderMatching(activity, draft); break;
+    case "bucket": body = renderBucket(activity, draft); break;
+    case "ordering": body = renderOrdering(activity, draft); break;
+    case "spectrum": body = renderSpectrum(activity, draft); break;
+    case "pick": body = renderPick(activity, draft); break;
+    default: body = el("div", {}, ["Unsupported activity type."]);
+  }
+  wrap.appendChild(body);
+
+  const canSubmit = validateDraft(activity, draft);
+  const submitRow = el("div", { style: "margin-top:20px;" }, [
+    el("button", {
+      class: "primary-btn", "data-action": "submit-activity",
+      disabled: !canSubmit || STATE.submitInProgress
+    }, [
+      STATE.submitInProgress ? el("span", { class: "loading-spinner" }) : null,
+      STATE.submitInProgress ? "Saving..." : "Submit"
+    ])
+  ]);
+  wrap.appendChild(submitRow);
+
+  if (STATE.submitError) {
+    wrap.appendChild(el("div", { class: "inline-error" }, [
+      el("div", {}, [
+        "\u26A0\uFE0F Couldn't save \u2014 please try again.",
+        el("div", { class: "tech-detail" }, [STATE.submitError])
+      ]),
+      el("button", { class: "secondary-btn", "data-action": "retry-submit" }, ["Try Again"])
+    ]));
+  }
+
+  return wrap;
+}
+
+function renderGroupPicker() {
+  const count = groupCountFor(STATE.classSection);
+  const opts = [];
+  for (let i = 1; i <= count; i++) opts.push(el("option", { value: i }, [`Group ${i}`]));
+  return el("div", { class: "card" }, [
+    el("p", { style: "margin-bottom:14px; color:var(--muted); font-size:14px;" }, [
+      "This is a GROUP activity. Pick your group number \u2014 you'll stay in this group for the rest of the session."
+    ]),
+    el("select", { id: "group-select" }, [el("option", { value: "" }, ["Choose a group..."]), ...opts]),
+    el("button", { class: "primary-btn", "data-action": "confirm-group" }, ["Confirm Group"])
+  ]);
+}
+
+function getDraft(activity) {
+  if (!STATE.activityDraft[activity.id]) {
+    STATE.activityDraft[activity.id] = initDraft(activity);
+  }
+  return STATE.activityDraft[activity.id];
+}
+function initDraft(activity) {
+  switch (activity.type) {
+    case "poll": return { selected: null };
+    case "quiz": return { answers: new Array(activity.stems.length).fill(null) };
+    case "matching": return { answers: new Array(activity.terms.length).fill(null) };
+    case "bucket": return {
+      assignments: new Array(activity.items.length).fill(null),
+      pickedIndex: null
+    };
+    case "ordering": return { order: activity.items.map((_, i) => i) };
+    case "spectrum": return { values: activity.items.map(() => 50), notes: activity.items.map(() => "") };
+    case "pick": return { selected: null, justification: "" };
+    default: return {};
+  }
+}
+function validateDraft(activity, draft) {
+  switch (activity.type) {
+    case "poll": return draft.selected !== null;
+    case "quiz": return draft.answers.every((a) => a !== null);
+    case "matching": return draft.answers.every((a) => a !== null);
+    case "bucket": return draft.assignments.every((a) => a !== null);
+    case "ordering": return true;
+    case "spectrum": return draft.notes.every((n) => n.trim().length > 0);
+    case "pick": return draft.selected !== null && draft.justification.trim().length > 0;
+    default: return false;
+  }
+}
+
+/* ---- Poll ---- */
+function renderPoll(a, draft) {
+  const letters = ["A", "B", "C", "D", "E"];
+  const wrap = el("div", { class: "card" }, [
+    el("p", { style: "font-weight:600; margin-bottom:16px;" }, [a.prompt])
+  ]);
+  a.options.forEach((opt, i) => {
+    wrap.appendChild(el("div", {
+      class: `option-row ${draft.selected === i ? "selected" : ""}`,
+      "data-action": "poll-select", "data-id": a.id, "data-idx": i
+    }, [
+      el("span", { class: "option-letter" }, [letters[i]]),
+      el("span", {}, [opt])
+    ]));
+  });
+  if (a.footer) wrap.appendChild(el("div", { class: "discussion-footer" }, [a.footer]));
+  return wrap;
+}
+
+/* ---- Scenario quiz ---- */
+function renderQuiz(a, draft) {
+  const letters = ["A", "B", "C", "D", "E"];
+  const wrap = el("div", { class: "card" }, []);
+  a.stems.forEach((stem, si) => {
+    const block = el("div", { class: "stem-block" }, [
+      el("div", { class: "stem-text" }, [`${si + 1}. ${stem.text}`])
+    ]);
+    const optRow = el("div", { class: "inline-options" }, []);
+    a.options.forEach((opt, oi) => {
+      optRow.appendChild(el("div", {
+        class: `inline-opt ${draft.answers[si] === oi ? "selected" : ""}`,
+        "data-action": "quiz-select", "data-id": a.id, "data-stem": si, "data-idx": oi
+      }, [`${letters[oi]}) ${opt}`]));
+    });
+    block.appendChild(optRow);
+    wrap.appendChild(block);
+  });
+  return wrap;
+}
+
+/* ---- Matching ---- */
+function renderMatching(a, draft) {
+  const letters = ["A", "B", "C", "D", "E"];
+  const wrap = el("div", { class: "card" }, []);
+  const cols = el("div", { class: "match-cols" }, []);
+  const termCol = el("div", { class: "match-col" }, [el("h4", { style: "margin-bottom:10px; color:var(--teal);" }, ["Terms"])]);
+  a.terms.forEach((term, ti) => {
+    const sel = el("select", { "data-action": "match-select", "data-id": a.id, "data-term": ti }, [
+      el("option", { value: "" }, ["Choose a definition..."]),
+      ...a.displayedDefs.map((d, di) => el("option", { value: di, selected: draft.answers[ti] === di }, [letters[di] + ") " + (d.length > 46 ? d.slice(0, 46) + "\u2026" : d)]))
+    ]);
+    termCol.appendChild(el("div", { class: "match-term-row" }, [
+      el("span", { class: "match-term-num" }, [String(ti + 1)]),
+      el("div", { style: "flex:1;" }, [
+        el("div", { style: "font-weight:600; font-size:13.5px; margin-bottom:6px;" }, [term]),
+        sel
+      ])
+    ]));
+  });
+  const defCol = el("div", { class: "match-col" }, [el("h4", { style: "margin-bottom:10px; color:var(--teal);" }, ["Definitions (not in matching order)"])]);
+  a.displayedDefs.forEach((d, di) => {
+    defCol.appendChild(el("div", { class: "match-def-row" }, [
+      el("span", { class: "match-def-letter" }, [letters[di]]),
+      el("span", { class: "match-def-text" }, [d])
+    ]));
+  });
+  cols.appendChild(termCol);
+  cols.appendChild(defCol);
+  wrap.appendChild(cols);
+  return wrap;
+}
+
+/* ---- Ordering ---- */
+function renderOrdering(a, draft) {
+  const wrap = el("div", { class: "card" }, [
+    el("p", { style: "color:var(--muted); font-size:13px; margin-bottom:14px;" }, ["Use \u25B2\u25BC to arrange in the correct order."])
+  ]);
+  draft.order.forEach((itemIdx, pos) => {
+    wrap.appendChild(el("div", { class: "order-item" }, [
+      el("span", { class: "order-badge" }, [String(pos + 1)]),
+      el("span", { class: "order-text" }, [a.items[itemIdx]]),
+      el("div", { class: "order-controls" }, [
+        el("button", { "data-action": "order-up", "data-id": a.id, "data-pos": pos, disabled: pos === 0 }, ["\u25B2"]),
+        el("button", { "data-action": "order-down", "data-id": a.id, "data-pos": pos, disabled: pos === draft.order.length - 1 }, ["\u25BC"])
+      ])
+    ]));
+  });
+  return wrap;
+}
+
+/* ---- Bucket / category sort (also used for GROUP activities) ---- */
+function renderBucket(a, draft) {
+  const wrap = el("div", { class: "card" }, []);
+  if (a.instruction) wrap.appendChild(el("p", { style: "font-style:italic; color:var(--muted); font-size:13px; margin-bottom:14px;" }, [a.instruction]));
+
+  const unassigned = a.items.map((it, i) => i).filter((i) => draft.assignments[i] === null);
+  const itemsWrap = el("div", { class: "bucket-items" }, []);
+  unassigned.forEach((i) => {
+    itemsWrap.appendChild(el("div", {
+      class: `bucket-item ${draft.pickedIndex === i ? "picked-for-assign" : ""}`,
+      "data-action": "bucket-pick", "data-id": a.id, "data-idx": i
+    }, [a.items[i].text]));
+  });
+  if (unassigned.length === 0) {
+    itemsWrap.appendChild(el("div", { style: "color:var(--muted); font-size:13px;" }, ["All items sorted. Tap a category to reassign, or submit below."]));
+  }
+  wrap.appendChild(itemsWrap);
+
+  const cats = el("div", { class: "bucket-categories" }, []);
+  a.categories.forEach((cat, ci) => {
+    const catBox = el("div", { class: "bucket-cat", "data-action": "bucket-assign", "data-id": a.id, "data-cat": ci }, [
+      el("h4", {}, [cat]),
+      el("div", { class: "cat-items" }, a.items.map((it, i) => {
+        if (draft.assignments[i] !== ci) return null;
+        return el("div", { class: "cat-item" }, [
+          el("span", {}, [it.text]),
+          el("button", { "data-action": "bucket-remove", "data-id": a.id, "data-idx": i }, ["\u00D7"])
+        ]);
+      }).filter(Boolean))
+    ]);
+    cats.appendChild(catBox);
+  });
+  wrap.appendChild(cats);
+
+  if (a.footer) wrap.appendChild(el("div", { class: "discussion-footer" }, [a.footer]));
+  return wrap;
+}
+
+/* ---- Spectrum sort ---- */
+function renderSpectrum(a, draft) {
+  const wrap = el("div", { class: "card" }, []);
+  if (a.instruction) wrap.appendChild(el("p", { style: "color:var(--muted); font-size:13px; margin-bottom:16px;" }, [a.instruction]));
+  a.items.forEach((item, i) => {
+    const box = el("div", { class: "spectrum-item" }, [
+      el("div", { class: "spectrum-label" }, [item]),
+      el("input", {
+        type: "range", min: "0", max: "100", value: draft.values[i], class: "spectrum-track",
+        "data-action": "spectrum-slide", "data-id": a.id, "data-idx": i
+      }),
+      el("div", { class: "spectrum-ends" }, [el("span", {}, ["Not at all effective"]), el("span", {}, ["Very effective"])]),
+      el("textarea", {
+        placeholder: "One line on why...", value: draft.notes[i],
+        "data-action": "spectrum-note", "data-id": a.id, "data-idx": i, rows: 2
+      })
+    ]);
+    wrap.appendChild(box);
+  });
+  return wrap;
+}
+
+/* ---- Synthesis pick ---- */
+function renderPick(a, draft) {
+  const letters = ["A", "B", "C", "D"];
+  const wrap = el("div", { class: "card" }, [
+    el("p", { style: "font-weight:600; margin-bottom:16px;" }, [a.prompt])
+  ]);
+  a.options.forEach((opt, i) => {
+    wrap.appendChild(el("div", {
+      class: `option-row ${draft.selected === i ? "selected" : ""}`,
+      "data-action": "pick-select", "data-id": a.id, "data-idx": i
+    }, [
+      el("span", { class: "option-letter" }, [letters[i]]),
+      el("span", {}, [opt])
+    ]));
+  });
+  wrap.appendChild(el("label", { class: "field-label", style: "margin-top:16px;" }, [a.footer || "Why?"]));
+  wrap.appendChild(el("textarea", { id: "pick-justification", "data-action": "pick-justify", "data-id": a.id, value: draft.justification, placeholder: "One sentence..." }));
+  return wrap;
+}
+
+/* =====================================================================
+   SUBMIT
+   ===================================================================== */
+function buildPayload(activity, draft) {
+  switch (activity.type) {
+    case "poll": return { selectedIndex: draft.selected };
+    case "quiz": return { answers: draft.answers.slice() };
+    case "matching": return { answers: draft.answers.slice() };
+    case "bucket": return { assignments: draft.assignments.slice() };
+    case "ordering": return { order: draft.order.slice() };
+    case "spectrum": return { values: draft.values.slice(), notes: draft.notes.slice() };
+    case "pick": return { selectedIndex: draft.selected, justification: draft.justification };
+    default: return {};
+  }
+}
+
+async function submitActivity() {
+  const found = findActivity(STATE.currentActivityId);
+  if (!found) return;
+  const { activity } = found;
+  const draft = getDraft(activity);
+  if (!validateDraft(activity, draft)) return;
+
+  STATE.submitInProgress = true;
+  STATE.submitError = null;
+  render();
+
+  const payload = buildPayload(activity, draft);
+  payload.submittedAt = new Date().toISOString();
+  payload.studentName = STATE.studentName;
+
+  const key = activity.group
+    ? `${WEEK}:groupresp:${STATE.classSection}:g${STATE.groupNumber}:${activity.id}`
+    : `${WEEK}:resp:${STATE.classSection}:${STATE.studentSlug}:${activity.id}`;
+
+  try {
+    await kvSet(key, JSON.stringify(payload));
+    STATE.submitInProgress = false;
+    STATE.courseMapDone[activity.id] = true;
+    STATE.screen = "submitted";
+    render();
+  } catch (err) {
+    STATE.submitInProgress = false;
+    STATE.submitError = String(err && err.message ? err.message : err);
+    render();
+  }
+}
+
+function renderSubmitted() {
+  const found = findActivity(STATE.currentActivityId);
+  const block = found ? found.block : null;
+  let nextActivity = null;
+  if (block) {
+    const idx = block.activities.findIndex((a) => a.id === STATE.currentActivityId);
+    if (idx >= 0 && idx < block.activities.length - 1) nextActivity = block.activities[idx + 1];
+    else {
+      const blockIdx = BLOCKS.findIndex((b) => b.id === block.id);
+      if (blockIdx >= 0 && blockIdx < BLOCKS.length - 1) nextActivity = BLOCKS[blockIdx + 1].activities[0];
+    }
+  }
+  return el("div", { class: "screen-wrap" }, [
+    el("div", { class: "card", style: "text-align:center;" }, [
+      el("div", { style: "font-size:40px; margin-bottom:10px;" }, ["\u2705"]),
+      el("h2", { class: "page-title" }, ["Submitted!"]),
+      el("div", { class: "page-sub" }, ["Your response has been saved."]),
+      el("div", { style: "display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:10px;" }, [
+        el("button", { class: "secondary-btn", "data-action": "back-to-map" }, ["Back to Course Map"]),
+        nextActivity ? el("button", { class: "primary-btn", "data-action": "open-activity", "data-id": nextActivity.id }, [`Next: ${nextActivity.title}`]) : null
+      ])
+    ])
+  ]);
+}
+
+/* =====================================================================
+   INSTRUCTOR
+   ===================================================================== */
+function renderInstructorPassword() {
+  return el("div", { class: "screen-wrap", style: "padding-top:60px;" }, [
+    el("div", { class: "card", style: "background:var(--white);" }, [
+      el("h2", { class: "page-title" }, ["Instructor Access"]),
+      el("label", { class: "field-label" }, ["Password"]),
+      el("input", { type: "password", id: "instructor-password-input", placeholder: "Enter password" }),
+      el("div", { id: "password-error" }),
+      el("button", { class: "primary-btn", "data-action": "submit-instructor-password" }, ["Enter Dashboard"])
+    ])
+  ]);
+}
+
+async function loadDashboardData() {
+  STATE.dashboard.loading = true;
+  render();
+  const cls = STATE.dashboard.classTab;
+  const data = {};
+  const allActivities = BLOCKS.flatMap((b) => b.activities);
+  await mapLimited(allActivities, 4, async (a) => {
+    if (a.group) {
+      const prefix = `${WEEK}:groupresp:${cls}:`;
+      const keys = await kvList(prefix + "");
+      const relevant = keys.filter((k) => k.endsWith(":" + a.id));
+      const values = await mapLimited(relevant, 4, async (k) => {
+        const v = await kvGet(k);
+        return v ? safeParse(v) : null;
+      });
+      data[a.id] = { group: values.filter(Boolean) };
+    } else {
+      const prefix = `${WEEK}:resp:${cls}:`;
+      const keys = await kvList(prefix);
+      const relevant = keys.filter((k) => k.endsWith(":" + a.id));
+      const values = await mapLimited(relevant, 4, async (k) => {
+        const v = await kvGet(k);
+        return v ? safeParse(v) : null;
+      });
+      data[a.id] = { individual: values.filter(Boolean) };
+    }
+  });
+  STATE.dashboard.data = data;
+  STATE.dashboard.loading = false;
+  render();
+}
+function safeParse(v) { try { return JSON.parse(v); } catch (e) { return null; } }
+
+function renderInstructorDashboard() {
+  const wrap = el("div", { class: "dash-wrap" }, []);
+  const header = el("div", { class: "dash-header" }, [
+    el("div", { class: "dash-title" }, ["Week 11 \u2014 Instructor Dashboard"]),
+    el("div", { class: "dash-actions" }, [
+      el("button", { class: "gold-btn", "data-action": "refresh-dashboard", disabled: STATE.dashboard.loading }, ["\uD83D\uDD04 Refresh All"]),
+      el("button", { class: "danger-btn", "data-action": "reset-all", disabled: STATE.dashboard.resetInProgress }, ["\uD83D\uDDD1 Reset All"])
+    ])
+  ]);
+  wrap.appendChild(header);
+
+  const tabs = el("div", { class: "class-tabs" }, [
+    el("div", { class: `class-tab ${STATE.dashboard.classTab === "A" ? "active" : ""}`, "data-action": "dash-tab", "data-class": "A" }, ["A Class (24)"]),
+    el("div", { class: `class-tab ${STATE.dashboard.classTab === "B" ? "active" : ""}`, "data-action": "dash-tab", "data-class": "B" }, ["B Class (20)"])
+  ]);
+  wrap.appendChild(tabs);
+
+  if (STATE.dashboard.resetInProgress) {
+    wrap.appendChild(el("div", { class: "result-card" }, [
+      el("span", { class: "loading-spinner" }),
+      `Resetting\u2026 ${STATE.dashboard.resetProgress ? STATE.dashboard.resetProgress.done + "/" + STATE.dashboard.resetProgress.total : "starting"}`
+    ]));
+  }
+  if (STATE.dashboard.error) {
+    wrap.appendChild(el("div", { class: "inline-error" }, [
+      el("div", {}, [
+        "\u26A0\uFE0F Something went wrong.",
+        el("div", { class: "tech-detail" }, [STATE.dashboard.error])
+      ]),
+      el("button", { class: "secondary-btn", "data-action": "refresh-dashboard" }, ["Retry"])
+    ]));
+  }
+
+  if (STATE.dashboard.loading) {
+    wrap.appendChild(el("p", {}, [el("span", { class: "loading-spinner" }), "Loading results..."]));
+    return wrap;
+  }
+
+  BLOCKS.forEach((block) => {
+    const blockWrap = el("div", { class: "dash-block" }, [el("h3", {}, [block.label])]);
+    block.activities.forEach((a) => {
+      blockWrap.appendChild(renderDashResultCard(a));
+    });
+    wrap.appendChild(blockWrap);
+  });
+
+  return wrap;
+}
+
+function renderDashResultCard(activity) {
+  const bucket = STATE.dashboard.data[activity.id] || {};
+  const responses = activity.group ? (bucket.group || []) : (bucket.individual || []);
+  const n = responses.length;
+  const expected = activity.group ? groupCountFor(STATE.dashboard.classTab) : CLASS_SIZES[STATE.dashboard.classTab];
+
+  const card = el("div", { class: "result-card" }, [
+    el("h4", {}, [activity.title, el("span", { class: "result-meta", style: "margin-left:6px;" }, [`(${activity.group ? "group" : "individual"})`])]),
+    el("div", { class: "result-meta" }, [`${n} of ${expected} ${activity.group ? "groups" : "students"} submitted`])
+  ]);
+
+  if (n === 0) {
+    card.appendChild(el("div", { class: "empty-note" }, ["No submissions yet."]));
+    return card;
+  }
+
+  switch (activity.type) {
+    case "poll": card.appendChild(renderDashPoll(activity, responses)); break;
+    case "quiz": card.appendChild(renderDashQuiz(activity, responses)); break;
+    case "matching": card.appendChild(renderDashMatching(activity, responses)); break;
+    case "bucket": card.appendChild(renderDashBucket(activity, responses)); break;
+    case "ordering": card.appendChild(renderDashOrdering(activity, responses)); break;
+    case "spectrum": card.appendChild(renderDashSpectrum(activity, responses)); break;
+    case "pick": card.appendChild(renderDashPick(activity, responses)); break;
+  }
+  return card;
+}
+
+function tally(responses, extractFn, labels) {
+  const counts = labels.map(() => 0);
+  responses.forEach((r) => {
+    const idx = extractFn(r);
+    if (idx !== null && idx !== undefined && counts[idx] !== undefined) counts[idx]++;
+  });
+  return counts;
+}
+
+function renderDashPoll(a, responses) {
+  const counts = tally(responses, (r) => r.selectedIndex, a.options);
+  const box = el("div", {}, []);
+  a.options.forEach((opt, i) => {
+    const pct = responses.length ? Math.round((counts[i] / responses.length) * 100) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [`${opt} \u2014 ${counts[i]} (${pct}%)`]),
+      el("div", { class: "progress-line" }, [el("div", { class: "progress-line-fill", style: `width:${pct}%;` })])
+    ]));
+  });
+  return box;
+}
+
+function renderDashQuiz(a, responses) {
+  const box = el("div", {}, []);
+  a.stems.forEach((stem, si) => {
+    const counts = tally(responses, (r) => r.answers ? r.answers[si] : null, a.options);
+    const correctCount = counts[stem.correct] || 0;
+    const pct = responses.length ? Math.round((correctCount / responses.length) * 100) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [`${si + 1}. ${stem.text}`]),
+      el("div", { class: "dash-correct" }, [`Correct: ${a.options[stem.correct]}`, el("span", { class: "accuracy-badge" }, [`${pct}% correct`])]),
+      el("div", { class: "dash-tally" }, [a.options.map((o, oi) => `${o}: ${counts[oi]}`).join("  \u00B7  ")])
+    ]));
+  });
+  return box;
+}
+
+function renderDashMatching(a, responses) {
+  const box = el("div", {}, []);
+  a.terms.forEach((term, ti) => {
+    const counts = tally(responses, (r) => r.answers ? r.answers[ti] : null, a.displayedDefs);
+    const correctCount = counts[a.correctDefIndex[ti]] || 0;
+    const pct = responses.length ? Math.round((correctCount / responses.length) * 100) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [term]),
+      el("div", { class: "dash-correct" }, [`Correct definition: ${a.displayedDefs[a.correctDefIndex[ti]]}`, el("span", { class: "accuracy-badge" }, [`${pct}% correct`])])
+    ]));
+  });
+  return box;
+}
+
+function renderDashBucket(a, responses) {
+  const box = el("div", {}, []);
+  a.items.forEach((item, ii) => {
+    const counts = tally(responses, (r) => r.assignments ? r.assignments[ii] : null, a.categories);
+    const correctCount = counts[item.correct] || 0;
+    const pct = responses.length ? Math.round((correctCount / responses.length) * 100) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [item.text]),
+      el("div", { class: "dash-correct" }, [`Correct category: ${a.categories[item.correct]}`, el("span", { class: "accuracy-badge" }, [`${pct}% correct`])])
+    ]));
+  });
+  return box;
+}
+
+function renderDashOrdering(a, responses) {
+  let fullyCorrect = 0;
+  responses.forEach((r) => {
+    if (r.order && JSON.stringify(r.order) === JSON.stringify(a.correctOrder)) fullyCorrect++;
+  });
+  const pct = responses.length ? Math.round((fullyCorrect / responses.length) * 100) : 0;
+  const correctList = a.correctOrder.map((idx, pos) => `${pos + 1}. ${a.items[idx]}`).join(" ");
+  return el("div", { class: "dash-stem" }, [
+    el("div", { class: "dash-correct" }, ["Correct order:", el("span", { class: "accuracy-badge" }, [`${pct}% fully correct`])]),
+    el("div", { class: "q-text", style: "margin-top:6px;" }, [correctList])
+  ]);
+}
+
+function renderDashSpectrum(a, responses) {
+  const box = el("div", {}, []);
+  a.items.forEach((item, ii) => {
+    const vals = responses.map((r) => (r.values ? r.values[ii] : null)).filter((v) => v !== null && v !== undefined);
+    const avg = vals.length ? Math.round(vals.reduce((s, v) => s + Number(v), 0) / vals.length) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [item]),
+      el("div", { class: "dash-tally" }, [`Average: ${avg}/100 (n=${vals.length})`]),
+      el("div", { class: "progress-line" }, [el("div", { class: "progress-line-fill", style: `width:${avg}%;` })])
+    ]));
+  });
+  return box;
+}
+
+function renderDashPick(a, responses) {
+  const counts = tally(responses, (r) => r.selectedIndex, a.options);
+  const box = el("div", {}, []);
+  a.options.forEach((opt, i) => {
+    const pct = responses.length ? Math.round((counts[i] / responses.length) * 100) : 0;
+    box.appendChild(el("div", { class: "dash-stem" }, [
+      el("div", { class: "q-text" }, [`${opt} \u2014 ${counts[i]} (${pct}%)`]),
+      el("div", { class: "progress-line" }, [el("div", { class: "progress-line-fill", style: `width:${pct}%;` })])
+    ]));
+  });
+  const withJust = responses.filter((r) => r.justification).slice(0, 6);
+  if (withJust.length) {
+    box.appendChild(el("div", { style: "margin-top:10px;" }, [
+      el("div", { class: "dash-tally", style: "margin-bottom:6px;" }, ["Sample justifications:"]),
+      ...withJust.map((r) => el("div", { class: "q-text", style: "margin-bottom:4px;" }, [`"${r.justification}"`]))
+    ]));
+  }
+  return box;
+}
+
+/* =====================================================================
+   RESET ALL
+   ===================================================================== */
+async function resetAll() {
+  STATE.dashboard.resetInProgress = true;
+  STATE.dashboard.error = null;
+  STATE.dashboard.resetProgress = null;
+  render();
+  try {
+    const allKeys = [];
+    for (const cls of ["A", "B"]) {
+      const respKeys = await kvList(`${WEEK}:resp:${cls}:`);
+      const groupKeys = await kvList(`${WEEK}:groupresp:${cls}:`);
+      allKeys.push(...respKeys, ...groupKeys);
+    }
+    await mapLimited(allKeys, 5, async (k) => {
+      await kvDelete(k);
+      STATE.dashboard.resetProgress = { done: (STATE.dashboard.resetProgress ? STATE.dashboard.resetProgress.done : 0) + 1, total: allKeys.length };
+      render();
+    });
+    // verify
+    let remaining = 0;
+    for (const cls of ["A", "B"]) {
+      const r1 = await kvList(`${WEEK}:resp:${cls}:`);
+      const r2 = await kvList(`${WEEK}:groupresp:${cls}:`);
+      remaining += r1.length + r2.length;
+    }
+    STATE.dashboard.resetInProgress = false;
+    if (remaining > 0) {
+      STATE.dashboard.error = `Reset incomplete \u2014 ${remaining} key(s) still remain. Try again.`;
+      render();
+      return;
+    }
+    // success: clear local student session state too, and confirm
+    resetLocalStudentSession();
+    showModal({
+      title: "Reset complete",
+      body: "All response data for both classes has been cleared, and local session state has been reset.",
+      confirmLabel: "OK",
+      onConfirm: () => { closeModal(); loadDashboardData(); }
+    });
+  } catch (err) {
+    STATE.dashboard.resetInProgress = false;
+    STATE.dashboard.error = String(err && err.message ? err.message : err);
+    render();
+  }
+}
+function resetLocalStudentSession() {
+  STATE.studentName = "";
+  STATE.studentSlug = "";
+  STATE.classSection = null;
+  STATE.groupNumber = null;
+  STATE.currentActivityId = null;
+  STATE.courseMapDone = {};
+  STATE.activityDraft = {};
+}
+
+/* =====================================================================
+   EVENT DELEGATION
+   ===================================================================== */
+let delegatedBound = false;
+function bindDelegatedEvents() {
+  if (delegatedBound) return;
+  delegatedBound = true;
+
+  document.addEventListener("click", async (e) => {
+    const target = e.target.closest("[data-action]");
+    if (!target) return;
+    const action = target.getAttribute("data-action");
+
+    switch (action) {
+      case "toggle-role": {
+        const role = target.getAttribute("data-role");
+        if (role === "student") {
+          if (STATE.role !== "student") {
+            STATE.role = "student";
+            if (!STATE.studentName) STATE.screen = "student-name";
+            else if (!STATE.classSection) STATE.screen = "student-class";
+            else STATE.screen = "course-map";
+          }
+        } else {
+          STATE.role = "instructor";
+          STATE.screen = STATE.instructorAuthed ? "instructor-dashboard" : "instructor-password";
+          if (STATE.instructorAuthed) loadDashboardData();
+        }
+        render();
+        break;
+      }
+      case "enter-student":
+        STATE.role = "student";
+        STATE.screen = "student-name";
+        render();
+        break;
+      case "enter-instructor":
+        STATE.role = "instructor";
+        STATE.screen = STATE.instructorAuthed ? "instructor-dashboard" : "instructor-password";
+        render();
+        if (STATE.instructorAuthed) loadDashboardData();
+        break;
+      case "submit-name": {
+        const input = document.getElementById("name-input");
+        const val = input ? input.value.trim() : "";
+        const errEl = document.getElementById("name-error");
+        if (!val) {
+          if (errEl) errEl.innerHTML = "";
+          if (errEl) errEl.appendChild(el("div", { class: "inline-error" }, ["Please enter your name."]));
+          return;
+        }
+        STATE.studentName = val;
+        STATE.studentSlug = slugify(val);
+        STATE.screen = "student-class";
+        render();
+        break;
+      }
+      case "choose-class": {
+        STATE.classSection = target.getAttribute("data-class");
+        STATE.screen = "course-map";
+        render();
+        loadCourseMapDone();
+        break;
+      }
+      case "open-activity": {
+        STATE.currentActivityId = target.getAttribute("data-id");
+        STATE.submitError = null;
+        STATE.screen = "activity";
+        render();
+        break;
+      }
+      case "back-to-map":
+        STATE.screen = "course-map";
+        render();
+        loadCourseMapDone();
+        break;
+      case "confirm-group": {
+        const sel = document.getElementById("group-select");
+        const val = sel ? sel.value : "";
+        if (!val) {
+          showModal({ title: "Pick a group", body: "Please choose a group number before continuing.", confirmLabel: "OK", onConfirm: closeModal });
+          return;
+        }
+        STATE.groupNumber = Number(val);
+        render();
+        break;
+      }
+      case "change-group": {
+        e.preventDefault();
+        showModal({
+          title: "Change group?",
+          body: `You're currently in Group ${STATE.groupNumber}. Changing groups affects both group activities this session.`,
+          confirmLabel: "Change Group", cancelLabel: "Cancel", danger: false,
+          onConfirm: () => { STATE.groupNumber = null; closeModal(); },
+          onCancel: closeModal
+        });
+        break;
+      }
+      case "poll-select": {
+        const id = target.getAttribute("data-id");
+        const idx = Number(target.getAttribute("data-idx"));
+        getDraft(findActivity(id).activity).selected = idx;
+        render();
+        break;
+      }
+      case "quiz-select": {
+        const id = target.getAttribute("data-id");
+        const stem = Number(target.getAttribute("data-stem"));
+        const idx = Number(target.getAttribute("data-idx"));
+        getDraft(findActivity(id).activity).answers[stem] = idx;
+        render();
+        break;
+      }
+      case "order-up": case "order-down": {
+        const id = target.getAttribute("data-id");
+        const pos = Number(target.getAttribute("data-pos"));
+        const draft = getDraft(findActivity(id).activity);
+        const swapWith = action === "order-up" ? pos - 1 : pos + 1;
+        if (swapWith < 0 || swapWith >= draft.order.length) return;
+        const tmp = draft.order[pos];
+        draft.order[pos] = draft.order[swapWith];
+        draft.order[swapWith] = tmp;
+        render();
+        break;
+      }
+      case "bucket-pick": {
+        const id = target.getAttribute("data-id");
+        const idx = Number(target.getAttribute("data-idx"));
+        const draft = getDraft(findActivity(id).activity);
+        draft.pickedIndex = draft.pickedIndex === idx ? null : idx;
+        render();
+        break;
+      }
+      case "bucket-assign": {
+        const id = target.getAttribute("data-id");
+        const cat = Number(target.getAttribute("data-cat"));
+        const draft = getDraft(findActivity(id).activity);
+        if (draft.pickedIndex !== null) {
+          draft.assignments[draft.pickedIndex] = cat;
+          draft.pickedIndex = null;
+          render();
+        }
+        break;
+      }
+      case "bucket-remove": {
+        const id = target.getAttribute("data-id");
+        const idx = Number(target.getAttribute("data-idx"));
+        const draft = getDraft(findActivity(id).activity);
+        draft.assignments[idx] = null;
+        render();
+        break;
+      }
+      case "pick-select": {
+        const id = target.getAttribute("data-id");
+        const idx = Number(target.getAttribute("data-idx"));
+        getDraft(findActivity(id).activity).selected = idx;
+        render();
+        break;
+      }
+      case "submit-activity": case "retry-submit":
+        submitActivity();
+        break;
+      case "submit-instructor-password": {
+        const input = document.getElementById("instructor-password-input");
+        const val = input ? input.value : "";
+        if (val === INSTRUCTOR_PASSWORD) {
+          STATE.instructorAuthed = true;
+          STATE.screen = "instructor-dashboard";
+          render();
+          loadDashboardData();
+        } else {
+          const errEl = document.getElementById("password-error");
+          if (errEl) {
+            errEl.innerHTML = "";
+            errEl.appendChild(el("div", { class: "inline-error" }, ["Incorrect password. Try again."]));
+          }
+        }
+        break;
+      }
+      case "dash-tab": {
+        STATE.dashboard.classTab = target.getAttribute("data-class");
+        render();
+        loadDashboardData();
+        break;
+      }
+      case "refresh-dashboard":
+        loadDashboardData();
+        break;
+      case "reset-all": {
+        showModal({
+          title: "Reset all data?",
+          body: "This permanently clears every response for both A Class and B Class, and returns any active student session to the landing screen. This cannot be undone.",
+          confirmLabel: "Reset Everything", cancelLabel: "Cancel", danger: true,
+          onConfirm: () => { closeModal(); resetAll(); },
+          onCancel: closeModal
+        });
+        break;
+      }
+      case "modal-confirm":
+        if (STATE.modal && STATE.modal.onConfirm) STATE.modal.onConfirm();
+        else closeModal();
+        break;
+      case "modal-cancel":
+        if (STATE.modal && STATE.modal.onCancel) STATE.modal.onCancel();
+        else closeModal();
+        break;
+    }
+  });
+
+  document.addEventListener("change", (e) => {
+    const target = e.target;
+    const action = target.getAttribute && target.getAttribute("data-action");
+    if (!action) return;
+    if (action === "match-select") {
+      const id = target.getAttribute("data-id");
+      const term = Number(target.getAttribute("data-term"));
+      const val = target.value === "" ? null : Number(target.value);
+      getDraft(findActivity(id).activity).answers[term] = val;
+      render();
+    } else if (action === "spectrum-slide") {
+      const id = target.getAttribute("data-id");
+      const idx = Number(target.getAttribute("data-idx"));
+      getDraft(findActivity(id).activity).values[idx] = Number(target.value);
+    }
+  });
+
+  document.addEventListener("input", (e) => {
+    const target = e.target;
+    const action = target.getAttribute && target.getAttribute("data-action");
+    if (!action) return;
+    if (action === "spectrum-note") {
+      const id = target.getAttribute("data-id");
+      const idx = Number(target.getAttribute("data-idx"));
+      getDraft(findActivity(id).activity).notes[idx] = target.value;
+      // enable/disable submit without full re-render (avoid losing focus)
+      updateSubmitButtonState();
+    } else if (action === "pick-justify") {
+      const id = target.getAttribute("data-id");
+      getDraft(findActivity(id).activity).justification = target.value;
+      updateSubmitButtonState();
+    }
+  });
+}
+
+function updateSubmitButtonState() {
+  const found = findActivity(STATE.currentActivityId);
+  if (!found) return;
+  const draft = getDraft(found.activity);
+  const canSubmit = validateDraft(found.activity, draft);
+  const btn = document.querySelector('[data-action="submit-activity"]');
+  if (btn) btn.disabled = !canSubmit || STATE.submitInProgress;
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+render();
+</script>
+</body>
+</html>
