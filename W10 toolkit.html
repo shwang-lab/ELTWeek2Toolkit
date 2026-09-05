@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 10 Toolkit</title>
+<style>
+  :root {
+    --teal: #1F4E44;
+    --teal-acc: #2F6F62;
+    --gold: #C98A2B;
+    --gold-lt: #E8C468;
+    --ink: #1B2430;
+    --cream: #F2EFE6;
+    --white: #FFFFFF;
+    --cardbg: #F3F1EC;
+    --muted: #6B7280;
+    --success: #7BC67E;
+    --error: #A23B33;
+    --error-bg: #FDEDEA;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--white);
+    color: var(--ink);
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  h1, h2, h3 {
+    font-family: Georgia, "Times New Roman", serif;
+    margin: 0 0 12px 0;
+  }
+  #app { min-height: 500px; padding-bottom: 60px; }
+  .screen { max-width: 760px; margin: 0 auto; padding: 90px 20px 40px 20px; }
+  .screen.wide { max-width: 980px; }
+  body.dark-mode { background: var(--teal); color: var(--cream); }
+  .btn {
+    display: inline-block;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: var(--white);
+    background: var(--teal-acc);
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn.gold { background: var(--gold); }
+  .btn.danger { background: var(--error); }
+  .btn.outline {
+    background: transparent; color: var(--teal-acc);
+    border: 1.5px solid var(--teal-acc);
+  }
+  .btn.small { padding: 7px 14px; font-size: 13px; }
+  .card {
+    background: var(--cardbg);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .card.dark { background: #173B33; color: var(--cream); }
+  .pill {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .pill.gold { background: var(--gold); }
+  .pill.teal { background: var(--teal-acc); }
+  .pill.muted { background: var(--muted); }
+  .toggle-pill {
+    position: fixed; top: 16px; right: 16px; z-index: 500;
+    display: flex; border-radius: 999px; overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    font-size: 13px; font-weight: 700;
+  }
+  .toggle-pill button {
+    border: none; padding: 9px 16px; cursor: pointer;
+    background: var(--cardbg); color: var(--ink);
+  }
+  .toggle-pill button.active { background: var(--teal); color: var(--white); }
+  input[type=text], input[type=email], textarea, select {
+    width: 100%;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1.5px solid #D8D3C6;
+    background: var(--white);
+    color: var(--ink);
+    margin-top: 4px;
+  }
+  textarea { min-height: 70px; resize: vertical; }
+  label.field-label { font-weight: 700; font-size: 14px; display: block; margin: 14px 0 2px 0; }
+  .muted-text { color: var(--muted); font-size: 13.5px; }
+  .option-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;
+    border: 1.5px solid #E1DCCE; cursor: pointer;
+  }
+  .option-row:hover { border-color: var(--teal-acc); }
+  .option-row.selected { border-color: var(--teal-acc); background: #E4EFEC; }
+  .option-row input { margin: 0; }
+  .bucket-item {
+    display: inline-block; padding: 8px 12px; margin: 5px;
+    border-radius: 7px; background: var(--white); border: 1.5px solid #D8D3C6;
+    cursor: pointer; font-size: 14px;
+  }
+  .bucket-item.selected { border-color: var(--gold); background: #FBF0DC; }
+  .bucket-item.placed { opacity: 0.55; }
+  .bucket-cat {
+    min-height: 90px; border-radius: 8px; padding: 12px;
+    border: 2px dashed #C7C1B2; margin-bottom: 12px; cursor: pointer;
+  }
+  .bucket-cat.hot { border-color: var(--gold); background: #FBF0DC; }
+  .order-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;
+    background: var(--cardbg);
+  }
+  .order-row .num {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--teal-acc);
+    color: var(--white); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .order-row .txt { flex: 1; font-size: 14.5px; }
+  .order-btns button {
+    background: var(--white); border: 1.5px solid #D8D3C6;
+    border-radius: 5px; width: 30px; height: 30px; cursor: pointer; font-size: 14px;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+    padding: 20px;
+  }
+  .modal-card {
+    background: var(--white); border-radius: 12px; padding: 26px;
+    max-width: 420px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal-card h3 { margin-bottom: 10px; }
+  .modal-card .modal-actions { margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end; }
+  .err-banner {
+    background: var(--error-bg); color: var(--error);
+    border-radius: 8px; padding: 10px 14px; font-size: 14px; margin-top: 10px;
+    font-weight: 600;
+  }
+  .err-banner .tech { font-weight: 400; font-size: 12px; color: #8a4a42; display: block; margin-top: 4px; }
+  .map-block-title { font-family: Georgia, serif; font-weight: 700; font-size: 19px; margin: 26px 0 10px 0; color: var(--teal); }
+  .map-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: 10px; background: var(--cardbg);
+    margin-bottom: 10px; cursor: pointer;
+  }
+  .map-item:hover { background: #ECE7DC; }
+  .map-item .idx {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--teal-acc);
+    color: var(--white); display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .map-item .idx.done { background: var(--success); color: var(--teal); }
+  .map-item .body { flex: 1; }
+  .map-item .body .t { font-weight: 700; font-size: 15px; }
+  .map-item .body .b { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .progress-pill {
+    display: inline-block; background: var(--teal); color: var(--white);
+    border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab-row button {
+    border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+    font-weight: 700; font-size: 14px; background: #173B33; color: var(--cream);
+  }
+  .tab-row button.active { background: var(--gold); color: var(--white); }
+  .dash-card { background: #173B33; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+  .dash-card h4 { margin: 0 0 10px 0; font-size: 15px; color: var(--gold-lt); }
+  .dash-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #2A5148; font-size: 14px; }
+  .dash-row:last-child { border-bottom: none; }
+  .dash-correct { color: var(--success); font-weight: 700; }
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5); border-top-color: #fff;
+    animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .landing-card {
+    display: block; width: 100%; text-align: left; padding: 26px 24px;
+    border-radius: 12px; border: none; cursor: pointer; margin-bottom: 16px;
+    background: var(--cardbg); color: var(--ink);
+  }
+  .landing-card h3 { color: var(--teal); }
+  .footnote { color: var(--muted); font-size: 13px; font-style: italic; margin-top: 18px; }
+  .slider-row { margin: 10px 0 18px 0; }
+  .slider-row input[type=range] { width: 100%; }
+  .slider-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .group-field { background: var(--cardbg); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .group-field label { color: var(--gold); font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+
+/* ============================================================
+   0. STORAGE BACKEND SHIM  (reused pattern, per spec section 7a)
+   ============================================================ */
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJc_RFDdhCU4_VB41uMefmy6cKgjg4DVwqVk1xBDa5MDAA0aMq53VinzQf1iZKyy4i/exec";
+
+async function kvGetRaw(key) {
+  var res = await fetch(APPS_SCRIPT_URL + "?action=get&key=" + encodeURIComponent(key));
+  var data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "get failed");
+  return data.value;
+}
+async function kvSetRaw(key, value) {
+  var res = await fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "set", key: key, value: value })
+  });
+  var data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "set failed");
+  return true;
+}
+async function kvListRaw(prefix) {
+  var res = await fetch(APPS_SCRIPT_URL + "?action=list&prefix=" + encodeURIComponent(prefix));
+  var data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "list failed");
+  return data.keys;
+}
+async function kvDeleteRaw(key) {
+  var res = await fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "delete", key: key })
+  });
+  var data = await res.json();
+  if (data.status !== "ok") throw new Error(data.message || "delete failed");
+  return true;
+}
+
+/* ---- global adaptive throttle: shrinks on success, grows on failure ---- */
+var THROTTLE = { gapMs: 120, lastDispatch: 0 };
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+async function throttleGate() {
+  var now = Date.now();
+  var wait = (THROTTLE.lastDispatch + THROTTLE.gapMs) - now;
+  if (wait > 0) await sleep(wait);
+  THROTTLE.lastDispatch = Date.now();
+}
+function throttleSuccess() { THROTTLE.gapMs = Math.max(60, THROTTLE.gapMs * 0.92); }
+function throttleFailure() { THROTTLE.gapMs = Math.min(4000, THROTTLE.gapMs * 1.8); }
+
+async function withRetry(fn, opts) {
+  opts = opts || {};
+  var attempts = opts.attempts || 4;
+  var baseDelay = opts.baseDelay || 300;
+  var lastErr = null;
+  for (var i = 0; i < attempts; i++) {
+    try {
+      await throttleGate();
+      var result = await fn();
+      throttleSuccess();
+      return result;
+    } catch (e) {
+      lastErr = e;
+      throttleFailure();
+      if (i < attempts - 1) await sleep(baseDelay * Math.pow(2, i));
+    }
+  }
+  throw lastErr;
+}
+
+async function kvGet(key) {
+  try { return await withRetry(function () { return kvGetRaw(key); }, { attempts: 4 }); }
+  catch (e) { console.warn("kvGet failed, treating as null:", key, e); return null; }
+}
+async function kvSet(key, value) {
+  return await withRetry(function () { return kvSetRaw(key, value); }, { attempts: 5, baseDelay: 400 });
+}
+async function kvList(prefix) {
+  try { return await withRetry(function () { return kvListRaw(prefix); }, { attempts: 4 }); }
+  catch (e) { console.warn("kvList failed, treating as empty:", prefix, e); return []; }
+}
+async function kvDelete(key) {
+  return await withRetry(function () { return kvDeleteRaw(key); }, { attempts: 5, baseDelay: 400 });
+}
+
+async function mapLimited(items, limit, fn) {
+  var results = new Array(items.length);
+  var idx = 0;
+  async function worker() {
+    while (idx < items.length) {
+      var my = idx++;
+      results[my] = await fn(items[my], my);
+    }
+  }
+  var n = Math.min(limit, items.length) || 1;
+  var workers = [];
+  for (var i = 0; i < n; i++) workers.push(worker());
+  await Promise.all(workers);
+  return results;
+}
+
+var WEEK = "week10";
+function slugify(name) {
+  return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "student";
+}
+function shuffledIndices(n, seed) {
+  var arr = [];
+  for (var i = 0; i < n; i++) arr.push(i);
+  var s = seed || Math.floor(Math.random() * 100000);
+  function rand() { s = (s * 9301 + 49297) % 233280; return s / 233280; }
+  for (var j = arr.length - 1; j > 0; j--) {
+    var k = Math.floor(rand() * (j + 1));
+    var tmp = arr[j]; arr[j] = arr[k]; arr[k] = tmp;
+  }
+  return arr;
+}
+
+/* ============================================================
+   1. CONTENT DATA  (mirrors the locked Lecture Slides exactly)
+   ============================================================ */
+var DATA = {
+  blocks: [
+    {
+      id: "A",
+      label: "Block A - Non-Native English-Speaking Teachers",
+      activities: ["a1_poll", "a2_matching", "a3_quiz", "a4_ordering", "a5_bucket"]
+    },
+    {
+      id: "B",
+      label: "Block B - Language Teacher Prep for an AI World",
+      activities: ["b1_poll", "b2_matching", "b3_quiz", "b4_spectrum", "b5_group"]
+    },
+    {
+      id: "S",
+      label: "Synthesis",
+      activities: ["syn_pick"]
+    }
+  ],
+
+  activities: {
+    a1_poll: {
+      block: "A", type: "poll", group: false,
+      title: "Quick Poll",
+      blurb: "What matters more in a good English teacher?",
+      prompt: "What matters more in a good English teacher?",
+      options: [
+        "Speaking with a native-sounding accent",
+        "Understanding the grammar well enough to explain it clearly",
+        "Having personally struggled to learn the language",
+        "Being able to speak fluently without hesitation"
+      ]
+    },
+    a2_matching: {
+      block: "A", type: "matching", group: false,
+      title: "Match the Researcher",
+      blurb: "Match each researcher to their real claim.",
+      terms: ["Amin (2004)", "Medgyes (1994, 2001)", "Seidlhofer (1999)", "Pasternak & Bailey (2004)", "V. Cook (1999)"],
+      definitions: [
+        "Argues native-speaker status is tied to racism and colonialism, not just language ability",
+        "Views NES and NNES teachers as different \"species\" with distinct classroom behaviors",
+        "Describes NNES teachers as \"double agents\" who mediate between two languages/cultures",
+        "Argues native-speaker status and language proficiency sit on separate continuums",
+        "Proposes \"multicompetent language users\" to replace the native/non-native labels"
+      ]
+    },
+    a3_quiz: {
+      block: "A", type: "quiz", group: false,
+      title: "Scenario Quiz - Hiring Decisions",
+      blurb: "Identify what's really happening in each hiring scenario.",
+      options: [
+        "Not discriminatory: a legitimate skill requirement",
+        "Discriminatory: based on passport/citizenship",
+        "Discriminatory: based on racial/visual appearance",
+        "Discriminatory: based on which university granted the degree"
+      ],
+      stems: [
+        "A teaching applicant sounds like a native speaker but is rejected because she is Korean and her degree isn't from a US university.",
+        "A US-born, native-English-speaking teacher of color isn't hired because his photo doesn't match the interviewer's mental image of \"native speaker.\"",
+        "A job ad requires \"native speaker\" status but applies a rigorous, consistent English proficiency exam to every applicant.",
+        "A UK job ad only accepts applicants holding passports from the US, UK, Canada, Australia, Ireland, or New Zealand.",
+        "A white European teacher whose first language isn't English is readily accepted as \"native,\" while a non-white American English teacher is questioned."
+      ],
+      correct: [3, 2, 0, 1, 2]
+    },
+    a4_ordering: {
+      block: "A", type: "ordering", group: false,
+      title: "Order the NNEST Movement's History",
+      blurb: "Reorder these into the correct chronological sequence.",
+      items: [
+        "The NNEST Caucus is founded within TESOL.",
+        "TESOL issues its first statement opposing native-speaker-only hiring.",
+        "TESOL issues its position statement against discrimination of non-native speakers.",
+        "Researchers spearhead discussion at the TESOL convention in Chicago.",
+        "Braine publishes a seminal book on non-native English-speaking teachers."
+      ],
+      correctOrder: [1, 3, 0, 4, 2]
+    },
+    a5_bucket: {
+      block: "A", type: "bucket", group: true,
+      title: "Sort the Job-Ad Excerpts",
+      blurb: "As a group, sort each excerpt into Discriminatory or Not discriminatory.",
+      categories: ["Discriminatory", "Not discriminatory"],
+      items: [
+        { text: "\"Native speaker required; British or American accent preferred.\"", cat: 0 },
+        { text: "\"Must pass a certified oral & written English exam, open to all nationalities.\"", cat: 1 },
+        { text: "\"Only passport-holders from the US, UK, Canada, Australia, Ireland, or NZ considered.\"", cat: 0 },
+        { text: "\"Minimum 3 years' classroom experience and a TESOL certificate required.\"", cat: 1 },
+        { text: "\"Seeking energetic native English speakers only - no exceptions.\"", cat: 0 },
+        { text: "\"Must explain English grammar structure clearly to learners.\"", cat: 1 },
+        { text: "\"American or Western-looking teachers preferred for promotional photos.\"", cat: 0 },
+        { text: "\"Bachelor's degree plus recognized teaching certificate; native or non-native speakers welcome.\"", cat: 1 }
+      ]
+    },
+    b1_poll: {
+      block: "B", type: "poll", group: false,
+      title: "Quick Poll",
+      blurb: "How often do you use AI tools for English?",
+      prompt: "How often do you personally use AI tools (ChatGPT, Google Translate, Grammarly) for your English?",
+      options: ["Daily", "A few times a week", "Rarely", "Never"]
+    },
+    b2_matching: {
+      block: "B", type: "matching", group: false,
+      title: "Match the Framework",
+      blurb: "Match each ecological framework to its real definition.",
+      terms: ["Sociomaterialism", "Complex dynamic systems theory", "Activity theory", "Relational pedagogy"],
+      definitions: [
+        "Agency is distributed between humans and nonhuman tools, described through \"entanglement\"",
+        "Learning outcomes are unpredictable, shaped by initial conditions and shifting interactions over time",
+        "Learning is a tool-mediated social process involving purpose, rules, community, and division of labor",
+        "Frames technology as socially embedded - the learner-tool relationship matters more than the tool alone"
+      ]
+    },
+    b3_quiz: {
+      block: "B", type: "quiz", group: false,
+      title: "Scenario Quiz - What Went Wrong?",
+      blurb: "Classify the AI limitation shown in each snippet.",
+      options: [
+        "Hallucination (invented fact)",
+        "Pragmatic/embodied gap (missed tone or gesture)",
+        "Bias in training data",
+        "No limitation shown - reasonable output"
+      ],
+      stems: [
+        "A student asks an AI chatbot to confirm a historical date; the chatbot states a confident but incorrect year.",
+        "An AI voice assistant misses a student's sarcastic tone and responds as if the comment were sincere.",
+        "An AI writing tool consistently suggests \"he\" for doctors and \"she\" for nurses in its example sentences.",
+        "An AI grammar checker correctly flags a subject-verb agreement error and suggests the right fix.",
+        "An AI tutor can't tell that a student's raised eyebrow and pause meant confusion, and continues the lesson as planned."
+      ],
+      correct: [0, 1, 2, 3, 1]
+    },
+    b4_spectrum: {
+      block: "B", type: "spectrum", group: false,
+      title: "Spectrum Sort",
+      blurb: "Slide the marker, then justify your position for each statement.",
+      statements: [
+        "\"AI chatbots will make human language teachers unnecessary within 10 years.\"",
+        "\"Using Google Translate to check a single word is basically cheating.\"",
+        "\"Teachers should require students to disclose every time they use AI on an assignment.\"",
+        "\"AI is most useful for practicing grammar, least useful for practicing real conversation.\""
+      ]
+    },
+    b5_group: {
+      block: "B", type: "group", group: true,
+      title: "Design a Balanced AI Assignment",
+      blurb: "As a group, design one writing assignment that uses AI deliberately.",
+      instruction: "As a group, design ONE writing assignment for a future class that uses AI deliberately, not accidentally. Fill in the three fields below together.",
+      fields: [
+        "Assignment topic",
+        "One step that REQUIRES using AI (and why)",
+        "One step that must be done WITHOUT AI (and why)"
+      ]
+    },
+    syn_pick: {
+      block: "S", type: "synthesis", group: false,
+      title: "Pick a Side",
+      blurb: "Which \"authenticity\" myth is more persuasive to the average student today?",
+      prompt: "Which \"authenticity\" myth do you think is more persuasive to the average student today?",
+      options: [
+        "The native-speaker myth (Block A)",
+        "The human-equivalent-AI myth (Block B)"
+      ]
+    }
+  }
+};
+
+/* ============================================================
+   2. STATE
+   ============================================================ */
+var STATE = {
+  screen: "landing",
+  role: null,
+  student: { name: "", cls: "", slug: "", groups: {} },
+  currentActivityId: null,
+  instructorAuthed: false,
+  dashboard: { cls: "A", loading: false, data: {}, error: null },
+  resetInProgress: false,
+  resetProgressText: "",
+  modal: null,
+  courseMapCache: { indivKeys: [], groupKeys: [], loading: false, error: null },
+  activityDraft: {},
+  activityLoadedShuffle: {}
+};
+
+var app = document.getElementById("app");
+
+/* ============================================================
+   3. CUSTOM MODAL  (never native alert/confirm/prompt)
+   ============================================================ */
+function showModal(opts) {
+  STATE.modal = {
+    title: opts.title || "",
+    message: opts.message || "",
+    confirmText: opts.confirmText || "OK",
+    cancelText: opts.cancelText || null,
+    onConfirm: opts.onConfirm || null,
+    onCancel: opts.onCancel || null
+  };
+  renderModal();
+}
+function closeModal() {
+  STATE.modal = null;
+  var existing = document.getElementById("modal-root");
+  if (existing) existing.remove();
+}
+function renderModal() {
+  var existing = document.getElementById("modal-root");
+  if (existing) existing.remove();
+  if (!STATE.modal) return;
+  var root = document.createElement("div");
+  root.id = "modal-root";
+  root.className = "modal-overlay";
+  var cancelBtn = STATE.modal.cancelText
+    ? '<button class="btn outline" data-action="modal-cancel">' + escapeHtml(STATE.modal.cancelText) + '</button>'
+    : "";
+  root.innerHTML =
+    '<div class="modal-card">' +
+      (STATE.modal.title ? "<h3>" + escapeHtml(STATE.modal.title) + "</h3>" : "") +
+      "<div>" + escapeHtml(STATE.modal.message) + "</div>" +
+      '<div class="modal-actions">' +
+        cancelBtn +
+        '<button class="btn gold" data-action="modal-confirm">' + escapeHtml(STATE.modal.confirmText) + "</button>" +
+      "</div>" +
+    "</div>";
+  document.body.appendChild(root);
+}
+
+/* ============================================================
+   4. SMALL HELPERS
+   ============================================================ */
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function activityLookup(id) { return DATA.activities[id]; }
+function blockLookup(blockId) {
+  for (var i = 0; i < DATA.blocks.length; i++) if (DATA.blocks[i].id === blockId) return DATA.blocks[i];
+  return null;
+}
+function individualKey(cls, slug, activityId) { return WEEK + ":resp:" + cls + ":" + slug + ":" + activityId; }
+function groupKey(cls, groupNum, activityId) { return WEEK + ":groupresp:" + cls + ":g" + groupNum + ":" + activityId; }
+function groupCountForClass(cls) {
+  var size = cls === "A" ? 24 : 20;
+  return Math.max(1, Math.ceil(size / 4));
+}
+
+/* ============================================================
+   5. TOP-LEVEL RENDER DISPATCH
+   ============================================================ */
+function render() {
+  document.body.classList.toggle("dark-mode", STATE.role === "instructor");
+  var html = "";
+  if (STATE.screen === "landing") html = renderLanding();
+  else if (STATE.screen === "studentSetup") html = renderStudentSetup();
+  else if (STATE.screen === "courseMap") html = renderCourseMap();
+  else if (STATE.screen === "activity") html = renderActivityScreen();
+  else if (STATE.screen === "instructorAuth") html = renderInstructorAuth();
+  else if (STATE.screen === "dashboard") html = renderDashboard();
+  else html = "<div class='screen'>Unknown screen</div>";
+
+  var toggle = "";
+  if (STATE.screen !== "landing") {
+    toggle =
+      '<div class="toggle-pill">' +
+        '<button data-action="switch-role" data-role="student" class="' + (STATE.role === "student" ? "active" : "") + '">Student</button>' +
+        '<button data-action="switch-role" data-role="instructor" class="' + (STATE.role === "instructor" ? "active" : "") + '">Instructor</button>' +
+      "</div>";
+  }
+  app.innerHTML = toggle + html;
+  renderModal();
+}
+
+/* ============================================================
+   6. LANDING
+   ============================================================ */
+function renderLanding() {
+  return (
+    '<div class="screen">' +
+      "<h1>Week 10 Toolkit</h1>" +
+      '<p class="muted-text">Non-Native English-Speaking Teachers &amp; Language Teacher Prep for an AI World</p>' +
+      '<button class="landing-card" data-action="enter-student">' +
+        "<h3>Enter as Student</h3>" +
+        '<div class="muted-text">Complete today\'s in-class activities.</div>' +
+      "</button>" +
+      '<button class="landing-card" data-action="enter-instructor">' +
+        "<h3>Enter as Instructor</h3>" +
+        '<div class="muted-text">View live results and manage the session.</div>' +
+      "</button>" +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   7. STUDENT SETUP  (Name -> Class)
+   ============================================================ */
+function renderStudentSetup() {
+  return (
+    '<div class="screen">' +
+      "<h2>Welcome</h2>" +
+      '<p class="muted-text">Your name and class section are used only to save your own responses.</p>' +
+      '<label class="field-label">Your name</label>' +
+      '<input type="text" id="student-name-input" data-action="name-input" placeholder="e.g. Siti Rahma" value="' + escapeHtml(STATE.student.name) + '">' +
+      '<label class="field-label">Class section</label>' +
+      '<div style="display:flex; gap:10px; margin-top:6px;">' +
+        '<button class="btn ' + (STATE.student.cls === "A" ? "" : "outline") + '" data-action="pick-class" data-cls="A">A Class</button>' +
+        '<button class="btn ' + (STATE.student.cls === "B" ? "" : "outline") + '" data-action="pick-class" data-cls="B">B Class</button>' +
+      "</div>" +
+      '<p class="muted-text" style="margin-top:14px;">A Class and B Class are kept completely separate - your instructor sees results by section.</p>' +
+      '<button class="btn gold" style="margin-top:18px;" data-action="student-continue">Continue</button>' +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   8. COURSE MAP
+   ============================================================ */
+async function loadCourseMapData() {
+  STATE.courseMapCache.loading = true;
+  STATE.courseMapCache.error = null;
+  render();
+  var slug = STATE.student.slug, cls = STATE.student.cls;
+  try {
+    var indivPrefix = WEEK + ":resp:" + cls + ":" + slug + ":";
+    var groupPrefix = WEEK + ":groupresp:" + cls + ":";
+    var indivKeys = await kvList(indivPrefix);
+    var groupKeys = await kvList(groupPrefix);
+    STATE.courseMapCache.indivKeys = indivKeys || [];
+    STATE.courseMapCache.groupKeys = groupKeys || [];
+  } catch (e) {
+    STATE.courseMapCache.error = String(e && e.message || e);
+  }
+  STATE.courseMapCache.loading = false;
+  // guard: only repaint if the user is still on the Course Map - an in-flight load
+  // that resolves after the user has already navigated elsewhere must not clobber
+  // whatever screen (e.g. an in-progress activity) is now showing.
+  if (STATE.screen === "courseMap") render();
+}
+
+function isActivityDone(activityId) {
+  var act = activityLookup(activityId);
+  var cls = STATE.student.cls, slug = STATE.student.slug;
+  if (!act.group) {
+    return STATE.courseMapCache.indivKeys.indexOf(individualKey(cls, slug, activityId)) !== -1;
+  } else {
+    var g = STATE.student.groups[activityId];
+    if (!g) return false;
+    return STATE.courseMapCache.groupKeys.indexOf(groupKey(cls, g, activityId)) !== -1;
+  }
+}
+
+function renderCourseMap() {
+  var totalCount = 0, doneCount = 0;
+  var blocksHtml = "";
+  DATA.blocks.forEach(function (block) {
+    blocksHtml += '<div class="map-block-title">' + escapeHtml(block.label) + "</div>";
+    block.activities.forEach(function (activityId, i) {
+      var act = activityLookup(activityId);
+      totalCount++;
+      var done = isActivityDone(activityId);
+      if (done) doneCount++;
+      var idxHtml = done ? "\u2713" : String(i + 1);
+      blocksHtml +=
+        '<div class="map-item" data-action="open-activity" data-activity="' + activityId + '">' +
+          '<div class="idx ' + (done ? "done" : "") + '">' + idxHtml + "</div>" +
+          '<div class="body">' +
+            '<div class="t">' + escapeHtml(act.title) + (act.group ? '  <span class="pill gold" style="margin-left:6px;">GROUP</span>' : "") + "</div>" +
+            '<div class="b">' + escapeHtml(act.blurb) + "</div>" +
+          "</div>" +
+        "</div>";
+    });
+  });
+  var loadingNote = STATE.courseMapCache.loading ? '<p class="muted-text"><span class="spinner" style="border-top-color:#2F6F62;border-color:rgba(47,111,98,0.3)"></span>Checking your progress...</p>' : "";
+  var errNote = STATE.courseMapCache.error ? '<div class="err-banner">Couldn\'t check progress - showing activities anyway.<span class="tech">' + escapeHtml(STATE.courseMapCache.error) + "</span></div>" : "";
+  return (
+    '<div class="screen wide">' +
+      '<div class="progress-pill">' + doneCount + " / " + totalCount + " done</div>" +
+      "<h2>" + escapeHtml(STATE.student.name) + " - Class " + escapeHtml(STATE.student.cls) + "</h2>" +
+      loadingNote + errNote +
+      blocksHtml +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   9. ACTIVITY SCREEN - dispatch + group-picker gate
+   ============================================================ */
+function ensureDraft(activityId) {
+  if (STATE.activityDraft[activityId]) return STATE.activityDraft[activityId];
+  var act = activityLookup(activityId);
+  var draft = { submitting: false, submitError: null, submitted: false };
+  if (act.type === "poll") draft.choice = null;
+  if (act.type === "synthesis") { draft.choice = null; draft.justification = ""; }
+  if (act.type === "quiz") draft.answers = act.stems.map(function () { return null; });
+  if (act.type === "matching") {
+    draft.picks = act.terms.map(function () { return null; });
+    if (!STATE.activityLoadedShuffle[activityId]) {
+      STATE.activityLoadedShuffle[activityId] = shuffledIndices(act.definitions.length);
+    }
+  }
+  if (act.type === "ordering") {
+    if (!STATE.activityLoadedShuffle[activityId]) {
+      STATE.activityLoadedShuffle[activityId] = shuffledIndices(act.items.length);
+    }
+    draft.order = STATE.activityLoadedShuffle[activityId].slice();
+  }
+  if (act.type === "bucket") {
+    draft.assignments = {};
+    draft.selectedItem = null;
+  }
+  if (act.type === "spectrum") {
+    draft.values = act.statements.map(function () { return 3; });
+    draft.justifications = act.statements.map(function () { return ""; });
+  }
+  if (act.type === "group") {
+    draft.fields = act.fields.map(function () { return ""; });
+  }
+  STATE.activityDraft[activityId] = draft;
+  return draft;
+}
+
+function renderActivityScreen() {
+  var activityId = STATE.currentActivityId;
+  var act = activityLookup(activityId);
+  if (!act) return '<div class="screen">Activity not found. <button class="btn" data-action="back-to-map">Back</button></div>';
+
+  if (act.group && !STATE.student.groups[activityId]) {
+    return renderGroupPicker(activityId, act);
+  }
+
+  var draft = ensureDraft(activityId);
+  var blockLabel = blockLookup(act.block).label;
+
+  if (draft.submitted) {
+    return renderSubmittedScreen(activityId, act);
+  }
+
+  var inner = "";
+  if (act.type === "poll") inner = renderPollActivity(activityId, act, draft);
+  else if (act.type === "matching") inner = renderMatchingActivity(activityId, act, draft);
+  else if (act.type === "quiz") inner = renderQuizActivity(activityId, act, draft);
+  else if (act.type === "ordering") inner = renderOrderingActivity(activityId, act, draft);
+  else if (act.type === "bucket") inner = renderBucketActivity(activityId, act, draft);
+  else if (act.type === "spectrum") inner = renderSpectrumActivity(activityId, act, draft);
+  else if (act.type === "group") inner = renderGroupTaskActivity(activityId, act, draft);
+  else if (act.type === "synthesis") inner = renderSynthesisActivity(activityId, act, draft);
+
+  var errHtml = draft.submitError
+    ? '<div class="err-banner">Couldn\'t save - Try Again<span class="tech">' + escapeHtml(draft.submitError) + "</span></div>"
+    : "";
+
+  return (
+    '<div class="screen">' +
+      '<button class="btn outline small" data-action="back-to-map" style="margin-bottom:14px;">&larr; Course Map</button>' +
+      '<div class="pill teal" style="margin-bottom:10px;">' + escapeHtml(blockLabel) + "</div>" +
+      "<h2>" + escapeHtml(act.title) + (act.group ? ' <span class="pill gold">GROUP ' + escapeHtml(STATE.student.groups[activityId] || "") + "</span>" : "") + "</h2>" +
+      inner +
+      errHtml +
+      '<button class="btn gold" style="margin-top:20px;" data-action="submit-activity" data-activity="' + activityId + '" ' + (draft.submitting ? "disabled" : "") + ">" +
+        (draft.submitting ? '<span class="spinner"></span>Saving...' : "Submit") +
+      "</button>" +
+    "</div>"
+  );
+}
+
+function renderGroupPicker(activityId, act) {
+  var cls = STATE.student.cls;
+  var n = groupCountForClass(cls);
+  var opts = "";
+  for (var i = 1; i <= n; i++) opts += '<option value="' + i + '">Group ' + i + "</option>";
+  return (
+    '<div class="screen">' +
+      '<button class="btn outline small" data-action="back-to-map" style="margin-bottom:14px;">&larr; Course Map</button>' +
+      "<h2>" + escapeHtml(act.title) + '  <span class="pill gold">GROUP</span></h2>' +
+      '<p class="muted-text">This is a group activity. Pick your group number - your group\'s answer counts as one shared submission.</p>' +
+      '<label class="field-label">Your group (Class ' + escapeHtml(cls) + ", " + n + " groups)</label>" +
+      '<select id="group-picker-select">' + opts + "</select>" +
+      '<button class="btn gold" style="margin-top:16px;" data-action="confirm-group" data-activity="' + activityId + '">Continue</button>' +
+    "</div>"
+  );
+}
+
+function renderSubmittedScreen(activityId, act) {
+  var blockActs = blockLookup(act.block).activities;
+  var idx = blockActs.indexOf(activityId);
+  var nextId = null;
+  for (var bi = 0; bi < DATA.blocks.length && !nextId; bi++) {
+    var b = DATA.blocks[bi];
+    var actsIdx = b.activities.indexOf(activityId);
+    if (actsIdx !== -1) {
+      if (actsIdx + 1 < b.activities.length) nextId = b.activities[actsIdx + 1];
+      else if (bi + 1 < DATA.blocks.length) nextId = DATA.blocks[bi + 1].activities[0];
+    }
+  }
+  var nextBtn = nextId
+    ? '<button class="btn gold" data-action="open-activity" data-activity="' + nextId + '">Next Activity: ' + escapeHtml(activityLookup(nextId).title) + "</button>"
+    : "";
+  return (
+    '<div class="screen">' +
+      '<div class="card"><h2 style="color:#2F6F62;">Submitted!</h2>' +
+      '<p class="muted-text">Your response has been saved.</p></div>' +
+      '<div style="display:flex; gap:10px; flex-wrap:wrap;">' +
+        '<button class="btn outline" data-action="back-to-map">Back to Course Map</button>' +
+        nextBtn +
+      "</div>" +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   10. PER-TYPE ACTIVITY RENDERERS
+   ============================================================ */
+function renderPollActivity(activityId, act, draft) {
+  var letters = ["A", "B", "C", "D", "E"];
+  var rows = act.options.map(function (opt, i) {
+    var sel = draft.choice === i;
+    return (
+      '<div class="option-row ' + (sel ? "selected" : "") + '" data-action="poll-pick" data-activity="' + activityId + '" data-idx="' + i + '">' +
+        '<input type="radio" ' + (sel ? "checked" : "") + " readonly>" +
+        "<div><b>" + letters[i] + ".</b> " + escapeHtml(opt) + "</div>" +
+      "</div>"
+    );
+  }).join("");
+  return "<p>" + escapeHtml(act.prompt) + "</p>" + rows + '<p class="muted-text">No right answer here - just your honest instinct.</p>';
+}
+
+function renderMatchingActivity(activityId, act, draft) {
+  var shuffle = STATE.activityLoadedShuffle[activityId];
+  var rows = act.terms.map(function (term, i) {
+    var selectId = "match-select-" + activityId + "-" + i;
+    var options = shuffle.map(function (origIdx) {
+      var selected = draft.picks[i] === origIdx ? "selected" : "";
+      return '<option value="' + origIdx + '" ' + selected + ">" + escapeHtml(act.definitions[origIdx]) + "</option>";
+    }).join("");
+    return (
+      '<div class="group-field">' +
+        "<label>" + escapeHtml(term) + "</label>" +
+        '<select data-action="matching-pick" data-activity="' + activityId + '" data-term="' + i + '" id="' + selectId + '">' +
+          '<option value="">-- choose the matching definition --</option>' + options +
+        "</select>" +
+      "</div>"
+    );
+  }).join("");
+  return rows;
+}
+
+function renderQuizActivity(activityId, act, draft) {
+  var letters = ["A", "B", "C", "D"];
+  return act.stems.map(function (stem, si) {
+    var opts = act.options.map(function (opt, oi) {
+      var sel = draft.answers[si] === oi;
+      return (
+        '<div class="option-row ' + (sel ? "selected" : "") + '" data-action="quiz-pick" data-activity="' + activityId + '" data-stem="' + si + '" data-idx="' + oi + '">' +
+          '<input type="radio" ' + (sel ? "checked" : "") + " readonly>" +
+          "<div><b>" + letters[oi] + ".</b> " + escapeHtml(opt) + "</div>" +
+        "</div>"
+      );
+    }).join("");
+    return '<div class="card"><b>' + (si + 1) + ".</b> " + escapeHtml(stem) + "</div>" + opts;
+  }).join("");
+}
+
+function renderOrderingActivity(activityId, act, draft) {
+  return draft.order.map(function (origIdx, pos) {
+    return (
+      '<div class="order-row">' +
+        '<div class="num">' + (pos + 1) + "</div>" +
+        '<div class="txt">' + escapeHtml(act.items[origIdx]) + "</div>" +
+        '<div class="order-btns" style="display:flex; gap:6px;">' +
+          '<button data-action="order-move" data-activity="' + activityId + '" data-pos="' + pos + '" data-dir="-1" ' + (pos === 0 ? "disabled" : "") + ">\u25B2</button>" +
+          '<button data-action="order-move" data-activity="' + activityId + '" data-pos="' + pos + '" data-dir="1" ' + (pos === draft.order.length - 1 ? "disabled" : "") + ">\u25BC</button>" +
+        "</div>" +
+      "</div>"
+    );
+  }).join("") + '<p class="muted-text">Use the arrows to reorder, earliest at the top.</p>';
+}
+
+function renderBucketActivity(activityId, act, draft) {
+  var itemsHtml = act.items.map(function (item, i) {
+    var placed = draft.assignments[i] !== undefined;
+    var selected = draft.selectedItem === i;
+    if (placed) return "";
+    return (
+      '<div class="bucket-item ' + (selected ? "selected" : "") + '" data-action="bucket-select-item" data-activity="' + activityId + '" data-item="' + i + '">' +
+        escapeHtml(item.text) +
+      "</div>"
+    );
+  }).join("");
+  var catsHtml = act.categories.map(function (catName, ci) {
+    var inCat = act.items.map(function (item, i) { return draft.assignments[i] === ci ? i : null; }).filter(function (x) { return x !== null; });
+    var chips = inCat.map(function (i) {
+      return '<div class="bucket-item placed">' + escapeHtml(act.items[i].text) + "</div>";
+    }).join("");
+    return (
+      '<div class="bucket-cat ' + (draft.selectedItem !== null ? "hot" : "") + '" data-action="bucket-assign" data-activity="' + activityId + '" data-cat="' + ci + '">' +
+        "<b>" + escapeHtml(catName) + "</b><div>" + chips + "</div>" +
+      "</div>"
+    );
+  }).join("");
+  var remaining = act.items.length - Object.keys(draft.assignments).length;
+  return (
+    '<p class="muted-text">' + (draft.selectedItem !== null ? "Now tap a category to place it." : "Tap an excerpt below, then tap a category.") + "</p>" +
+    '<div style="margin-bottom:14px;">' + (itemsHtml || '<i class="muted-text">All items placed.</i>') + "</div>" +
+    catsHtml +
+    '<p class="muted-text">' + remaining + " item(s) left to sort.</p>"
+  );
+}
+
+function renderSpectrumActivity(activityId, act, draft) {
+  return act.statements.map(function (st, i) {
+    return (
+      '<div class="card">' +
+        "<p>" + (i + 1) + ". " + escapeHtml(st) + "</p>" +
+        '<div class="slider-row">' +
+          '<input type="range" min="1" max="5" value="' + draft.values[i] + '" data-action="spectrum-slide" data-activity="' + activityId + '" data-stmt="' + i + '">' +
+          '<div class="slider-labels"><span>Disagree</span><span>Agree</span></div>' +
+        "</div>" +
+        '<textarea placeholder="One sentence justifying your position..." data-action="spectrum-justify" data-activity="' + activityId + '" data-stmt="' + i + '">' + escapeHtml(draft.justifications[i]) + "</textarea>" +
+      "</div>"
+    );
+  }).join("");
+}
+
+function renderGroupTaskActivity(activityId, act, draft) {
+  return (
+    "<p>" + escapeHtml(act.instruction) + "</p>" +
+    act.fields.map(function (label, i) {
+      return (
+        '<div class="group-field">' +
+          "<label>" + escapeHtml(label) + "</label>" +
+          '<textarea data-action="group-field-input" data-activity="' + activityId + '" data-field="' + i + '">' + escapeHtml(draft.fields[i]) + "</textarea>" +
+        "</div>"
+      );
+    }).join("")
+  );
+}
+
+function renderSynthesisActivity(activityId, act, draft) {
+  var letters = ["A", "B"];
+  var rows = act.options.map(function (opt, i) {
+    var sel = draft.choice === i;
+    return (
+      '<div class="option-row ' + (sel ? "selected" : "") + '" data-action="synth-pick" data-activity="' + activityId + '" data-idx="' + i + '">' +
+        '<input type="radio" ' + (sel ? "checked" : "") + " readonly>" +
+        "<div><b>" + letters[i] + ".</b> " + escapeHtml(opt) + "</div>" +
+      "</div>"
+    );
+  }).join("");
+  return (
+    "<p>" + escapeHtml(act.prompt) + "</p>" + rows +
+    '<label class="field-label">One-line justification</label>' +
+    '<input type="text" placeholder="Your reason..." value="' + escapeHtml(draft.justification) + '" data-action="synth-justify" data-activity="' + activityId + '">'
+  );
+}
+
+/* ============================================================
+   11. VALIDATION per activity type
+   ============================================================ */
+function validateDraft(act, draft) {
+  if (act.type === "poll") return draft.choice !== null ? null : "Pick one option first.";
+  if (act.type === "quiz") return draft.answers.every(function (a) { return a !== null; }) ? null : "Answer every question first.";
+  if (act.type === "matching") return draft.picks.every(function (p) { return p !== null; }) ? null : "Match every term first.";
+  if (act.type === "ordering") return null;
+  if (act.type === "bucket") return Object.keys(draft.assignments).length === act.items.length ? null : "Sort every item into a category first.";
+  if (act.type === "spectrum") return draft.justifications.every(function (j) { return j.trim().length > 0; }) ? null : "Write a one-line justification for every statement.";
+  if (act.type === "group") return draft.fields.every(function (f) { return f.trim().length > 0; }) ? null : "Fill in all three fields as a group first.";
+  if (act.type === "synthesis") return (draft.choice !== null && draft.justification.trim().length > 0) ? null : "Pick a side and write a one-line justification first.";
+  return null;
+}
+
+function buildPayload(act, draft) {
+  if (act.type === "poll") return { choice: draft.choice };
+  if (act.type === "quiz") return { answers: draft.answers };
+  if (act.type === "matching") return { picks: draft.picks };
+  if (act.type === "ordering") return { order: draft.order };
+  if (act.type === "bucket") return { assignments: draft.assignments };
+  if (act.type === "spectrum") return { values: draft.values, justifications: draft.justifications };
+  if (act.type === "group") return { fields: draft.fields };
+  if (act.type === "synthesis") return { choice: draft.choice, justification: draft.justification };
+  return {};
+}
+
+/* ============================================================
+   12. EVENT HANDLING - click delegation
+   ============================================================ */
+async function handleSubmitActivity(activityId) {
+  var act = activityLookup(activityId);
+  var draft = STATE.activityDraft[activityId];
+  var validationMsg = validateDraft(act, draft);
+  if (validationMsg) {
+    showModal({ title: "Almost done", message: validationMsg, confirmText: "OK" });
+    return;
+  }
+  draft.submitting = true;
+  draft.submitError = null;
+  render();
+  var payload = buildPayload(act, draft);
+  var cls = STATE.student.cls;
+  var key = act.group
+    ? groupKey(cls, STATE.student.groups[activityId], activityId)
+    : individualKey(cls, STATE.student.slug, activityId);
+  try {
+    await kvSet(key, JSON.stringify(payload));
+    draft.submitting = false;
+    draft.submitted = true;
+    if (!act.group) STATE.courseMapCache.indivKeys.push(key);
+    else STATE.courseMapCache.groupKeys.push(key);
+    render();
+  } catch (e) {
+    draft.submitting = false;
+    draft.submitError = String(e && e.message || e);
+    render();
+  }
+}
+
+function handleClick(e) {
+  var target = e.target.closest("[data-action]");
+  if (!target) return;
+  var action = target.getAttribute("data-action");
+
+  if (action === "modal-confirm") {
+    var cb = STATE.modal && STATE.modal.onConfirm;
+    closeModal();
+    if (cb) cb();
+    return;
+  }
+  if (action === "modal-cancel") {
+    var cb2 = STATE.modal && STATE.modal.onCancel;
+    closeModal();
+    if (cb2) cb2();
+    return;
+  }
+
+  if (action === "enter-student") { STATE.role = "student"; STATE.screen = "studentSetup"; render(); return; }
+  if (action === "enter-instructor") {
+    STATE.role = "instructor";
+    if (STATE.instructorAuthed) { STATE.screen = "dashboard"; loadDashboardData(); }
+    else STATE.screen = "instructorAuth";
+    render();
+    return;
+  }
+  if (action === "switch-role") {
+    var role = target.getAttribute("data-role");
+    if (role === "student") {
+      STATE.role = "student";
+      STATE.screen = STATE.student.name && STATE.student.cls ? "courseMap" : "studentSetup";
+      if (STATE.screen === "courseMap") loadCourseMapData(); else render();
+    } else {
+      STATE.role = "instructor";
+      if (STATE.instructorAuthed) { STATE.screen = "dashboard"; loadDashboardData(); }
+      else { STATE.screen = "instructorAuth"; render(); }
+    }
+    return;
+  }
+
+  if (action === "pick-class") { STATE.student.cls = target.getAttribute("data-cls"); render(); return; }
+  if (action === "student-continue") {
+    var name = (STATE.student.name || "").trim();
+    if (!name) { showModal({ title: "Name needed", message: "Please enter your name first." }); return; }
+    if (!STATE.student.cls) { showModal({ title: "Class needed", message: "Please pick your class section first." }); return; }
+    STATE.student.name = name;
+    STATE.student.slug = slugify(name);
+    STATE.screen = "courseMap";
+    loadCourseMapData();
+    return;
+  }
+
+  if (action === "open-activity") {
+    STATE.currentActivityId = target.getAttribute("data-activity");
+    STATE.screen = "activity";
+    render();
+    return;
+  }
+  if (action === "back-to-map") {
+    STATE.screen = "courseMap";
+    loadCourseMapData();
+    return;
+  }
+  if (action === "confirm-group") {
+    var sel = document.getElementById("group-picker-select");
+    var g = sel ? sel.value : "1";
+    STATE.student.groups[target.getAttribute("data-activity")] = g;
+    render();
+    return;
+  }
+
+  if (action === "poll-pick") {
+    var d1 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d1.choice = parseInt(target.getAttribute("data-idx"), 10);
+    render();
+    return;
+  }
+  if (action === "synth-pick") {
+    var d2 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d2.choice = parseInt(target.getAttribute("data-idx"), 10);
+    render();
+    return;
+  }
+  if (action === "quiz-pick") {
+    var d3 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d3.answers[parseInt(target.getAttribute("data-stem"), 10)] = parseInt(target.getAttribute("data-idx"), 10);
+    render();
+    return;
+  }
+  if (action === "order-move") {
+    var d4 = STATE.activityDraft[target.getAttribute("data-activity")];
+    var pos = parseInt(target.getAttribute("data-pos"), 10);
+    var dir = parseInt(target.getAttribute("data-dir"), 10);
+    var newPos = pos + dir;
+    if (newPos < 0 || newPos >= d4.order.length) return;
+    var tmp = d4.order[pos]; d4.order[pos] = d4.order[newPos]; d4.order[newPos] = tmp;
+    render();
+    return;
+  }
+  if (action === "bucket-select-item") {
+    var d5 = STATE.activityDraft[target.getAttribute("data-activity")];
+    var itemIdx = parseInt(target.getAttribute("data-item"), 10);
+    d5.selectedItem = d5.selectedItem === itemIdx ? null : itemIdx;
+    render();
+    return;
+  }
+  if (action === "bucket-assign") {
+    var d6 = STATE.activityDraft[target.getAttribute("data-activity")];
+    if (d6.selectedItem === null) return;
+    var catIdx = parseInt(target.getAttribute("data-cat"), 10);
+    d6.assignments[d6.selectedItem] = catIdx;
+    d6.selectedItem = null;
+    render();
+    return;
+  }
+  if (action === "submit-activity") {
+    handleSubmitActivity(target.getAttribute("data-activity"));
+    return;
+  }
+
+  if (action === "dash-tab") { STATE.dashboard.cls = target.getAttribute("data-cls"); loadDashboardData(); return; }
+  if (action === "dash-refresh") { loadDashboardData(); return; }
+  if (action === "dash-reset") {
+    showModal({
+      title: "Reset all data?",
+      message: "This clears every response for BOTH classes and cannot be undone. Are you sure?",
+      confirmText: "Yes, reset everything",
+      cancelText: "Cancel",
+      onConfirm: function () { performResetAll(); }
+    });
+    return;
+  }
+  if (action === "instructor-auth-submit") {
+    var pwInput = document.getElementById("instructor-pw-input");
+    var pw = pwInput ? pwInput.value : "";
+    if (pw === "ELT100") {
+      STATE.instructorAuthed = true;
+      STATE.screen = "dashboard";
+      loadDashboardData();
+    } else {
+      showModal({ title: "Incorrect password", message: "That password isn't correct. Try again." });
+    }
+    return;
+  }
+}
+
+function handleInputEvent(e) {
+  var target = e.target.closest("[data-action]");
+  if (!target) return;
+  var action = target.getAttribute("data-action");
+  if (action === "name-input") {
+    STATE.student.name = target.value;
+    return;
+  }
+  if (action === "matching-pick") {
+    var d1 = STATE.activityDraft[target.getAttribute("data-activity")];
+    var termIdx = parseInt(target.getAttribute("data-term"), 10);
+    var v = target.value;
+    d1.picks[termIdx] = v === "" ? null : parseInt(v, 10);
+    return;
+  }
+  if (action === "spectrum-slide") {
+    var d2 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d2.values[parseInt(target.getAttribute("data-stmt"), 10)] = parseInt(target.value, 10);
+    return;
+  }
+  if (action === "spectrum-justify") {
+    var d3 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d3.justifications[parseInt(target.getAttribute("data-stmt"), 10)] = target.value;
+    return;
+  }
+  if (action === "group-field-input") {
+    var d4 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d4.fields[parseInt(target.getAttribute("data-field"), 10)] = target.value;
+    return;
+  }
+  if (action === "synth-justify") {
+    var d5 = STATE.activityDraft[target.getAttribute("data-activity")];
+    d5.justification = target.value;
+    return;
+  }
+}
+
+document.addEventListener("click", handleClick);
+document.addEventListener("input", handleInputEvent);
+document.addEventListener("change", handleInputEvent);
+
+/* ============================================================
+   13. INSTRUCTOR AUTH
+   ============================================================ */
+function renderInstructorAuth() {
+  return (
+    '<div class="screen">' +
+      "<h2>Instructor Login</h2>" +
+      '<label class="field-label">Password</label>' +
+      '<input type="text" id="instructor-pw-input" placeholder="Enter password">' +
+      '<button class="btn gold" style="margin-top:16px;" data-action="instructor-auth-submit">Enter Dashboard</button>' +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   14. DASHBOARD DATA LOADING
+   ============================================================ */
+async function loadDashboardData() {
+  STATE.dashboard.loading = true;
+  STATE.dashboard.error = null;
+  render();
+  var cls = STATE.dashboard.cls;
+  try {
+    var indivPrefix = WEEK + ":resp:" + cls + ":";
+    var groupPrefix = WEEK + ":groupresp:" + cls + ":";
+    var indivKeys = await kvList(indivPrefix);
+    var groupKeysList = await kvList(groupPrefix);
+
+    var indivRows = await mapLimited(indivKeys, 6, async function (key) {
+      var val = await kvGet(key);
+      return { key: key, value: val };
+    });
+    var groupRows = await mapLimited(groupKeysList, 6, async function (key) {
+      var val = await kvGet(key);
+      return { key: key, value: val };
+    });
+
+    var byActivity = {};
+    Object.keys(DATA.activities).forEach(function (id) { byActivity[id] = []; });
+
+    indivRows.forEach(function (row) {
+      if (!row.value) return;
+      var activityId = row.key.split(":").pop();
+      if (!byActivity[activityId]) byActivity[activityId] = [];
+      try { byActivity[activityId].push({ payload: JSON.parse(row.value), who: row.key }); }
+      catch (e) { /* skip malformed */ }
+    });
+    groupRows.forEach(function (row) {
+      if (!row.value) return;
+      var activityId = row.key.split(":").pop();
+      if (!byActivity[activityId]) byActivity[activityId] = [];
+      try { byActivity[activityId].push({ payload: JSON.parse(row.value), who: row.key }); }
+      catch (e) { /* skip malformed */ }
+    });
+
+    STATE.dashboard.data = byActivity;
+  } catch (e) {
+    STATE.dashboard.error = String(e && e.message || e);
+  }
+  STATE.dashboard.loading = false;
+  if (STATE.screen === "dashboard") render();
+}
+
+/* ============================================================
+   15. DASHBOARD AGGREGATION + RENDER PER ACTIVITY TYPE
+   ============================================================ */
+function renderDashCard(activityId) {
+  var act = activityLookup(activityId);
+  var rows = STATE.dashboard.data[activityId] || [];
+  var body = "";
+  var n = rows.length;
+
+  if (act.type === "poll" || act.type === "synthesis") {
+    var counts = act.options.map(function () { return 0; });
+    var justifications = [];
+    rows.forEach(function (r) {
+      var c = r.payload.choice;
+      if (typeof c === "number" && counts[c] !== undefined) counts[c]++;
+      if (r.payload.justification) justifications.push(r.payload.justification);
+    });
+    body = act.options.map(function (opt, i) {
+      var pct = n ? Math.round((counts[i] / n) * 100) : 0;
+      return '<div class="dash-row"><span>' + escapeHtml(opt) + "</span><span>" + counts[i] + " (" + pct + "%)</span></div>";
+    }).join("");
+    if (justifications.length) {
+      body += '<div style="margin-top:10px;"><b>Justifications:</b>' +
+        justifications.map(function (j) { return '<div class="dash-row"><span>' + escapeHtml(j) + "</span><span></span></div>"; }).join("") +
+        "</div>";
+    }
+  } else if (act.type === "quiz") {
+    var quizLetters = ["A", "B", "C", "D", "E"];
+    body = act.stems.map(function (stem, si) {
+      var correctIdx = act.correct[si];
+      var correctCount = 0;
+      rows.forEach(function (r) { if (r.payload.answers && r.payload.answers[si] === correctIdx) correctCount++; });
+      var pct = n ? Math.round((correctCount / n) * 100) : 0;
+      return '<div class="dash-row"><span>Q' + (si + 1) + ": " + escapeHtml(stem.slice(0, 44)) + "...</span>" +
+        '<span class="dash-correct">' + correctCount + "/" + n + " (" + pct + "%) correct - answer: " + quizLetters[correctIdx] + "</span></div>";
+    }).join("");
+  } else if (act.type === "matching") {
+    body = act.terms.map(function (term, ti) {
+      var correctCount = 0, answeredCount = 0;
+      rows.forEach(function (r) {
+        if (r.payload.picks && r.payload.picks[ti] !== null && r.payload.picks[ti] !== undefined) {
+          answeredCount++;
+          if (r.payload.picks[ti] === ti) correctCount++;
+        }
+      });
+      var pct = answeredCount ? Math.round((correctCount / answeredCount) * 100) : 0;
+      return '<div class="dash-row"><span>' + escapeHtml(term) + "</span><span class=\"dash-correct\">" + correctCount + "/" + answeredCount + " (" + pct + "%)</span></div>";
+    }).join("");
+  } else if (act.type === "ordering") {
+    var exact = 0;
+    rows.forEach(function (r) {
+      if (r.payload.order && JSON.stringify(r.payload.order) === JSON.stringify(act.correctOrder)) exact++;
+    });
+    var pct2 = n ? Math.round((exact / n) * 100) : 0;
+    body = '<div class="dash-row"><span>Fully correct order</span><span class="dash-correct">' + exact + "/" + n + " (" + pct2 + "%)</span></div>";
+  } else if (act.type === "bucket") {
+    body = act.items.map(function (item, ii) {
+      var correctCount = 0;
+      rows.forEach(function (r) {
+        if (r.payload.assignments && r.payload.assignments[ii] === item.cat) correctCount++;
+      });
+      var pct3 = n ? Math.round((correctCount / n) * 100) : 0;
+      return '<div class="dash-row"><span>' + escapeHtml(item.text.slice(0, 40)) + "...</span><span class=\"dash-correct\">" + correctCount + "/" + n + " (" + pct3 + "%)</span></div>";
+    }).join("") + '<div class="muted-text" style="margin-top:6px;color:#B9C7C1;">' + n + " group submission(s)</div>";
+  } else if (act.type === "spectrum") {
+    body = act.statements.map(function (st, si) {
+      var vals = rows.map(function (r) { return (r.payload.values && r.payload.values[si]) || null; }).filter(function (v) { return v !== null; });
+      var avg = vals.length ? (vals.reduce(function (a, b) { return a + b; }, 0) / vals.length).toFixed(1) : "-";
+      var justs = rows.map(function (r) { return r.payload.justifications && r.payload.justifications[si]; }).filter(function (j) { return j; });
+      var justHtml = justs.length
+        ? '<div style="margin:4px 0 10px 0;">' + justs.map(function (j) { return '<div class="muted-text" style="color:#B9C7C1;">- ' + escapeHtml(j) + "</div>"; }).join("") + "</div>"
+        : "";
+      return '<div class="dash-row"><span>' + escapeHtml(st.slice(0, 40)) + "...</span><span>avg " + avg + "/5 (n=" + vals.length + ")</span></div>" + justHtml;
+    }).join("");
+  } else if (act.type === "group") {
+    body = rows.length
+      ? rows.map(function (r) {
+          var g = r.who.split(":")[2];
+          return '<div class="dash-row" style="display:block;"><b>' + escapeHtml(g) + "</b><br>" +
+            act.fields.map(function (label, fi) { return "<i>" + escapeHtml(label) + ":</i> " + escapeHtml(r.payload.fields[fi] || "") + "<br>"; }).join("") +
+            "</div>";
+        }).join("")
+      : '<div class="muted-text">No group submissions yet.</div>';
+  }
+
+  return (
+    '<div class="dash-card">' +
+      "<h4>" + escapeHtml(act.title) + (act.group ? "  [GROUP]" : "") + " - " + n + " submission(s)</h4>" +
+      body +
+    "</div>"
+  );
+}
+
+function renderDashboard() {
+  var cls = STATE.dashboard.cls;
+  var tabs = '<div class="tab-row">' +
+    '<button class="' + (cls === "A" ? "active" : "") + '" data-action="dash-tab" data-cls="A">Class A</button>' +
+    '<button class="' + (cls === "B" ? "active" : "") + '" data-action="dash-tab" data-cls="B">Class B</button>' +
+    "</div>";
+
+  var controls =
+    '<div style="display:flex; gap:10px; margin-bottom:20px;">' +
+      '<button class="btn gold" data-action="dash-refresh" ' + (STATE.resetInProgress ? "disabled" : "") + ">\uD83D\uDD04 Refresh All</button>" +
+      '<button class="btn danger" data-action="dash-reset" ' + (STATE.resetInProgress ? "disabled" : "") + ">\uD83D\uDDD1 Reset All</button>" +
+    "</div>";
+
+  var resetNote = STATE.resetInProgress
+    ? '<div class="card dark"><span class="spinner"></span>' + escapeHtml(STATE.resetProgressText) + "</div>"
+    : "";
+
+  var loadingNote = STATE.dashboard.loading ? '<p><span class="spinner"></span>Loading results...</p>' : "";
+  var errNote = STATE.dashboard.error
+    ? '<div class="err-banner">Couldn\'t load results.<span class="tech">' + escapeHtml(STATE.dashboard.error) + '</span></div><button class="btn gold small" data-action="dash-refresh">Try Again</button>'
+    : "";
+
+  var blocksHtml = "";
+  if (!STATE.dashboard.loading && !STATE.dashboard.error) {
+    DATA.blocks.forEach(function (block) {
+      blocksHtml += '<h3 style="color:#E8C468;">' + escapeHtml(block.label) + "</h3>";
+      block.activities.forEach(function (activityId) { blocksHtml += renderDashCard(activityId); });
+    });
+  }
+
+  return (
+    '<div class="screen wide">' +
+      "<h2>Instructor Dashboard</h2>" +
+      tabs + controls + resetNote + loadingNote + errNote + blocksHtml +
+    "</div>"
+  );
+}
+
+/* ============================================================
+   16. RESET ALL
+   ============================================================ */
+async function performResetAll() {
+  STATE.resetInProgress = true;
+  STATE.resetProgressText = "Gathering keys...";
+  render();
+  try {
+    var allKeys = [];
+    for (var ci = 0; ci < 2; ci++) {
+      var c = ci === 0 ? "A" : "B";
+      var k1 = await kvList(WEEK + ":resp:" + c + ":");
+      var k2 = await kvList(WEEK + ":groupresp:" + c + ":");
+      allKeys = allKeys.concat(k1 || [], k2 || []);
+    }
+    var total = allKeys.length;
+    var done = 0;
+    STATE.resetProgressText = "Resetting... 0/" + total;
+    render();
+    await mapLimited(allKeys, 5, async function (key) {
+      try { await kvDelete(key); } catch (e) { /* retried internally; count regardless */ }
+      done++;
+      STATE.resetProgressText = "Resetting... " + done + "/" + total;
+    });
+
+    // verification pass
+    STATE.resetProgressText = "Verifying...";
+    render();
+    var remaining = [];
+    for (var cj = 0; cj < 2; cj++) {
+      var c2 = cj === 0 ? "A" : "B";
+      var v1 = await kvList(WEEK + ":resp:" + c2 + ":");
+      var v2 = await kvList(WEEK + ":groupresp:" + c2 + ":");
+      remaining = remaining.concat(v1 || [], v2 || []);
+    }
+    if (remaining.length > 0) {
+      STATE.resetInProgress = false;
+      showModal({ title: "Reset incomplete", message: remaining.length + " item(s) could not be confirmed deleted. Try Reset All again." });
+      render();
+      return;
+    }
+
+    STATE.resetInProgress = false;
+    STATE.student = { name: "", cls: "", slug: "", groups: {} };
+    STATE.role = null;
+    STATE.screen = "landing";
+    STATE.activityDraft = {};
+    STATE.activityLoadedShuffle = {};
+    STATE.instructorAuthed = false;
+    showModal({ title: "Reset complete", message: "All response data for both classes has been cleared." });
+    render();
+  } catch (e) {
+    STATE.resetInProgress = false;
+    showModal({ title: "Reset failed", message: "Something went wrong: " + String(e && e.message || e) + ". Nothing was navigated away - try again." });
+    render();
+  }
+}
+
+/* ============================================================
+   17. BOOTSTRAP
+   ============================================================ */
+render();
+</script>
+</body>
+</html>
